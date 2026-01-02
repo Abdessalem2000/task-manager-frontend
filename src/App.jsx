@@ -19,7 +19,9 @@ function App() {
 
   const fetchTasks = () => {
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-    console.log('🔍 DEBUG: Fetching tasks from:', `${API_URL}/api/v1/tasks`);
+    console.log('🔍 DEBUG: VITE_API_URL environment variable:', import.meta.env.VITE_API_URL);
+    console.log('🔍 DEBUG: Using API_URL:', API_URL);
+    console.log('🔍 DEBUG: Full fetch URL:', `${API_URL}/api/v1/tasks`);
     fetch(`${API_URL}/api/v1/tasks`)
       .then(res => {
         console.log('🔍 DEBUG: Fetch response status:', res.status);
@@ -73,6 +75,8 @@ function App() {
       completed: false
     };
     
+    console.log('🔍 DEBUG: VITE_API_URL environment variable:', import.meta.env.VITE_API_URL);
+    console.log('🔍 DEBUG: Using API_URL:', API_URL);
     console.log('🔍 DEBUG: Adding task to:', `${API_URL}/api/v1/tasks`);
     console.log('🔍 DEBUG: Task data:', taskData);
     
@@ -111,6 +115,21 @@ function App() {
   return (
     <div style={{ padding: '50px', textAlign: 'center', backgroundColor: '#f0f2f5', minHeight: '100vh' }}>
       <h1 style={{ color: '#1a73e8' }}>Dashboard with Tasks</h1>
+      
+      {/* Debug Info */}
+      <div style={{ 
+        background: '#fff3cd', 
+        padding: '10px', 
+        borderRadius: '5px', 
+        marginBottom: '20px',
+        fontSize: '12px',
+        fontFamily: 'monospace'
+      }}>
+        <strong>DEBUG INFO:</strong><br/>
+        VITE_API_URL: {import.meta.env.VITE_API_URL || 'NOT SET'}<br/>
+        API_URL: {import.meta.env.VITE_API_URL || 'http://localhost:3000'}<br/>
+        Full URL: {(import.meta.env.VITE_API_URL || 'http://localhost:3000') + '/api/v1/tasks'}
+      </div>
       
       <div style={{ 
         background: 'white', 
