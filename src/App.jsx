@@ -262,7 +262,9 @@ function App() {
       minHeight: '100vh', 
       background: theme.bg,
       padding: '0',
+      margin: '0',
       display: 'flex',
+      width: '100%',
       color: theme.text
     }}>
       {/* Sidebar */}
@@ -446,6 +448,10 @@ function App() {
       <div style={{
         marginLeft: sidebarOpen ? '280px' : '0',
         flex: 1,
+        display: 'flex',
+        flexDirection: 'column',
+        width: '100%',
+        minWidth: 0,
         transition: 'margin-left 0.3s ease',
         minHeight: '100vh'
       }}>
@@ -533,14 +539,17 @@ function App() {
         padding: '30px', 
         flex: 1,
         display: 'flex',
-        flexDirection: 'column'
+        flexDirection: 'column',
+        width: '100%',
+        margin: '0'
       }}>
           {/* Stats Cards */}
           <div className="stats-grid" style={{ 
             display: 'grid', 
             gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
             gap: '25px',
-            marginBottom: '40px'
+            marginBottom: '40px',
+            width: '100%'
           }}>
             <div style={{
               background: theme.cardBg,
@@ -832,8 +841,9 @@ function App() {
               ) : (
                 <div className="task-grid" style={{ 
                   display: 'grid', 
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
-                  gap: '20px'
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+                  gap: '20px',
+                  width: '100%'
                 }}>
                   {filteredTasks.map((task, index) => (
                     <div
@@ -1039,25 +1049,13 @@ function App() {
 
         @media (min-width: 769px) and (max-width: 1024px) {
           .task-grid {
-            grid-template-columns: repeat(2, 1fr) !important;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)) !important;
           }
         }
 
-        @media (min-width: 1025px) and (max-width: 1440px) {
+        @media (min-width: 1025px) {
           .task-grid {
-            grid-template-columns: repeat(3, 1fr) !important;
-          }
-        }
-
-        @media (min-width: 1441px) and (max-width: 1920px) {
-          .task-grid {
-            grid-template-columns: repeat(4, 1fr) !important;
-          }
-        }
-
-        @media (min-width: 1921px) {
-          .task-grid {
-            grid-template-columns: repeat(5, 1fr) !important;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)) !important;
           }
         }
       `}</style>
