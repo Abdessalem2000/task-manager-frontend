@@ -447,13 +447,15 @@ function App() {
       {/* Main Content */}
       <div style={{
         marginLeft: sidebarOpen ? '280px' : '0',
-        flex: 1,
+        flex: '1 1 0%',
         display: 'flex',
         flexDirection: 'column',
         width: '100%',
-        minWidth: 0,
+        maxWidth: 'none',
+        minWidth: '0',
         transition: 'margin-left 0.3s ease',
-        minHeight: '100vh'
+        minHeight: '100vh',
+        overflow: 'hidden'
       }}>
         {/* Header */}
         <div style={{ 
@@ -537,11 +539,13 @@ function App() {
       
       <div style={{ 
         padding: '30px', 
-        flex: 1,
+        flex: '1 1 0%',
         display: 'flex',
         flexDirection: 'column',
         width: '100%',
-        margin: '0'
+        maxWidth: 'none',
+        margin: '0',
+        overflow: 'auto'
       }}>
           {/* Stats Cards */}
           <div className="stats-grid" style={{ 
@@ -842,7 +846,7 @@ function App() {
               ) : (
                 <div className="task-grid" style={{ 
                   display: 'grid', 
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
                   gap: '25px',
                   width: '100%',
                   maxWidth: 'none'
@@ -1051,7 +1055,7 @@ function App() {
 
         @media (min-width: 769px) and (max-width: 1024px) {
           .task-grid {
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)) !important;
           }
           
           .stats-grid {
@@ -1060,20 +1064,9 @@ function App() {
           }
         }
 
-        @media (min-width: 1025px) and (max-width: 1440px) {
+        @media (min-width: 1025px) {
           .task-grid {
-            grid-template-columns: repeat(4, 1fr) !important;
-          }
-          
-          .stats-grid {
-            grid-template-columns: repeat(4, 1fr) !important;
-            gap: 40px !important;
-          }
-        }
-
-        @media (min-width: 1441px) {
-          .task-grid {
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)) !important;
           }
           
           .stats-grid {
