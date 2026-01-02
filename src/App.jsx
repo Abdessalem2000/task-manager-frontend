@@ -241,6 +241,22 @@ function App() {
     return <Auth onAuthSuccess={handleAuthSuccess} />;
   }
 
+  // Calculate completion percentage for chart
+  const completedCount = filteredTasks.filter(t => t.completed).length;
+  const pendingCount = filteredTasks.filter(t => !t.completed).length;
+  const completionPercentage = filteredTasks.length > 0 ? Math.round((completedCount / filteredTasks.length) * 100) : 0;
+
+  // Quick add task function
+  const quickAddTask = () => {
+    const taskName = prompt('Quick add task:');
+    if (taskName && taskName.trim()) {
+      setNewTaskName(taskName.trim());
+      setTaskPriority('medium');
+      setTaskCategory('work');
+      setTimeout(() => addTask(), 100);
+    }
+  };
+
   return (
     <div style={{ 
       minHeight: '100vh', 
@@ -343,6 +359,39 @@ function App() {
               transition: 'all 0.2s ease'
             }} onClick={() => setSelectedCategory('shopping')}>
               🛒 Shopping
+            </button>
+          </div>
+
+          {/* Quick Add Button */}
+          <div style={{ marginTop: '20px' }}>
+            <button
+              onClick={quickAddTask}
+              style={{
+                width: '100%',
+                padding: '14px 16px',
+                backgroundColor: '#34a853',
+                color: 'white',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontSize: '14px',
+                fontWeight: '600',
+                transition: 'all 0.2s ease',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = '#2d8e3d';
+                e.currentTarget.style.transform = 'translateY(-1px)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = '#34a853';
+                e.currentTarget.style.transform = 'translateY(0)';
+              }}
+            >
+              ⚡ Quick Add
             </button>
           </div>
 
@@ -516,7 +565,7 @@ function App() {
               <div style={{ fontSize: '3rem', marginBottom: '10px' }}>✅</div>
               <h3 style={{ color: theme.textSecondary, margin: '0 0 10px 0', fontSize: '1.1rem' }}>Completed</h3>
               <p style={{ fontSize: '2.5rem', fontWeight: 'bold', color: '#34a853', margin: '0' }}>
-                {filteredTasks.filter(t => t.completed).length}
+                {completedCount}
               </p>
             </div>
             
@@ -532,7 +581,88 @@ function App() {
               <div style={{ fontSize: '3rem', marginBottom: '10px' }}>⏳</div>
               <h3 style={{ color: theme.textSecondary, margin: '0 0 10px 0', fontSize: '1.1rem' }}>Pending</h3>
               <p style={{ fontSize: '2.5rem', fontWeight: 'bold', color: '#fbbc04', margin: '0' }}>
-                {filteredTasks.filter(t => !t.completed).length}
+                {pendingCount}
+              </p>
+            </div>
+
+            {/* Donut Chart Card */}
+            <div style={{
+              background: theme.cardBg,
+              padding: '30px',
+              borderRadius: '20px',
+              boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
+              textAlign: 'center',
+              transition: 'transform 0.3s ease',
+              border: `1px solid ${theme.border}`,
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center'
+            }}>
+              <h3 style={{ color: theme.textSecondary, margin: '0 0 20px 0', fontSize: '1.1rem' }}>Progress</h3>
+              
+              {/* SVG Donut Chart */}
+              <div style={{ position: 'relative', width: '120px', height: '120px', marginBottom: '15px' }}>
+                <svg width="120" height="120" viewBox="0 0 120 120">
+                  {/* Background circle */}
+                  <circle
+                    cx="60"
+                    cy="60"
+                    r="50"
+                    fill="none"
+                    stroke={darkMode ? '#3d3d5c' : '#f0f0f0'}
+                    strokeWidth="20"
+                  />
+                  
+                  {/* Progress circle */}
+                  {filteredTasks.length > 0 && (
+                    <circle
+                      cx="60"
+                      cy="60"
+                      r="50"
+                      fill="none"
+                      stroke="#34a853"
+                      strokeWidth="20"
+                      strokeDasharray={`${(completionPercentage / 100) * 314.16} 314.16`}
+                      strokeDashoffset="78.54"
+                      transform="rotate(-90 60 60)"
+                      style={{
+                        transition: 'stroke-dasharray 0.5s ease-in-out',
+                        filter: 'drop-shadow(0 2px 4px rgba(52, 168, 83, 0.3))'
+                      }}
+                    />
+                  )}
+                  
+                  {/* Inner circle for donut effect */}
+                  <circle
+                    cx="60"
+                    cy="60"
+                    r="30"
+                    fill={theme.cardBg}
+                  />
+                </svg>
+                
+                {/* Percentage text */}
+                <div style={{
+                  position: 'absolute',
+                  top: '50%',
+                  left: '50%',
+                  transform: 'translate(-50%, -50%)',
+                  fontSize: '1.5rem',
+                  fontWeight: 'bold',
+                  color: theme.text
+                }}>
+                  {completionPercentage}%
+                </div>
+              </div>
+              
+              <p style={{ 
+                fontSize: '0.9rem', 
+                margin: 0, 
+                color: theme.textSecondary,
+                fontWeight: '500'
+              }}>
+                {completedCount} of {filteredTasks.length} completed
               </p>
             </div>
           </div>
