@@ -108,7 +108,19 @@ function App() {
       console.error("❌ Error adding task:", err);
       console.error("❌ Error details:", err.message);
       console.error("❌ Error stack:", err.stack);
-      showToast('Failed to add task', 'error');
+      
+      // Show detailed error message from backend
+      let errorMessage = 'Failed to add task';
+      if (err.msg) {
+        errorMessage = err.msg;
+        if (err.details && Object.keys(err.details).length > 0) {
+          errorMessage += ': ' + JSON.stringify(err.details);
+        }
+      } else if (err.error) {
+        errorMessage = err.error;
+      }
+      
+      showToast(errorMessage, 'error');
     });
   };
 
