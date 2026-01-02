@@ -546,10 +546,11 @@ function App() {
           {/* Stats Cards */}
           <div className="stats-grid" style={{ 
             display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
-            gap: '25px',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', 
+            gap: '40px',
             marginBottom: '40px',
-            width: '100%'
+            width: '100%',
+            maxWidth: 'none'
           }}>
             <div style={{
               background: theme.cardBg,
@@ -841,9 +842,10 @@ function App() {
               ) : (
                 <div className="task-grid" style={{ 
                   display: 'grid', 
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-                  gap: '20px',
-                  width: '100%'
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+                  gap: '25px',
+                  width: '100%',
+                  maxWidth: 'none'
                 }}>
                   {filteredTasks.map((task, index) => (
                     <div
@@ -1049,13 +1051,34 @@ function App() {
 
         @media (min-width: 769px) and (max-width: 1024px) {
           .task-grid {
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)) !important;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+          }
+          
+          .stats-grid {
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)) !important;
+            gap: 40px !important;
           }
         }
 
-        @media (min-width: 1025px) {
+        @media (min-width: 1025px) and (max-width: 1440px) {
           .task-grid {
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)) !important;
+            grid-template-columns: repeat(4, 1fr) !important;
+          }
+          
+          .stats-grid {
+            grid-template-columns: repeat(4, 1fr) !important;
+            gap: 40px !important;
+          }
+        }
+
+        @media (min-width: 1441px) {
+          .task-grid {
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important;
+          }
+          
+          .stats-grid {
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)) !important;
+            gap: 40px !important;
           }
         }
       `}</style>
