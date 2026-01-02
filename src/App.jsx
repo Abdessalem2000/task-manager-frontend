@@ -19,47 +19,31 @@ function App() {
 
   const fetchTasks = () => {
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-    console.log('🔍 DEBUG: VITE_API_URL environment variable:', import.meta.env.VITE_API_URL);
-    console.log('🔍 DEBUG: Using API_URL:', API_URL);
-    console.log('🔍 DEBUG: Full fetch URL:', `${API_URL}/api/tasks`);
     fetch(`${API_URL}/api/tasks`)
-      .then(res => {
-        console.log('🔍 DEBUG: Fetch response status:', res.status);
-        console.log('🔍 DEBUG: Fetch response headers:', res.headers);
-        return res.json();
-      })
+      .then(res => res.json())
       .then(data => {
-        console.log('🔍 DEBUG: Fetch response data:', data);
         if(Array.isArray(data)) {
           setTasks(data);
         }
       })
       .catch(err => {
-        console.error("❌ Error fetching tasks:", err);
-        console.error("❌ Error details:", err.message);
-        console.error("❌ Error stack:", err.stack);
+        console.error("Error fetching tasks:", err);
+        showToast('Failed to fetch tasks', 'error');
       });
   };
 
   const deleteTask = (taskId) => {
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-    console.log('🔍 DEBUG: Deleting task from:', `${API_URL}/api/tasks/${taskId}`);
     fetch(`${API_URL}/api/tasks/${taskId}`, {
       method: 'DELETE'
     })
-    .then(res => {
-      console.log('🔍 DEBUG: Delete response status:', res.status);
-      return res.json();
-    })
+    .then(res => res.json())
     .then(data => {
-      console.log("🔍 DEBUG: Delete response data:", data);
-      // Update state immediately for better UX
       setTasks(prevTasks => prevTasks.filter(task => task._id !== taskId));
       showToast('Task deleted successfully!', 'success');
     })
     .catch(err => {
-      console.error("❌ Error deleting task:", err);
-      console.error("❌ Error details:", err.message);
+      console.error("Error deleting task:", err);
       showToast('Failed to delete task', 'error');
     });
   };
@@ -75,11 +59,6 @@ function App() {
       completed: false
     };
     
-    console.log('🔍 DEBUG: VITE_API_URL environment variable:', import.meta.env.VITE_API_URL);
-    console.log('🔍 DEBUG: Using API_URL:', API_URL);
-    console.log('🔍 DEBUG: Adding task to:', `${API_URL}/api/tasks`);
-    console.log('🔍 DEBUG: Task data:', taskData);
-    
     fetch(`${API_URL}/api/tasks`, {
       method: 'POST',
       headers: {
@@ -87,40 +66,19 @@ function App() {
       },
       body: JSON.stringify(taskData)
     })
-    .then(res => {
-      console.log('🔍 DEBUG: Add task response status:', res.status);
-      console.log('🔍 DEBUG: Add task response headers:', res.headers);
-      return res.json();
-    })
+    .then(res => res.json())
     .then(data => {
-      console.log("🔍 DEBUG: Add task response data:", data);
       setNewTaskName(''); // Clear input
-      // Add the new task to state immediately for better UX
       if (data.task) {
         setTasks(prevTasks => [...prevTasks, data.task]);
         showToast('Task added successfully!', 'success');
       } else {
-        console.error('🔍 DEBUG: No task in response:', data);
-        showToast('Task added but response format unexpected', 'success');
+        showToast('Task added successfully!', 'success');
       }
     })
     .catch(err => {
-      console.error("❌ Error adding task:", err);
-      console.error("❌ Error details:", err.message);
-      console.error("❌ Error stack:", err.stack);
-      
-      // Show detailed error message from backend
-      let errorMessage = 'Failed to add task';
-      if (err.msg) {
-        errorMessage = err.msg;
-        if (err.details && Object.keys(err.details).length > 0) {
-          errorMessage += ': ' + JSON.stringify(err.details);
-        }
-      } else if (err.error) {
-        errorMessage = err.error;
-      }
-      
-      showToast(errorMessage, 'error');
+      console.error("Error adding task:", err);
+      showToast('Failed to add task', 'error');
     });
   };
 
