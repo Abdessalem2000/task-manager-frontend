@@ -1,12 +1,20 @@
 import React, { useState, useEffect } from 'react';
+import Auth from './Auth.jsx';
 
 function App() {
+  const [user, setUser] = useState(null);
   const [tasks, setTasks] = useState([]);
   const [newTaskName, setNewTaskName] = useState('');
   const [toast, setToast] = useState(null);
 
+  // Check for existing authentication on mount
   useEffect(() => {
-    fetchTasks();
+    const token = localStorage.getItem('token');
+    const savedUser = localStorage.getItem('user');
+    
+    if (token && savedUser) {
+      setUser(JSON.parse(savedUser));
+    }
   }, []);
 
   // Toast notification function
@@ -17,9 +25,33 @@ function App() {
     }, 3000);
   };
 
+  // Handle successful authentication
+  const handleAuthSuccess = (userData) => {
+    setUser(userData);
+    showToast('Welcome back!', 'success');
+  };
+
+  // Handle logout
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    setUser(null);
+    setTasks([]);
+    showToast('Logged out successfully', 'success');
+  };
+
+  // Fetch tasks (only when user is authenticated)
   const fetchTasks = () => {
+    if (!user) return;
+    
+    const token = localStorage.getItem('token');
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-    fetch(`${API_URL}/api/tasks`)
+    
+    fetch(`${API_URL}/api/tasks`, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    })
       .then(res => res.json())
       .then(data => {
         if(Array.isArray(data)) {
@@ -32,10 +64,22 @@ function App() {
       });
   };
 
+  // Fetch tasks when user changes
+  useEffect(() => {
+    if (user) {
+      fetchTasks();
+    }
+  }, [user]);
+
   const deleteTask = (taskId) => {
+    const token = localStorage.getItem('token');
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+    
     fetch(`${API_URL}/api/tasks/${taskId}`, {
-      method: 'DELETE'
+      method: 'DELETE',
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
     })
     .then(res => res.json())
     .then(data => {
@@ -53,6 +97,7 @@ function App() {
       return; // Don't add empty tasks
     }
 
+    const token = localStorage.getItem('token');
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
     const taskData = {
       name: newTaskName,
@@ -62,7 +107,8 @@ function App() {
     fetch(`${API_URL}/api/tasks`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
       },
       body: JSON.stringify(taskData)
     })
@@ -82,9 +128,43 @@ function App() {
     });
   };
 
+  // Show Auth component if user is not logged in
+  if (!user) {
+    return <Auth onAuthSuccess={handleAuthSuccess} />;
+  }
+
   return (
     <div style={{ padding: '50px', textAlign: 'center', backgroundColor: '#f0f2f5', minHeight: '100vh' }}>
-      <h1 style={{ color: '#1a73e8' }}>Dashboard with Tasks</h1>
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'space-between', 
+        alignItems: 'center',
+        marginBottom: '30px',
+        maxWidth: '800px',
+        margin: '0 auto 30px auto'
+      }}>
+        <h1 style={{ color: '#1a73e8', margin: 0 }}>Dashboard with Tasks</h1>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+          <span style={{ color: '#5f6368', fontWeight: '500' }}>
+            Welcome, {user.name}!
+          </span>
+          <button
+            onClick={handleLogout}
+            style={{
+              padding: '8px 16px',
+              backgroundColor: '#dc3545',
+              color: 'white',
+              border: 'none',
+              borderRadius: '6px',
+              cursor: 'pointer',
+              fontSize: '14px',
+              fontWeight: '500'
+            }}
+          >
+            Logout
+          </button>
+        </div>
+      </div>
       
       <div style={{ 
         background: 'white', 
@@ -98,6 +178,7 @@ function App() {
         <p style={{ fontSize: '64px', fontWeight: 'bold', color: '#34a853', margin: '20px 0' }}>
           {tasks.length}
         </p>
+        <p style={{ color: '#5f6368', margin: '0' }}>Tasks created by you</p>
       </div>
 
       <div style={{ 
@@ -106,93 +187,93 @@ function App() {
         borderRadius: '20px', 
         display: 'inline-block',
         boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
-        textAlign: 'left'
+        marginBottom: '30px',
+        width: '100%',
+        maxWidth: '600px'
       }}>
-        <h3 style={{ color: '#5f6368', marginBottom: '20px' }}>Task List</h3>
-        
-        {/* Add Task Form */}
-        <div style={{ 
-          display: 'flex', 
-          gap: '10px', 
-          marginBottom: '20px',
-          padding: '15px',
-          backgroundColor: '#f8f9fa',
-          borderRadius: '10px'
-        }}>
+        <h3 style={{ color: '#5f6368', marginBottom: '20px' }}>Add New Task</h3>
+        <div style={{ display: 'flex', gap: '10px', marginBottom: '20px' }}>
           <input
             type="text"
             value={newTaskName}
             onChange={(e) => setNewTaskName(e.target.value)}
+            placeholder="Enter task name..."
             onKeyPress={(e) => e.key === 'Enter' && addTask()}
-            placeholder="Enter new task..."
             style={{
               flex: 1,
-              padding: '10px',
+              padding: '12px',
               border: '1px solid #ddd',
-              borderRadius: '5px',
-              fontSize: '14px'
+              borderRadius: '8px',
+              fontSize: '16px'
             }}
           />
-          <button 
+          <button
             onClick={addTask}
             style={{
-              backgroundColor: '#4285f4',
+              padding: '12px 24px',
+              backgroundColor: '#1a73e8',
               color: 'white',
               border: 'none',
-              padding: '10px 20px',
-              borderRadius: '5px',
+              borderRadius: '8px',
               cursor: 'pointer',
-              fontSize: '14px',
-              fontWeight: 'bold'
+              fontSize: '16px',
+              fontWeight: '500'
             }}
-            onMouseOver={(e) => e.target.style.backgroundColor = '#357ae8'}
-            onMouseOut={(e) => e.target.style.backgroundColor = '#4285f4'}
           >
             Add Task
           </button>
         </div>
-        
-        {tasks.length === 0 ? (
-          <p style={{ color: '#999' }}>No tasks found</p>
-        ) : (
-          <ul style={{ listStyle: 'none', padding: 0 }}>
-            {tasks.map(task => (
-              <li key={task._id} style={{ 
-                display: 'flex', 
-                justifyContent: 'space-between', 
-                alignItems: 'center',
-                padding: '10px',
-                borderBottom: '1px solid #eee',
-                marginBottom: '5px'
-              }}>
-                <span style={{ 
-                  textDecoration: task.completed ? 'line-through' : 'none',
-                  color: task.completed ? '#999' : '#333'
-                }}>
-                  {task.name}
-                </span>
-                <button 
+
+        <div style={{ maxHeight: '300px', overflowY: 'auto' }}>
+          {tasks.length === 0 ? (
+            <p style={{ color: '#5f6368', textAlign: 'center', padding: '20px' }}>
+              No tasks yet. Add your first task above!
+            </p>
+          ) : (
+            tasks.map(task => (
+              <div
+                key={task._id}
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  padding: '15px',
+                  borderBottom: '1px solid #eee',
+                  backgroundColor: task.completed ? '#f8f9fa' : 'white'
+                }}
+              >
+                <div style={{ textAlign: 'left' }}>
+                  <div style={{ 
+                    fontWeight: '500', 
+                    color: task.completed ? '#6c757d' : '#212529',
+                    textDecoration: task.completed ? 'line-through' : 'none'
+                  }}>
+                    {task.name}
+                  </div>
+                  <div style={{ fontSize: '12px', color: '#6c757d' }}>
+                    {new Date(task.createdAt).toLocaleDateString()}
+                  </div>
+                </div>
+                <button
                   onClick={() => deleteTask(task._id)}
                   style={{
-                    backgroundColor: '#ea4335',
+                    padding: '6px 12px',
+                    backgroundColor: '#dc3545',
                     color: 'white',
                     border: 'none',
-                    padding: '8px 16px',
-                    borderRadius: '5px',
+                    borderRadius: '4px',
                     cursor: 'pointer',
-                    fontSize: '14px'
+                    fontSize: '12px'
                   }}
-                  onMouseOver={(e) => e.target.style.backgroundColor = '#d33b2c'}
-                  onMouseOut={(e) => e.target.style.backgroundColor = '#ea4335'}
                 >
                   Delete
                 </button>
-              </li>
-            ))}
-          </ul>
-        )}
+              </div>
+            ))
+          )}
+        </div>
       </div>
-      
+
       {/* Toast Notification */}
       {toast && (
         <div style={{
@@ -200,19 +281,15 @@ function App() {
           top: '20px',
           right: '20px',
           padding: '15px 20px',
-          borderRadius: '8px',
+          backgroundColor: toast.type === 'success' ? '#28a745' : '#dc3545',
           color: 'white',
-          fontWeight: 'bold',
-          fontSize: '14px',
-          zIndex: 1000,
-          backgroundColor: toast.type === 'success' ? '#34a853' : '#ea4335',
+          borderRadius: '8px',
           boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-          animation: 'slideIn 0.3s ease-out'
+          zIndex: 1000
         }}>
           {toast.message}
         </div>
       )}
-      
       {/* Add CSS animation */}
       <style>{`
         @keyframes slideIn {
