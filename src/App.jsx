@@ -222,12 +222,12 @@ function App() {
         </button>
       </div>
       
-      <div style={{ maxWidth: '1200px', margin: '0 auto' }}>
+      <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
         {/* Stats Cards */}
-        <div style={{ 
+        <div className="stats-grid" style={{ 
           display: 'grid', 
-          gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', 
-          gap: '20px',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', 
+          gap: '25px',
           marginBottom: '40px'
         }}>
           <div style={{
@@ -373,7 +373,11 @@ function App() {
                 </p>
               </div>
             ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+              <div className="task-grid" style={{ 
+                display: 'grid', 
+                gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))',
+                gap: '20px'
+              }}>
                 {tasks.map((task, index) => (
                   <div
                     key={task._id}
@@ -386,7 +390,8 @@ function App() {
                       borderRadius: '12px',
                       transition: 'all 0.3s ease',
                       animation: `slideIn 0.3s ease ${index * 0.1}s both`,
-                      cursor: 'pointer'
+                      cursor: 'pointer',
+                      minHeight: '80px'
                     }}
                     onMouseEnter={(e) => {
                       e.currentTarget.style.transform = 'translateY(-2px)';
@@ -501,7 +506,7 @@ function App() {
         </div>
       )}
 
-      {/* Add CSS animations */}
+      {/* Add CSS animations and responsive styles */}
       <style>{`
         @keyframes slideIn {
           from {
@@ -528,6 +533,29 @@ function App() {
         @keyframes spin {
           0% { transform: rotate(0deg); }
           100% { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+          .task-grid {
+            grid-template-columns: 1fr !important;
+          }
+          
+          .stats-grid {
+            grid-template-columns: 1fr !important;
+            gap: 15px !important;
+          }
+        }
+
+        @media (min-width: 769px) and (max-width: 1024px) {
+          .task-grid {
+            grid-template-columns: repeat(2, 1fr) !important;
+          }
+        }
+
+        @media (min-width: 1025px) {
+          .task-grid {
+            grid-template-columns: repeat(3, 1fr) !important;
+          }
         }
       `}</style>
     </div>
