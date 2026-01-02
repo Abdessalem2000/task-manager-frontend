@@ -460,8 +460,7 @@ function App() {
             display: 'flex', 
             justifyContent: 'space-between', 
             alignItems: 'center',
-            maxWidth: '1400px',
-            margin: '0 auto'
+            width: '100%'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
               {/* Mobile Menu Toggle */}
@@ -494,7 +493,8 @@ function App() {
             {/* Search Bar */}
             <div style={{
               position: 'relative',
-              width: '300px'
+              width: '400px',
+              maxWidth: '500px'
             }}>
               <input
                 type="text"
@@ -529,7 +529,12 @@ function App() {
           </div>
         </div>
       
-      <div style={{ padding: '30px', maxWidth: '1400px', margin: '0 auto' }}>
+      <div style={{ 
+        padding: '30px', 
+        flex: 1,
+        display: 'flex',
+        flexDirection: 'column'
+      }}>
           {/* Stats Cards */}
           <div className="stats-grid" style={{ 
             display: 'grid', 
@@ -1038,9 +1043,21 @@ function App() {
           }
         }
 
-        @media (min-width: 1025px) {
+        @media (min-width: 1025px) and (max-width: 1440px) {
           .task-grid {
             grid-template-columns: repeat(3, 1fr) !important;
+          }
+        }
+
+        @media (min-width: 1441px) and (max-width: 1920px) {
+          .task-grid {
+            grid-template-columns: repeat(4, 1fr) !important;
+          }
+        }
+
+        @media (min-width: 1921px) {
+          .task-grid {
+            grid-template-columns: repeat(5, 1fr) !important;
           }
         }
       `}</style>
