@@ -455,12 +455,14 @@ function App() {
         display: 'flex',
         flexDirection: 'column',
         width: '100%',
-        maxWidth: 'none',
+        maxWidth: '100%',
         minWidth: '0',
         transition: 'margin-left 0.3s ease',
         minHeight: '100vh',
         overflow: 'hidden',
-        position: 'relative'
+        overflowX: 'hidden',
+        position: 'relative',
+        boxSizing: 'border-box'
       }}>
         {/* Header */}
         <div style={{ 
@@ -468,13 +470,18 @@ function App() {
           borderBottom: `1px solid ${theme.border}`,
           backgroundColor: theme.sidebarBg,
           backdropFilter: 'blur(10px)',
-          boxSizing: 'border-box'
+          width: '100%',
+          maxWidth: '100%',
+          boxSizing: 'border-box',
+          overflow: 'hidden'
         }}>
           <div style={{ 
             display: 'flex', 
             justifyContent: 'space-between', 
             alignItems: 'center',
-            width: '100%'
+            width: '100%',
+            maxWidth: '100%',
+            boxSizing: 'border-box'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
               {/* Mobile Menu Toggle */}
@@ -508,7 +515,9 @@ function App() {
             <div style={{
               position: 'relative',
               width: '400px',
-              maxWidth: '500px'
+              maxWidth: '500px',
+              flex: '0 0 auto',
+              boxSizing: 'border-box'
             }}>
               <input
                 type="text"
@@ -549,12 +558,12 @@ function App() {
         display: 'flex',
         flexDirection: 'column',
         width: '100%',
-        maxWidth: 'none',
+        maxWidth: '100%',
         margin: '0',
-        marginRight: '0',
         overflow: 'auto',
         position: 'relative',
-        boxSizing: 'border-box'
+        boxSizing: 'border-box',
+        overflowX: 'hidden'
       }}>
           {/* Stats Cards */}
           <div className="stats-grid" style={{ 
