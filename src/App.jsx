@@ -347,22 +347,28 @@ function App() {
                 textAlign: 'left',
                 fontSize: '14px',
                 fontWeight: selectedCategory === 'all' ? '600' : '500',
-                transition: 'all 0.3s ease',
+                transition: 'all 0.3s ease-in-out',
                 display: 'flex',
                 justifyContent: 'space-between',
-                alignItems: 'center'
+                alignItems: 'center',
+                position: 'relative',
+                overflow: 'hidden'
               }} 
               onClick={() => setSelectedCategory('all')}
               onMouseEnter={(e) => {
                 if (selectedCategory !== 'all') {
-                  e.currentTarget.style.backgroundColor = darkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
-                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.backgroundColor = darkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
+                  e.currentTarget.style.transform = 'scale(1.05)';
+                  e.currentTarget.style.boxShadow = darkMode 
+                    ? '0 4px 20px rgba(255,255,255,0.1)' 
+                    : '0 4px 20px rgba(0,0,0,0.1)';
                 }
               }}
               onMouseLeave={(e) => {
                 if (selectedCategory !== 'all') {
                   e.currentTarget.style.backgroundColor = 'transparent';
-                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.transform = 'scale(1)';
+                  e.currentTarget.style.boxShadow = 'none';
                 }
               }}
             >
@@ -385,17 +391,35 @@ function App() {
                 backgroundColor: selectedCategory === 'work' ? (darkMode ? '#4a4a6a' : '#e8f0fe') : 'transparent',
                 color: theme.text,
                 border: 'none',
-                borderRadius: '8px',
+                borderRadius: '12px',
                 cursor: 'pointer',
                 textAlign: 'left',
                 fontSize: '14px',
-                transition: 'all 0.2s ease',
+                fontWeight: selectedCategory === 'work' ? '600' : '500',
+                transition: 'all 0.3s ease-in-out',
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                fontWeight: selectedCategory === 'work' ? '600' : '400'
+                position: 'relative',
+                overflow: 'hidden'
               }} 
               onClick={() => setSelectedCategory('work')}
+              onMouseEnter={(e) => {
+                if (selectedCategory !== 'work') {
+                  e.currentTarget.style.backgroundColor = darkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
+                  e.currentTarget.style.transform = 'scale(1.05)';
+                  e.currentTarget.style.boxShadow = darkMode 
+                    ? '0 4px 20px rgba(255,255,255,0.1)' 
+                    : '0 4px 20px rgba(0,0,0,0.1)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (selectedCategory !== 'work') {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.transform = 'scale(1)';
+                  e.currentTarget.style.boxShadow = 'none';
+                }
+              }}
             >
               <span>💼 Work</span>
               <span style={{
@@ -416,17 +440,35 @@ function App() {
                 backgroundColor: selectedCategory === 'personal' ? (darkMode ? '#4a4a6a' : '#e8f0fe') : 'transparent',
                 color: theme.text,
                 border: 'none',
-                borderRadius: '8px',
+                borderRadius: '12px',
                 cursor: 'pointer',
                 textAlign: 'left',
                 fontSize: '14px',
-                transition: 'all 0.2s ease',
+                fontWeight: selectedCategory === 'personal' ? '600' : '500',
+                transition: 'all 0.3s ease-in-out',
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                fontWeight: selectedCategory === 'personal' ? '600' : '400'
+                position: 'relative',
+                overflow: 'hidden'
               }} 
               onClick={() => setSelectedCategory('personal')}
+              onMouseEnter={(e) => {
+                if (selectedCategory !== 'personal') {
+                  e.currentTarget.style.backgroundColor = darkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
+                  e.currentTarget.style.transform = 'scale(1.05)';
+                  e.currentTarget.style.boxShadow = darkMode 
+                    ? '0 4px 20px rgba(255,255,255,0.1)' 
+                    : '0 4px 20px rgba(0,0,0,0.1)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (selectedCategory !== 'personal') {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.transform = 'scale(1)';
+                  e.currentTarget.style.boxShadow = 'none';
+                }
+              }}
             >
               <span>👤 Personal</span>
               <span style={{
@@ -447,17 +489,35 @@ function App() {
                 backgroundColor: selectedCategory === 'shopping' ? (darkMode ? '#4a4a6a' : '#e8f0fe') : 'transparent',
                 color: theme.text,
                 border: 'none',
-                borderRadius: '8px',
+                borderRadius: '12px',
                 cursor: 'pointer',
                 textAlign: 'left',
                 fontSize: '14px',
-                transition: 'all 0.2s ease',
+                fontWeight: selectedCategory === 'shopping' ? '600' : '500',
+                transition: 'all 0.3s ease-in-out',
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
-                fontWeight: selectedCategory === 'shopping' ? '600' : '400'
+                position: 'relative',
+                overflow: 'hidden'
               }} 
               onClick={() => setSelectedCategory('shopping')}
+              onMouseEnter={(e) => {
+                if (selectedCategory !== 'shopping') {
+                  e.currentTarget.style.backgroundColor = darkMode ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.08)';
+                  e.currentTarget.style.transform = 'scale(1.05)';
+                  e.currentTarget.style.boxShadow = darkMode 
+                    ? '0 4px 20px rgba(255,255,255,0.1)' 
+                    : '0 4px 20px rgba(0,0,0,0.1)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (selectedCategory !== 'shopping') {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.transform = 'scale(1)';
+                  e.currentTarget.style.boxShadow = 'none';
+                }
+              }}
             >
               <span>🛒 Shopping</span>
               <span style={{
