@@ -3,6 +3,227 @@ import Auth from './Auth.jsx';
 import ProfileSettings from './ProfileSettings.jsx';
 import Toast from './Toast.jsx';
 import { LineChart, Line, AreaChart, Area, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragOverlay,
+  defaultDropAnimationSideEffects,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import {
+  useSortable,
+} from '@dnd-kit/sortable';
+
+// Import CSS for dnd-kit
+import '@dnd-kit/core/dist/style.css';
+import '@dnd-kit/sortable/dist/style.css';
+
+// Sortable Task Card Component
+const SortableTaskCard = ({ task, theme, darkMode, toggleTaskComplete, deleteTask, alarms, setShowAlarmPopup, priorityColors, categoryColors, index }) => {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: task._id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+  };
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+    >
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          padding: '20px',
+          backgroundColor: task.completed 
+            ? (darkMode ? '#0a0a0a' : '#f8f9fa')
+            : (darkMode ? '#181818' : 'rgba(255, 255, 255, 0.9)'),
+          backdropFilter: 'blur(20px)',
+          border: darkMode ? '1px solid #282828' : '1px solid rgba(255,255,255,0.2)',
+          borderRadius: '16px',
+          transition: 'all 0.3s ease',
+          animation: `slideIn 0.3s ease ${index * 0.1}s both`,
+          cursor: isDragging ? 'grabbing' : 'grab',
+          minHeight: '120px',
+          position: 'relative',
+          boxShadow: isDragging ? '0 20px 60px rgba(0,0,0,0.3)' : '0 10px 30px rgba(0,0,0,0.1)'
+        }}
+        onMouseEnter={(e) => {
+          if (!isDragging) {
+            e.currentTarget.style.transform = 'translateY(-5px)';
+            e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.15)';
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (!isDragging) {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.1)';
+          }
+        }}
+      >
+        {/* Priority Badge */}
+        <div style={{
+          position: 'absolute',
+          top: '10px',
+          right: '10px',
+          width: '8px',
+          height: '8px',
+          borderRadius: '50%',
+          backgroundColor: priorityColors[task.priority] || priorityColors.medium
+        }}></div>
+
+        {/* Category Badge */}
+        <div style={{
+          position: 'absolute',
+          top: '10px',
+          left: '10px',
+          padding: '4px 8px',
+          borderRadius: '4px',
+          fontSize: '10px',
+          fontWeight: '500',
+          backgroundColor: categoryColors[task.category] || categoryColors.work,
+          color: 'white'
+        }}>
+          {task.category || 'work'}
+        </div>
+
+        {/* Alarm Bell Icon */}
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+            setShowAlarmPopup(task._id);
+          }}
+          style={{
+            position: 'absolute',
+            top: '10px',
+            right: '45px',
+            width: '24px',
+            height: '24px',
+            borderRadius: '50%',
+            backgroundColor: alarms[task._id] ? '#1DB954' : 'transparent',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            cursor: 'pointer',
+            fontSize: '14px',
+            transition: 'all 0.2s ease',
+            border: alarms[task._id] ? 'none' : '1px solid #A7A7A7'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'scale(1.1)';
+            e.currentTarget.style.backgroundColor = alarms[task._id] ? '#1ed760' : '#282828';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'scale(1)';
+            e.currentTarget.style.backgroundColor = alarms[task._id] ? '#1DB954' : 'transparent';
+          }}
+        >
+          {alarms[task._id] ? '🔔' : '🔕'}
+        </div>
+        
+        <div style={{ display: 'flex', alignItems: 'flex-start', marginTop: '25px' }}>
+          <div
+            onClick={() => toggleTaskComplete(task._id)}
+            style={{
+              width: '24px',
+              height: '24px',
+              border: '2px solid #1a73e8',
+              borderRadius: '6px',
+              marginRight: '15px',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              backgroundColor: task.completed ? '#1a73e8' : 'transparent',
+              transition: 'all 0.2s ease',
+              flexShrink: 0
+            }}
+          >
+            {task.completed && (
+              <span style={{ color: 'white', fontSize: '14px' }}>✓</span>
+            )}
+          </div>
+          
+          <div style={{ flex: 1, textAlign: 'left' }}>
+            <div style={{ 
+              fontWeight: '500', 
+              color: task.completed ? theme.textSecondary : theme.text,
+              textDecoration: task.completed ? 'line-through' : 'none',
+              fontSize: '16px',
+              marginBottom: '5px',
+              lineHeight: '1.4'
+            }}>
+              {task.name}
+            </div>
+            <div style={{ fontSize: '12px', color: theme.textSecondary }}>
+              {new Date(task.createdAt).toLocaleDateString('en-US', { 
+                month: 'short', 
+                day: 'numeric', 
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+              })}
+            </div>
+          </div>
+        </div>
+        
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            deleteTask(task._id);
+          }}
+          style={{
+            padding: '8px 12px',
+            backgroundColor: '#dc3545',
+            color: 'white',
+            border: 'none',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            fontSize: '12px',
+            fontWeight: '500',
+            transition: 'all 0.2s ease',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '5px',
+            alignSelf: 'flex-end',
+            marginTop: '10px'
+          }}
+          onMouseEnter={(e) => {
+            e.target.style.backgroundColor = '#c82333';
+            e.target.style.transform = 'scale(1.05)';
+          }}
+          onMouseLeave={(e) => {
+            e.target.style.backgroundColor = '#dc3545';
+            e.target.style.transform = 'scale(1)';
+          }}
+        >
+          🗑️ Delete
+        </button>
+      </div>
+    </div>
+  );
+};
 
 function App() {
   const [user, setUser] = useState(null);
@@ -25,6 +246,19 @@ function App() {
   const [userXP, setUserXP] = useState(0);
   const [badges, setBadges] = useState([]);
   const [showLevelUp, setShowLevelUp] = useState(false);
+  const [activeId, setActiveId] = useState(null);
+
+  // Setup drag and drop sensors
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
 
   // Check for existing authentication on mount
   useEffect(() => {
@@ -245,6 +479,36 @@ function App() {
     const matchesCategory = selectedCategory === 'all' || task.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
+
+  // Handle drag end event
+  const handleDragEnd = (event) => {
+    const { active, over } = event;
+
+    if (active.id !== over.id) {
+      const oldIndex = filteredTasks.findIndex((task) => task._id === active.id);
+      const newIndex = filteredTasks.findIndex((task) => task._id === over.id);
+      
+      if (oldIndex !== -1 && newIndex !== -1) {
+        const newTasks = arrayMove(filteredTasks, oldIndex, newIndex);
+        
+        // Update the order in the main tasks array
+        const updatedTasks = tasks.map(task => {
+          const newTask = newTasks.find(t => t._id === task._id);
+          return newTask || task;
+        });
+        
+        setTasks(updatedTasks);
+        showToast('📋 Task order updated!', 'success');
+      }
+    }
+    
+    setActiveId(null);
+  };
+
+  // Handle drag start event
+  const handleDragStart = (event) => {
+    setActiveId(event.active.id);
+  };
 
   // Get theme colors
   const theme = darkMode ? {
@@ -1577,183 +1841,116 @@ function App() {
                   </p>
                 </div>
               ) : (
-                <div className="task-grid" style={{ 
-                  display: 'grid', 
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
-                  gap: '25px',
-                  width: '100%',
-                  maxWidth: 'none'
-                }}>
-                  {filteredTasks.map((task, index) => (
-                    <div
-                      key={task._id}
-                      style={{
+                <DndContext
+                  sensors={sensors}
+                  collisionDetection={closestCenter}
+                  onDragStart={handleDragStart}
+                  onDragEnd={handleDragEnd}
+                >
+                  <SortableContext
+                    items={filteredTasks.map(task => task._id)}
+                    strategy={verticalListSortingStrategy}
+                  >
+                    <div className="task-grid" style={{ 
+                      display: 'grid', 
+                      gridTemplateColumns: 'repeat(auto-fill, minmax(350px, 1fr))',
+                      gap: '25px',
+                      width: '100%',
+                      maxWidth: 'none'
+                    }}>
+                      {filteredTasks.map((task, index) => (
+                        <SortableTaskCard
+                          key={task._id}
+                          task={task}
+                          theme={theme}
+                          darkMode={darkMode}
+                          toggleTaskComplete={toggleTaskComplete}
+                          deleteTask={deleteTask}
+                          alarms={alarms}
+                          setShowAlarmPopup={setShowAlarmPopup}
+                          priorityColors={priorityColors}
+                          categoryColors={categoryColors}
+                          index={index}
+                        />
+                      ))}
+                    </div>
+                  </SortableContext>
+                  <DragOverlay>
+                    {activeId ? (
+                      <div style={{
                         display: 'flex',
                         flexDirection: 'column',
                         padding: '20px',
-                        backgroundColor: task.completed 
-                          ? (darkMode ? '#0a0a0a' : '#f8f9fa')
-                          : (darkMode ? '#181818' : 'rgba(255, 255, 255, 0.9)'),
+                        backgroundColor: darkMode ? '#181818' : 'rgba(255, 255, 255, 0.9)',
                         backdropFilter: 'blur(20px)',
                         border: darkMode ? '1px solid #282828' : '1px solid rgba(255,255,255,0.2)',
                         borderRadius: '16px',
-                        transition: 'all 0.3s ease',
-                        animation: `slideIn 0.3s ease ${index * 0.1}s both`,
-                        cursor: 'pointer',
+                        cursor: 'grabbing',
                         minHeight: '120px',
                         position: 'relative',
-                        boxShadow: '0 10px 30px rgba(0,0,0,0.1)'
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.transform = 'translateY(-5px)';
-                        e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.15)';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.transform = 'translateY(0)';
-                        e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.1)';
-                      }}
-                    >
-                      {/* Priority Badge */}
-                      <div style={{
-                        position: 'absolute',
-                        top: '10px',
-                        right: '10px',
-                        width: '8px',
-                        height: '8px',
-                        borderRadius: '50%',
-                        backgroundColor: priorityColors[task.priority] || priorityColors.medium
-                      }}></div>
-
-                      {/* Category Badge */}
-                      <div style={{
-                        position: 'absolute',
-                        top: '10px',
-                        left: '10px',
-                        padding: '4px 8px',
-                        borderRadius: '4px',
-                        fontSize: '10px',
-                        fontWeight: '500',
-                        backgroundColor: categoryColors[task.category] || categoryColors.work,
-                        color: 'white'
+                        boxShadow: '0 30px 80px rgba(0,0,0,0.4)',
+                        transform: 'rotate(5deg)',
+                        opacity: 0.9
                       }}>
-                        {task.category || 'work'}
-                      </div>
-
-                      {/* Alarm Bell Icon */}
-                      <div
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setShowAlarmPopup(task._id);
-                        }}
-                        style={{
+                        <div style={{
                           position: 'absolute',
                           top: '10px',
-                          right: '45px',
-                          width: '24px',
-                          height: '24px',
+                          right: '10px',
+                          width: '8px',
+                          height: '8px',
                           borderRadius: '50%',
-                          backgroundColor: alarms[task._id] ? '#1DB954' : 'transparent',
-                          display: 'flex',
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          cursor: 'pointer',
-                          fontSize: '14px',
-                          transition: 'all 0.2s ease',
-                          border: alarms[task._id] ? 'none' : '1px solid #A7A7A7'
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.transform = 'scale(1.1)';
-                          e.currentTarget.style.backgroundColor = alarms[task._id] ? '#1ed760' : '#282828';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.transform = 'scale(1)';
-                          e.currentTarget.style.backgroundColor = alarms[task._id] ? '#1DB954' : 'transparent';
-                        }}
-                      >
-                        {alarms[task._id] ? '🔔' : '🔕'}
-                      </div>
-                      
-                      <div style={{ display: 'flex', alignItems: 'flex-start', marginTop: '25px' }}>
-                        <div
-                          onClick={() => toggleTaskComplete(task._id)}
-                          style={{
+                          backgroundColor: priorityColors[filteredTasks.find(t => t._id === activeId)?.priority] || priorityColors.medium
+                        }}></div>
+                        
+                        <div style={{
+                          position: 'absolute',
+                          top: '10px',
+                          left: '10px',
+                          padding: '4px 8px',
+                          borderRadius: '4px',
+                          fontSize: '10px',
+                          fontWeight: '500',
+                          backgroundColor: categoryColors[filteredTasks.find(t => t._id === activeId)?.category] || categoryColors.work,
+                          color: 'white'
+                        }}>
+                          {filteredTasks.find(t => t._id === activeId)?.category || 'work'}
+                        </div>
+                        
+                        <div style={{ display: 'flex', alignItems: 'flex-start', marginTop: '25px' }}>
+                          <div style={{
                             width: '24px',
                             height: '24px',
                             border: '2px solid #1a73e8',
                             borderRadius: '6px',
                             marginRight: '15px',
-                            cursor: 'pointer',
                             display: 'flex',
                             alignItems: 'center',
                             justifyContent: 'center',
-                            backgroundColor: task.completed ? '#1a73e8' : 'transparent',
-                            transition: 'all 0.2s ease',
+                            backgroundColor: filteredTasks.find(t => t._id === activeId)?.completed ? '#1a73e8' : 'transparent',
                             flexShrink: 0
-                          }}
-                        >
-                          {task.completed && (
-                            <span style={{ color: 'white', fontSize: '14px' }}>✓</span>
-                          )}
-                        </div>
-                        
-                        <div style={{ flex: 1, textAlign: 'left' }}>
-                          <div style={{ 
-                            fontWeight: '500', 
-                            color: task.completed ? theme.textSecondary : theme.text,
-                            textDecoration: task.completed ? 'line-through' : 'none',
-                            fontSize: '16px',
-                            marginBottom: '5px',
-                            lineHeight: '1.4'
                           }}>
-                            {task.name}
+                            {filteredTasks.find(t => t._id === activeId)?.completed && (
+                              <span style={{ color: 'white', fontSize: '14px' }}>✓</span>
+                            )}
                           </div>
-                          <div style={{ fontSize: '12px', color: theme.textSecondary }}>
-                            {new Date(task.createdAt).toLocaleDateString('en-US', { 
-                              month: 'short', 
-                              day: 'numeric', 
-                              year: 'numeric',
-                              hour: '2-digit',
-                              minute: '2-digit'
-                            })}
+                          
+                          <div style={{ flex: 1, textAlign: 'left' }}>
+                            <div style={{ 
+                              fontWeight: '500', 
+                              color: filteredTasks.find(t => t._id === activeId)?.completed ? theme.textSecondary : theme.text,
+                              textDecoration: filteredTasks.find(t => t._id === activeId)?.completed ? 'line-through' : 'none',
+                              fontSize: '16px',
+                              marginBottom: '5px',
+                              lineHeight: '1.4'
+                            }}>
+                              {filteredTasks.find(t => t._id === activeId)?.name}
+                            </div>
                           </div>
                         </div>
                       </div>
-                      
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          deleteTask(task._id);
-                        }}
-                        style={{
-                          padding: '8px 12px',
-                          backgroundColor: '#dc3545',
-                          color: 'white',
-                          border: 'none',
-                          borderRadius: '8px',
-                          cursor: 'pointer',
-                          fontSize: '12px',
-                          fontWeight: '500',
-                          transition: 'all 0.2s ease',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '5px',
-                          alignSelf: 'flex-end',
-                          marginTop: '10px'
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = '#c82333';
-                          e.currentTarget.style.transform = 'scale(1.05)';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = '#dc3545';
-                          e.currentTarget.style.transform = 'scale(1)';
-                        }}
-                      >
-                        🗑️ Delete
-                      </button>
-                    </div>
-                  ))}
-                </div>
+                    ) : null}
+                  </DragOverlay>
+                </DndContext>
               )}
             </div>
           </div>
