@@ -304,67 +304,160 @@ function App() {
               color: 'white',
               fontWeight: 'bold'
             }}>
-              {user.name.charAt(0).toUpperCase()}
+              {user?.name?.charAt(0).toUpperCase() || 'U'}
             </div>
-            <h4 style={{ margin: '0 0 5px 0', fontSize: '18px' }}>{user.name}</h4>
-            <p style={{ margin: 0, fontSize: '14px', color: theme.textSecondary }}>
-              {user.email}
+            <h3 style={{ 
+              color: theme.text, 
+              margin: '0 0 5px 0', 
+              fontSize: '1.1rem',
+              fontWeight: '600'
+            }}>
+              {user?.name || 'User'}
+            </h3>
+            <p style={{ 
+              color: theme.textSecondary, 
+              margin: 0, 
+              fontSize: '0.9rem'
+            }}>
+              {user?.email || 'user@example.com'}
             </p>
           </div>
 
-          {/* Navigation */}
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
-            <button style={{
-              padding: '12px 16px',
-              backgroundColor: selectedCategory === 'all' ? '#1a73e8' : 'transparent',
-              color: selectedCategory === 'all' ? 'white' : theme.text,
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              textAlign: 'left',
-              fontSize: '14px',
-              transition: 'all 0.2s ease'
-            }} onClick={() => setSelectedCategory('all')}>
-              📋 All Tasks
+          {/* Category Navigation */}
+          <div style={{ marginTop: '30px' }}>
+            <h4 style={{ 
+              color: theme.textSecondary, 
+              fontSize: '0.9rem', 
+              fontWeight: '600', 
+              marginBottom: '15px',
+              textTransform: 'uppercase',
+              letterSpacing: '0.5px'
+            }}>
+              Categories
+            </h4>
+            <button
+              style={{
+                width: '100%',
+                padding: '12px 16px',
+                backgroundColor: selectedCategory === 'all' ? (darkMode ? '#4a4a6a' : '#e8f0fe') : 'transparent',
+                color: theme.text,
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                textAlign: 'left',
+                fontSize: '14px',
+                transition: 'all 0.2s ease',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                fontWeight: selectedCategory === 'all' ? '600' : '400'
+              }} 
+              onClick={() => setSelectedCategory('all')}
+            >
+              <span>📋 All Tasks</span>
+              <span style={{
+                backgroundColor: darkMode ? '#3a3a5a' : '#d1d9e0',
+                color: theme.text,
+                padding: '2px 8px',
+                borderRadius: '12px',
+                fontSize: '12px',
+                fontWeight: '600'
+              }}>
+                {tasks.length}
+              </span>
             </button>
-            <button style={{
-              padding: '12px 16px',
-              backgroundColor: selectedCategory === 'work' ? '#1a73e8' : 'transparent',
-              color: selectedCategory === 'work' ? 'white' : theme.text,
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              textAlign: 'left',
-              fontSize: '14px',
-              transition: 'all 0.2s ease'
-            }} onClick={() => setSelectedCategory('work')}>
-              💼 Work
+            <button
+              style={{
+                width: '100%',
+                padding: '12px 16px',
+                backgroundColor: selectedCategory === 'work' ? (darkMode ? '#4a4a6a' : '#e8f0fe') : 'transparent',
+                color: theme.text,
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                textAlign: 'left',
+                fontSize: '14px',
+                transition: 'all 0.2s ease',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                fontWeight: selectedCategory === 'work' ? '600' : '400'
+              }} 
+              onClick={() => setSelectedCategory('work')}
+            >
+              <span>💼 Work</span>
+              <span style={{
+                backgroundColor: darkMode ? '#3a3a5a' : '#d1d9e0',
+                color: theme.text,
+                padding: '2px 8px',
+                borderRadius: '12px',
+                fontSize: '12px',
+                fontWeight: '600'
+              }}>
+                {tasks.filter(t => t.category === 'work').length}
+              </span>
             </button>
-            <button style={{
-              padding: '12px 16px',
-              backgroundColor: selectedCategory === 'personal' ? '#34a853' : 'transparent',
-              color: selectedCategory === 'personal' ? 'white' : theme.text,
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              textAlign: 'left',
-              fontSize: '14px',
-              transition: 'all 0.2s ease'
-            }} onClick={() => setSelectedCategory('personal')}>
-              👤 Personal
+            <button
+              style={{
+                width: '100%',
+                padding: '12px 16px',
+                backgroundColor: selectedCategory === 'personal' ? (darkMode ? '#4a4a6a' : '#e8f0fe') : 'transparent',
+                color: theme.text,
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                textAlign: 'left',
+                fontSize: '14px',
+                transition: 'all 0.2s ease',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                fontWeight: selectedCategory === 'personal' ? '600' : '400'
+              }} 
+              onClick={() => setSelectedCategory('personal')}
+            >
+              <span>👤 Personal</span>
+              <span style={{
+                backgroundColor: darkMode ? '#3a3a5a' : '#d1d9e0',
+                color: theme.text,
+                padding: '2px 8px',
+                borderRadius: '12px',
+                fontSize: '12px',
+                fontWeight: '600'
+              }}>
+                {tasks.filter(t => t.category === 'personal').length}
+              </span>
             </button>
-            <button style={{
-              padding: '12px 16px',
-              backgroundColor: selectedCategory === 'shopping' ? '#fbbc04' : 'transparent',
-              color: selectedCategory === 'shopping' ? 'white' : theme.text,
-              border: 'none',
-              borderRadius: '8px',
-              cursor: 'pointer',
-              textAlign: 'left',
-              fontSize: '14px',
-              transition: 'all 0.2s ease'
-            }} onClick={() => setSelectedCategory('shopping')}>
-              🛒 Shopping
+            <button
+              style={{
+                width: '100%',
+                padding: '12px 16px',
+                backgroundColor: selectedCategory === 'shopping' ? (darkMode ? '#4a4a6a' : '#e8f0fe') : 'transparent',
+                color: theme.text,
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                textAlign: 'left',
+                fontSize: '14px',
+                transition: 'all 0.2s ease',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                fontWeight: selectedCategory === 'shopping' ? '600' : '400'
+              }} 
+              onClick={() => setSelectedCategory('shopping')}
+            >
+              <span>🛒 Shopping</span>
+              <span style={{
+                backgroundColor: darkMode ? '#3a3a5a' : '#d1d9e0',
+                color: theme.text,
+                padding: '2px 8px',
+                borderRadius: '12px',
+                fontSize: '12px',
+                fontWeight: '600'
+              }}>
+                {tasks.filter(t => t.category === 'shopping').length}
+              </span>
             </button>
           </div>
 
