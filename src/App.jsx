@@ -602,6 +602,78 @@ function App() {
     }
   };
 
+  // Voice Button Component
+  const VoiceButton = () => (
+    <div style={{ position: 'relative', display: 'inline-block' }}>
+      <button
+        onClick={startVoiceRecognition}
+        disabled={isListening}
+        style={{
+          backgroundColor: isListening ? '#1ed760' : '#1DB954',
+          border: 'none',
+          borderRadius: '12px',
+          padding: '15px 20px',
+          fontSize: '16px',
+          fontWeight: '600',
+          color: 'white',
+          cursor: isListening ? 'not-allowed' : 'pointer',
+          transition: 'all 0.3s ease',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '8px',
+          boxShadow: isListening 
+            ? '0 0 20px rgba(30, 215, 0, 0.6)' 
+            : '0 4px 15px rgba(29, 185, 84, 0.3)',
+          animation: isListening ? 'pulse 1.5s ease-in-out infinite' : 'none',
+          transform: isListening ? 'scale(1.05)' : 'scale(1)'
+        }}
+        onMouseEnter={(e) => {
+          if (!isListening) {
+            e.target.style.backgroundColor = '#1ed760';
+            e.target.style.transform = 'scale(1.05)';
+            e.target.style.boxShadow = '0 6px 20px rgba(30, 215, 0, 0.4)';
+          }
+        }}
+        onMouseLeave={(e) => {
+          if (!isListening) {
+            e.target.style.backgroundColor = '#1DB954';
+            e.target.style.transform = 'scale(1)';
+            e.target.style.boxShadow = '0 4px 15px rgba(29, 185, 84, 0.3)';
+          }
+        }}
+      >
+        🎤
+        {isListening && (
+          <span style={{
+            fontSize: '14px',
+            fontWeight: '500'
+          }}>
+            Listening...
+          </span>
+        )}
+      </button>
+      {isListening && (
+        <div style={{
+          position: 'absolute',
+          top: '-35px',
+          left: '50%',
+          transform: 'translateX(-50%)',
+          backgroundColor: '#1DB954',
+          color: 'white',
+          padding: '6px 12px',
+          borderRadius: '6px',
+          fontSize: '12px',
+          fontWeight: '600',
+          whiteSpace: 'nowrap',
+          boxShadow: '0 4px 12px rgba(29, 185, 84, 0.3)',
+          animation: 'fadeIn 0.3s ease'
+        }}>
+          🎤 Listening...
+        </div>
+      )}
+    </div>
+  );
+
   // Get theme colors
   const theme = darkMode ? {
     bg: '#121212',
@@ -1384,42 +1456,6 @@ function App() {
                 🔍
               </div>
               
-              {/* Microphone Button */}
-              <button
-                onClick={startVoiceRecognition}
-                disabled={isListening}
-                style={{
-                  position: 'absolute',
-                  right: '12px',
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  backgroundColor: isListening ? '#ea4335' : 'transparent',
-                  border: 'none',
-                  borderRadius: '50%',
-                  width: '32px',
-                  height: '32px',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: isListening ? 'not-allowed' : 'pointer',
-                  fontSize: '16px',
-                  transition: 'all 0.3s ease',
-                  animation: isListening ? 'pulse 1.5s ease-in-out infinite' : 'none'
-                }}
-                onMouseEnter={(e) => {
-                  if (!isListening) {
-                    e.target.style.backgroundColor = darkMode ? '#3a3a5a' : '#e8f0fe';
-                  }
-                }}
-                onMouseLeave={(e) => {
-                  if (!isListening) {
-                    e.target.style.backgroundColor = 'transparent';
-                  }
-                }}
-              >
-                🎤
-              </button>
-              
               <input
                 type="text"
                 value={searchQuery}
@@ -1428,7 +1464,7 @@ function App() {
                 style={{
                   width: '100%',
                   maxWidth: '300px',
-                  padding: '12px 50px 12px 40px',
+                  padding: '12px 16px 12px 40px',
                   backgroundColor: theme.inputBg,
                   border: `1px solid ${theme.border}`,
                   borderRadius: '12px',
@@ -1441,16 +1477,6 @@ function App() {
                 onFocus={(e) => e.target.style.borderColor = '#1a73e8'}
                 onBlur={(e) => e.target.style.borderColor = theme.border}
               />
-              <span style={{
-                position: 'absolute',
-                left: '12px',
-                top: '50%',
-                transform: 'translateY(-50%)',
-                color: theme.textSecondary,
-                fontSize: '16px'
-              }}>
-                🔍
-              </span>
             </div>
           </div>
         </div>
@@ -1894,6 +1920,7 @@ function App() {
                     </>
                   )}
                 </button>
+                <VoiceButton />
               </div>
               
               {/* Category and Priority Selectors */}
