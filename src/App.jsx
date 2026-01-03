@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Auth from './Auth.jsx';
+import ProfileSettings from './ProfileSettings.jsx';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -13,6 +14,7 @@ function App() {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [taskPriority, setTaskPriority] = useState('medium');
   const [taskCategory, setTaskCategory] = useState('work');
+  const [showProfileSettings, setShowProfileSettings] = useState(false);
 
   // Check for existing authentication on mount
   useEffect(() => {
@@ -261,6 +263,18 @@ function App() {
     });
   };
 
+  // Show Profile Settings if requested
+  if (showProfileSettings && user) {
+    return (
+      <ProfileSettings
+        user={user}
+        onBack={() => setShowProfileSettings(false)}
+        darkMode={darkMode}
+        showToast={showToast}
+      />
+    );
+  }
+
   // Show Auth component if user is not logged in
   if (!user) {
     return <Auth onAuthSuccess={handleAuthSuccess} />;
@@ -335,7 +349,7 @@ function App() {
               border: `3px solid ${darkMode ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.8)'}`,
               transition: 'all 0.3s ease'
             }}
-            onClick={() => document.getElementById('profile-upload').click()}
+            onClick={() => setShowProfileSettings(true)}
             onMouseEnter={(e) => {
               e.currentTarget.style.transform = 'scale(1.05)';
               e.currentTarget.style.boxShadow = '0 12px 35px rgba(26, 115, 232, 0.4)';
@@ -366,27 +380,43 @@ function App() {
                 onChange={handleProfilePictureUpload}
               />
               <div style={{
-                position: 'absolute',
-                bottom: '0',
-                right: '0',
-                width: '24px',
-                height: '24px',
-                backgroundColor: '#34a853',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '12px',
-                border: `2px solid ${darkMode ? '#2d2d44' : 'white'}`
-              }}>
-                📷
-              </div>
+              position: 'absolute',
+              bottom: '0',
+              right: '0',
+              width: '24px',
+              height: '24px',
+              backgroundColor: '#34a853',
+              borderRadius: '50%',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '12px',
+              border: `2px solid ${darkMode ? '#2d2d44' : 'white'}`,
+              cursor: 'pointer'
+            }}
+            onClick={(e) => {
+              e.stopPropagation();
+              document.getElementById('profile-upload').click();
+            }}>
+              📷
+            </div>
             </div>
             <h3 style={{ 
               color: theme.text, 
               margin: '0 0 5px 0', 
               fontSize: '1.1rem',
-              fontWeight: '600'
+              fontWeight: '600',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease'
+            }}
+            onClick={() => setShowProfileSettings(true)}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = '#1a73e8';
+              e.currentTarget.style.textDecoration = 'underline';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = theme.text;
+              e.currentTarget.style.textDecoration = 'none';
             }}>
               {user?.name || 'User'}
             </h3>
