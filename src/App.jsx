@@ -392,13 +392,97 @@ function App() {
     const savedLastActiveDate = localStorage.getItem('lastActiveDate');
     const savedHabits = localStorage.getItem('habits');
     
+    console.log('🔥 Loading from localStorage:', {
+      savedLevel,
+      savedXP,
+      savedBadges,
+      savedStreak,
+      savedLastActiveDate,
+      savedHabits
+    });
+    
     if (savedLevel) setUserLevel(parseInt(savedLevel));
     if (savedXP) setUserXP(parseInt(savedXP));
     if (savedBadges) setBadges(JSON.parse(savedBadges));
     if (savedStreak) setDailyStreak(parseInt(savedStreak));
     if (savedLastActiveDate) setLastActiveDate(savedLastActiveDate);
     if (savedHabits) setHabits(JSON.parse(savedHabits));
+    
+    // Initialize streak if not exists
+    if (!savedStreak) {
+      console.log('🔥 Initializing streak to 1');
+      setDailyStreak(1);
+      localStorage.setItem('dailyStreak', '1');
+    }
+    
+    // Initialize last active date if not exists
+    if (!savedLastActiveDate) {
+      const today = new Date().toDateString();
+      console.log('🔥 Initializing last active date to:', today);
+      setLastActiveDate(today);
+      localStorage.setItem('lastActiveDate', today);
+    }
+    
+    // Initialize XP if not exists
+    if (!savedXP) {
+      console.log('🔥 Initializing XP to 0');
+      setUserXP(0);
+      localStorage.setItem('userXP', '0');
+    }
+    
+    // Initialize level if not exists
+    if (!savedLevel) {
+      console.log('🔥 Initializing level to 1');
+      setUserLevel(1);
+      localStorage.setItem('userLevel', '1');
+    }
+    
+    // Initialize badges if not exists
+    if (!savedBadges) {
+      console.log('🔥 Initializing badges to empty array');
+      setBadges([]);
+      localStorage.setItem('badges', JSON.stringify([]));
+    }
+    
+    // Initialize habits if not exists
+    if (!savedHabits) {
+      console.log('🔥 Initializing habits to empty array');
+      setHabits([]);
+      localStorage.setItem('habits', JSON.stringify([]));
+    }
   }, []);
+
+  // Auto-save XP whenever it changes
+  useEffect(() => {
+    localStorage.setItem('userXP', userXP.toString());
+  }, [userXP]);
+
+  // Auto-save level whenever it changes
+  useEffect(() => {
+    localStorage.setItem('userLevel', userLevel.toString());
+  }, [userLevel]);
+
+  // Auto-save streak whenever it changes
+  useEffect(() => {
+    localStorage.setItem('dailyStreak', dailyStreak.toString());
+  }, [dailyStreak]);
+
+  // Auto-save last active date whenever it changes
+  useEffect(() => {
+    if (lastActiveDate) {
+      localStorage.setItem('lastActiveDate', lastActiveDate);
+    }
+  }, [lastActiveDate]);
+
+  // Auto-save badges whenever they change
+  useEffect(() => {
+    localStorage.setItem('badges', JSON.stringify(badges));
+  }, [badges]);
+
+  // Auto-save habits whenever they change
+  useEffect(() => {
+    localStorage.setItem('habits', JSON.stringify(habits));
+  }, [habits]);
 
   // Check and update daily streak
   useEffect(() => {
@@ -517,20 +601,17 @@ function App() {
   const awardXP = (xpAmount, achievement = null) => {
     const newXP = userXP + xpAmount;
     setUserXP(newXP);
-    localStorage.setItem('userXP', newXP.toString());
     
     // Update daily activity for streak
     const today = new Date().toDateString();
     if (lastActiveDate !== today) {
       setLastActiveDate(today);
-      localStorage.setItem('lastActiveDate', today);
     }
     
     // Check for level up
     const newLevel = Math.floor(newXP / 100) + 1;
     if (newLevel > userLevel) {
       setUserLevel(newLevel);
-      localStorage.setItem('userLevel', newLevel.toString());
       setShowLevelUp(true);
       showToast(`🎉 Level Up! You're now level ${newLevel}!`, 'success');
       
@@ -545,9 +626,11 @@ function App() {
     if (achievement && !badges.includes(achievement)) {
       const newBadges = [...badges, achievement];
       setBadges(newBadges);
-      localStorage.setItem('badges', JSON.stringify(newBadges));
       showToast(`🏆 Badge earned: ${achievement}!`, 'success');
     }
+    
+    // Debug logging
+    console.log('🔥 XP Updated:', { newXP, newLevel, dailyStreak, lastActiveDate });
   };
 
   // Load alarms from localStorage and check for triggered alarms
