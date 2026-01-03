@@ -514,11 +514,26 @@ function App() {
 
   // Voice Recognition Functions
   const startVoiceRecognition = () => {
+    // Request microphone permission first
+    navigator.mediaDevices.getUserMedia({ audio: true })
+      .then(() => {
+        console.log('🎤 Microphone permission granted!');
+        proceedWithVoiceRecognition();
+      })
+      .catch((error) => {
+        console.error('🎤 Microphone permission denied:', error);
+        showToast('🎤 Microphone permission denied. Please allow microphone access.', 'error');
+      });
+  };
+
+  const proceedWithVoiceRecognition = () => {
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+      console.log('🎤 Voice recognition not supported in this browser');
       showToast('🎤 Voice recognition not supported in this browser', 'error');
       return;
     }
 
+    console.log('🎤 Starting voice recognition...');
     const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const recognition = new SpeechRecognition();
     
@@ -527,22 +542,26 @@ function App() {
     recognition.lang = 'en-US';
 
     recognition.onstart = () => {
+      console.log('🎤 Voice recognition started');
       setIsListening(true);
       showToast('🎤 Listening...', 'info');
     };
 
     recognition.onresult = (event) => {
-      const transcript = event.results[0][0].transcript.toLowerCase();
+      const transcript = event.results[0][0].transcript;
+      console.log('🎤 Voice heard:', transcript);
       setVoiceCommand(transcript);
       processVoiceCommand(transcript);
     };
 
     recognition.onerror = (event) => {
+      console.error('🎤 Voice recognition error:', event.error);
       setIsListening(false);
       showToast('🎤 Voice recognition error: ' + event.error, 'error');
     };
 
     recognition.onend = () => {
+      console.log('🎤 Voice recognition ended');
       setIsListening(false);
     };
 
@@ -550,6 +569,7 @@ function App() {
   };
 
   const processVoiceCommand = (command) => {
+    console.log('🎤 Processing command:', command);
     // Play success sound
     const successSound = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT');
     successSound.play();
@@ -558,49 +578,89 @@ function App() {
     if (command.startsWith('add task')) {
       const taskName = command.replace('add task', '').trim();
       if (taskName) {
+        console.log('🎤 Adding task:', taskName);
         setNewTaskName(taskName);
         setTaskPriority('medium');
         setTaskCategory('work');
         setTimeout(() => addTask(), 100);
         showToast(`🎤 Task added: "${taskName}"`, 'success');
       } else {
+        console.log('🎤 No task name provided');
         showToast('🎤 Please specify a task name', 'error');
       }
     } else if (command === 'clear all') {
+      console.log('🎤 Clearing search');
       setSearchQuery('');
       showToast('🎤 Search cleared', 'success');
     } else if (command === 'open profile') {
+      console.log('🎤 Opening profile');
       setShowProfileSettings(true);
       showToast('🎤 Opening profile settings', 'success');
     } else if (command.startsWith('search for')) {
       const searchTerm = command.replace('search for', '').trim();
       if (searchTerm) {
+        console.log('🎤 Searching for:', searchTerm);
         setSearchQuery(searchTerm);
         showToast(`🎤 Searching for: "${searchTerm}"`, 'success');
       } else {
+        console.log('🎤 No search term provided');
         showToast('🎤 Please specify a search term', 'error');
       }
     } else if (command === 'complete task') {
+      console.log('🎤 Completing first incomplete task');
       // Complete the first incomplete task
       const incompleteTask = filteredTasks.find(t => !t.completed);
       if (incompleteTask) {
         toggleTaskComplete(incompleteTask._id);
         showToast(`🎤 Task completed: "${incompleteTask.name}"`, 'success');
       } else {
+        console.log('🎤 No incomplete tasks found');
         showToast('🎤 No incomplete tasks found', 'error');
       }
     } else if (command.startsWith('set priority')) {
       const priority = command.includes('high') ? 'high' : command.includes('low') ? 'low' : 'medium';
+      console.log('🎤 Setting priority to:', priority);
       setTaskPriority(priority);
       showToast(`🎤 Priority set to: ${priority}`, 'success');
     } else if (command.startsWith('set category')) {
       const category = command.includes('personal') ? 'personal' : command.includes('shopping') ? 'shopping' : 'work';
+      console.log('🎤 Setting category to:', category);
       setTaskCategory(category);
       showToast(`🎤 Category set to: ${category}`, 'success');
     } else {
+      console.log('🎤 Unrecognized command:', command);
       showToast(`🎤 Command not recognized: "${command}"`, 'error');
     }
   };
+
+  // Test Button Component
+  const TestVoiceButton = () => (
+    <button
+      onClick={startVoiceRecognition}
+      style={{
+        backgroundColor: '#1DB954',
+        color: 'white',
+        border: 'none',
+        borderRadius: '8px',
+        padding: '12px 20px',
+        fontSize: '14px',
+        fontWeight: '600',
+        cursor: 'pointer',
+        margin: '10px 0',
+        transition: 'all 0.3s ease'
+      }}
+      onMouseEnter={(e) => {
+        e.target.style.backgroundColor = '#1ed760';
+        e.target.style.transform = 'scale(1.05)';
+      }}
+      onMouseLeave={(e) => {
+        e.target.style.backgroundColor = '#1DB954';
+        e.target.style.transform = 'scale(1)';
+      }}
+    >
+      🎤 Start Voice Recognition
+    </button>
+  );
 
   // Voice Button Component
   const VoiceButton = () => (
@@ -1861,28 +1921,75 @@ function App() {
           }}>
             <h3 style={{ color: theme.textSecondary, marginBottom: '20px', fontSize: '1.3rem' }}>Add New Task</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+              {/* Test Button */}
+              <TestVoiceButton />
+              
               <div style={{ display: 'flex', gap: '15px' }}>
-                <input
-                  type="text"
-                  value={newTaskName}
-                  onChange={(e) => setNewTaskName(e.target.value)}
-                  placeholder="What needs to be done?"
-                  onKeyPress={(e) => e.key === 'Enter' && addTask()}
-                  disabled={isAddingTask}
-                  style={{
-                    flex: 1,
-                    padding: '15px 20px',
-                    backgroundColor: theme.inputBg,
-                    border: `2px solid ${theme.border}`,
-                    borderRadius: '12px',
-                    fontSize: '16px',
-                    color: theme.text,
-                    transition: 'border-color 0.3s ease',
-                    outline: 'none'
-                  }}
-                  onFocus={(e) => e.target.style.borderColor = '#1a73e8'}
-                  onBlur={(e) => e.target.style.borderColor = theme.border}
-                />
+                <div style={{ position: 'relative', flex: 1 }}>
+                  <input
+                    type="text"
+                    value={newTaskName}
+                    onChange={(e) => setNewTaskName(e.target.value)}
+                    placeholder="What needs to be done?"
+                    onKeyPress={(e) => e.key === 'Enter' && addTask()}
+                    disabled={isAddingTask}
+                    style={{
+                      width: '100%',
+                      padding: '15px 50px 15px 20px',
+                      backgroundColor: theme.inputBg,
+                      border: `2px solid ${theme.border}`,
+                      borderRadius: '12px',
+                      fontSize: '16px',
+                      color: theme.text,
+                      transition: 'border-color 0.3s ease',
+                      outline: 'none'
+                    }}
+                    onFocus={(e) => e.target.style.borderColor = '#1a73e8'}
+                    onBlur={(e) => e.target.style.borderColor = theme.border}
+                  />
+                  
+                  {/* Large Green Microphone Icon Inside Input */}
+                  <button
+                    onClick={startVoiceRecognition}
+                    disabled={isListening}
+                    style={{
+                      position: 'absolute',
+                      right: '10px',
+                      top: '50%',
+                      transform: 'translateY(-50%)',
+                      backgroundColor: isListening ? '#1ed760' : '#1DB954',
+                      border: 'none',
+                      borderRadius: '8px',
+                      width: '36px',
+                      height: '36px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      cursor: isListening ? 'not-allowed' : 'pointer',
+                      fontSize: '18px',
+                      transition: 'all 0.3s ease',
+                      boxShadow: isListening 
+                        ? '0 0 15px rgba(30, 215, 0, 0.6)' 
+                        : '0 2px 8px rgba(29, 185, 84, 0.3)',
+                      animation: isListening ? 'pulse 1.5s ease-in-out infinite' : 'none'
+                    }}
+                    onMouseEnter={(e) => {
+                      if (!isListening) {
+                        e.target.style.backgroundColor = '#1ed760';
+                        e.target.style.transform = 'translateY(-50%) scale(1.1)';
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (!isListening) {
+                        e.target.style.backgroundColor = '#1DB954';
+                        e.target.style.transform = 'translateY(-50%) scale(1)';
+                      }
+                    }}
+                  >
+                    🎤
+                  </button>
+                </div>
+                
                 <button
                   onClick={addTask}
                   disabled={isAddingTask || !newTaskName.trim()}
@@ -1920,7 +2027,6 @@ function App() {
                     </>
                   )}
                 </button>
-                <VoiceButton />
               </div>
               
               {/* Category and Priority Selectors */}
