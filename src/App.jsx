@@ -21,6 +21,10 @@ function App() {
   const [alarms, setAlarms] = useState({});
   const [showAlarmPopup, setShowAlarmPopup] = useState(null);
   const [showAlarmModal, setShowAlarmModal] = useState(null);
+  const [userLevel, setUserLevel] = useState(1);
+  const [userXP, setUserXP] = useState(0);
+  const [badges, setBadges] = useState([]);
+  const [showLevelUp, setShowLevelUp] = useState(false);
 
   // Check for existing authentication on mount
   useEffect(() => {
@@ -137,6 +141,69 @@ function App() {
     }
   }, []);
 
+  // Load gamification data from localStorage
+  useEffect(() => {
+    const savedLevel = localStorage.getItem('userLevel');
+    const savedXP = localStorage.getItem('userXP');
+    const savedBadges = localStorage.getItem('badges');
+    
+    if (savedLevel) setUserLevel(parseInt(savedLevel));
+    if (savedXP) setUserXP(parseInt(savedXP));
+    if (savedBadges) setBadges(JSON.parse(savedBadges));
+  }, []);
+
+  // Calculate XP required for next level
+  const getXPForNextLevel = (level) => {
+    return level * 100; // 100 XP per level
+  };
+
+  // Calculate current level progress
+  const getCurrentLevelXP = () => {
+    return getXPForNextLevel(userLevel - 1);
+  };
+
+  const getNextLevelXP = () => {
+    return getXPForNextLevel(userLevel);
+  };
+
+  const getProgressPercentage = () => {
+    const currentLevelXP = getCurrentLevelXP();
+    const nextLevelXP = getNextLevelXP();
+    const progressXP = userXP - currentLevelXP;
+    const totalXPNeeded = nextLevelXP - currentLevelXP;
+    return (progressXP / totalXPNeeded) * 100;
+  };
+
+  // Award XP and check for level up
+  const awardXP = (xpAmount, achievement = null) => {
+    const newXP = userXP + xpAmount;
+    setUserXP(newXP);
+    localStorage.setItem('userXP', newXP.toString());
+    
+    // Check for level up
+    const newLevel = Math.floor(newXP / 100) + 1;
+    if (newLevel > userLevel) {
+      setUserLevel(newLevel);
+      localStorage.setItem('userLevel', newLevel.toString());
+      setShowLevelUp(true);
+      showToast(`🎉 Level Up! You're now level ${newLevel}!`, 'success');
+      
+      // Play level up sound
+      const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT');
+      audio.play();
+      
+      setTimeout(() => setShowLevelUp(false), 3000);
+    }
+    
+    // Award badge if achievement provided
+    if (achievement && !badges.includes(achievement)) {
+      const newBadges = [...badges, achievement];
+      setBadges(newBadges);
+      localStorage.setItem('badges', JSON.stringify(newBadges));
+      showToast(`🏆 Badge earned: ${achievement}!`, 'success');
+    }
+  };
+
   // Load alarms from localStorage and check for triggered alarms
   useEffect(() => {
     const savedAlarms = localStorage.getItem('alarms');
@@ -237,6 +304,22 @@ function App() {
           t._id === taskId ? { ...t, completed: !t.completed } : t
         )
       );
+      
+      // Award XP for completing tasks
+      if (!task.completed) {
+        awardXP(10, 'First Task Completed');
+        
+        // Check for weekly warrior badge (7 tasks completed in a week)
+        const completedThisWeek = tasks.filter(t => 
+          t.completed && 
+          new Date(t.updatedAt || t.createdAt) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+        ).length;
+        
+        if (completedThisWeek >= 7) {
+          awardXP(0, 'Weekly Warrior');
+        }
+      }
+      
       showToast(task.completed ? 'Task marked as incomplete' : '🎉 Great job! Task completed!', task.completed ? 'info' : 'success');
     })
     .catch(err => {
@@ -316,6 +399,9 @@ function App() {
         onBack={() => setShowProfileSettings(false)}
         darkMode={darkMode}
         showToast={showToast}
+        userLevel={userLevel}
+        userXP={userXP}
+        badges={badges}
       />
     );
   }
@@ -501,6 +587,62 @@ function App() {
             }}>
               {user?.name || 'User'}
             </h3>
+            
+            {/* Level Indicator */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+              marginBottom: '10px'
+            }}>
+              <div style={{
+                background: 'linear-gradient(135deg, #FFD700, #FFA500)',
+                color: '#000',
+                padding: '4px 8px',
+                borderRadius: '12px',
+                fontSize: '12px',
+                fontWeight: '700',
+                boxShadow: '0 2px 8px rgba(255, 215, 0, 0.3)'
+              }}>
+                Lv. {userLevel}
+              </div>
+              <div style={{
+                fontSize: '12px',
+                color: '#FFD700',
+                fontWeight: '600'
+              }}>
+                {userXP} XP
+              </div>
+            </div>
+            
+            {/* XP Progress Bar */}
+            <div style={{
+              width: '100%',
+              height: '8px',
+              backgroundColor: darkMode ? '#282828' : '#e0e0e0',
+              borderRadius: '4px',
+              overflow: 'hidden',
+              marginBottom: '10px',
+              position: 'relative'
+            }}>
+              <div style={{
+                width: `${getProgressPercentage()}%`,
+                height: '100%',
+                background: 'linear-gradient(90deg, #00FF41, #32CD32)',
+                borderRadius: '4px',
+                transition: 'width 0.5s ease',
+                boxShadow: '0 0 10px rgba(0, 255, 65, 0.5)'
+              }}></div>
+            </div>
+            
+            <div style={{
+              fontSize: '10px',
+              color: theme.textSecondary,
+              textAlign: 'center'
+            }}>
+              {getNextLevelXP() - userXP} XP to Level {userLevel + 1}
+            </div>
             <p style={{ 
               color: theme.textSecondary, 
               margin: 0, 
@@ -1866,6 +2008,90 @@ function App() {
         </div>
       )}
 
+      {/* Level Up Celebration Modal */}
+      {showLevelUp && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.8)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 10001,
+          animation: 'fadeIn 0.3s ease'
+        }}>
+          <div style={{
+            background: 'linear-gradient(135deg, #FFD700, #FFA500)',
+            padding: '50px',
+            borderRadius: '30px',
+            boxShadow: '0 30px 80px rgba(255, 215, 0, 0.4)',
+            maxWidth: '500px',
+            width: '90%',
+            textAlign: 'center',
+            animation: 'levelUpPulse 0.6s ease, scaleIn 0.3s ease',
+            color: '#000'
+          }}>
+            <div style={{
+              fontSize: '5rem',
+              marginBottom: '20px',
+              animation: 'bounce 1s ease infinite'
+            }}>
+              🎉🏆
+            </div>
+            <h2 style={{
+              margin: '0 0 15px 0',
+              fontSize: '2.5rem',
+              fontWeight: '800',
+              textShadow: '2px 2px 4px rgba(0,0,0,0.3)'
+            }}>
+              LEVEL UP!
+            </h2>
+            <p style={{
+              margin: '0 0 30px 0',
+              fontSize: '1.3rem',
+              fontWeight: '600'
+            }}>
+              You're now <strong>Level {userLevel}</strong>!
+            </p>
+            <div style={{
+              fontSize: '1rem',
+              marginBottom: '30px',
+              opacity: 0.8
+            }}>
+              Keep completing tasks to earn more XP and unlock new badges!
+            </div>
+            <button
+              onClick={() => setShowLevelUp(false)}
+              style={{
+                padding: '15px 40px',
+                backgroundColor: '#000',
+                color: '#FFD700',
+                border: 'none',
+                borderRadius: '15px',
+                fontSize: '18px',
+                fontWeight: '700',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                boxShadow: '0 4px 15px rgba(0,0,0,0.3)'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.transform = 'scale(1.05)';
+                e.target.style.boxShadow = '0 6px 20px rgba(0,0,0,0.4)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.transform = 'scale(1)';
+                e.target.style.boxShadow = '0 4px 15px rgba(0,0,0,0.3)';
+              }}
+            >
+              Awesome! 🚀
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Add CSS animations and responsive styles */}
       <style>{`
         @keyframes slideIn {
@@ -1907,6 +2133,33 @@ function App() {
           to {
             opacity: 1;
             transform: scale(1);
+          }
+        }
+
+        @keyframes bounce {
+          0%, 20%, 50%, 80%, 100% {
+            transform: translateY(0);
+          }
+          40% {
+            transform: translateY(-30px);
+          }
+          60% {
+            transform: translateY(-15px);
+          }
+        }
+
+        @keyframes levelUpPulse {
+          0% {
+            transform: scale(1);
+            box-shadow: 0 30px 80px rgba(255, 215, 0, 0.4);
+          }
+          50% {
+            transform: scale(1.05);
+            box-shadow: 0 40px 100px rgba(255, 215, 0, 0.6);
+          }
+          100% {
+            transform: scale(1);
+            box-shadow: 0 30px 80px rgba(255, 215, 0, 0.4);
           }
         }
         

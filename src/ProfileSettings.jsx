@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const ProfileSettings = ({ user, onBack, darkMode, showToast }) => {
+const ProfileSettings = ({ user, onBack, darkMode, showToast, userLevel, userXP, badges }) => {
   const [profileData, setProfileData] = useState({
     fullName: '',
     email: '',
@@ -521,6 +521,129 @@ const ProfileSettings = ({ user, onBack, darkMode, showToast }) => {
               }}>
                 Completion Rate
               </div>
+            </div>
+          </div>
+
+          {/* Achievements Section */}
+          <div style={{
+            background: theme.cardBg,
+            backdropFilter: 'blur(20px)',
+            border: darkMode ? '1px solid #282828' : '1px solid rgba(255,255,255,0.2)',
+            borderRadius: '20px',
+            padding: '30px',
+            boxShadow: '0 10px 30px rgba(0,0,0,0.1)'
+          }}>
+            <h2 style={{
+              margin: '0 0 30px 0',
+              fontSize: '1.5rem',
+              fontWeight: '600',
+              color: theme.text
+            }}>
+              🏆 Achievements
+            </h2>
+            
+            {/* User Level Display */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              marginBottom: '30px',
+              padding: '20px',
+              background: 'linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(255, 165, 0, 0.1))',
+              borderRadius: '12px',
+              border: `1px solid ${darkMode ? 'rgba(255, 215, 0, 0.3)' : 'rgba(255, 215, 0, 0.2)'}`
+            }}>
+              <div>
+                <div style={{
+                  fontSize: '2rem',
+                  fontWeight: '800',
+                  color: '#FFD700',
+                  marginBottom: '5px'
+                }}>
+                  Level {userLevel}
+                </div>
+                <div style={{
+                  fontSize: '1rem',
+                  color: darkMode ? '#A7A7A7' : '#666'
+                }}>
+                  {userXP} Total XP
+                </div>
+              </div>
+              <div style={{
+                fontSize: '3rem'
+              }}>
+                🌟
+              </div>
+            </div>
+            
+            {/* Badges Grid */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+              gap: '15px'
+            }}>
+              {badges.length > 0 ? (
+                badges.map((badge, index) => (
+                  <div key={index} style={{
+                    textAlign: 'center',
+                    padding: '20px',
+                    background: darkMode ? 'rgba(29, 185, 84, 0.1)' : 'rgba(29, 185, 84, 0.1)',
+                    borderRadius: '12px',
+                    border: `1px solid ${darkMode ? 'rgba(29, 185, 84, 0.3)' : 'rgba(29, 185, 84, 0.2)'}`
+                  }}>
+                    <div style={{
+                      fontSize: '2rem',
+                      marginBottom: '10px'
+                    }}>
+                      {badge === 'First Task Completed' ? '🎯' : badge === 'Weekly Warrior' ? '⚔️' : '🏆'}
+                    </div>
+                    <div style={{
+                      fontSize: '0.9rem',
+                      fontWeight: '600',
+                      color: theme.text,
+                      marginBottom: '5px'
+                    }}>
+                      {badge}
+                    </div>
+                    <div style={{
+                      fontSize: '0.8rem',
+                      color: darkMode ? '#A7A7A7' : '#666'
+                    }}>
+                      Unlocked!
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div style={{
+                  gridColumn: '1 / -1',
+                  textAlign: 'center',
+                  padding: '40px',
+                  color: darkMode ? '#A7A7A7' : '#666',
+                  fontSize: '1rem'
+                }}>
+                  <div style={{
+                    fontSize: '3rem',
+                    marginBottom: '15px',
+                    opacity: 0.5
+                  }}>
+                    🔒
+                  </div>
+                  Complete tasks to unlock achievements!
+                </div>
+              )}
+            </div>
+            
+            {/* Progress Hint */}
+            <div style={{
+              marginTop: '20px',
+              padding: '15px',
+              background: darkMode ? 'rgba(26, 115, 232, 0.1)' : 'rgba(26, 115, 232, 0.1)',
+              borderRadius: '8px',
+              fontSize: '0.9rem',
+              color: darkMode ? '#A7A7A7' : '#666',
+              textAlign: 'center'
+            }}>
+              💡 Complete more tasks to earn XP and unlock new badges!
             </div>
           </div>
 
