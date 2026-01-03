@@ -265,6 +265,10 @@ function App() {
       margin: '0',
       display: 'flex',
       width: '100%',
+      maxWidth: 'none',
+      position: 'relative',
+      left: '0',
+      right: '0',
       color: theme.text
     }}>
       {/* Sidebar */}
@@ -455,7 +459,8 @@ function App() {
         minWidth: '0',
         transition: 'margin-left 0.3s ease',
         minHeight: '100vh',
-        overflow: 'hidden'
+        overflow: 'hidden',
+        position: 'relative'
       }}>
         {/* Header */}
         <div style={{ 
@@ -539,18 +544,20 @@ function App() {
       
       <div style={{ 
         padding: '30px', 
+        paddingRight: '40px',
         flex: '1 1 0%',
         display: 'flex',
         flexDirection: 'column',
         width: '100%',
         maxWidth: 'none',
         margin: '0',
-        overflow: 'auto'
+        overflow: 'auto',
+        position: 'relative'
       }}>
           {/* Stats Cards */}
           <div className="stats-grid" style={{ 
             display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', 
+            gridTemplateColumns: 'repeat(4, 1fr)', 
             gap: '40px',
             marginBottom: '40px',
             width: '100%',
