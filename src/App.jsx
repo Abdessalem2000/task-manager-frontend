@@ -17,6 +17,9 @@ function App() {
   const [taskPriority, setTaskPriority] = useState('medium');
   const [taskCategory, setTaskCategory] = useState('work');
   const [showProfileSettings, setShowProfileSettings] = useState(false);
+  const [alarms, setAlarms] = useState({});
+  const [showAlarmPopup, setShowAlarmPopup] = useState(null);
+  const [showAlarmModal, setShowAlarmModal] = useState(null);
 
   // Check for existing authentication on mount
   useEffect(() => {
@@ -132,6 +135,41 @@ function App() {
       setProfilePicture(savedProfilePicture);
     }
   }, []);
+
+  // Load alarms from localStorage and check for triggered alarms
+  useEffect(() => {
+    const savedAlarms = localStorage.getItem('alarms');
+    if (savedAlarms) {
+      setAlarms(JSON.parse(savedAlarms));
+    }
+  }, []);
+
+  // Check for alarms every second
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const now = new Date();
+      Object.entries(alarms).forEach(([taskId, alarmTime]) => {
+        if (alarmTime && new Date(alarmTime) <= now) {
+          const task = tasks.find(t => t._id === taskId);
+          if (task) {
+            setShowAlarmModal(task);
+            // Play ding sound
+            const audio = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT');
+            audio.play();
+            // Remove the alarm after triggering
+            setAlarms(prev => {
+              const newAlarms = { ...prev };
+              delete newAlarms[taskId];
+              localStorage.setItem('alarms', JSON.stringify(newAlarms));
+              return newAlarms;
+            });
+          }
+        }
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [alarms, tasks]);
 
   // Filter tasks based on search and category
   const filteredTasks = tasks.filter(task => {
@@ -300,6 +338,25 @@ function App() {
       setTaskCategory('work');
       setTimeout(() => addTask(), 100);
     }
+  };
+
+  // Handle alarm setting
+  const handleSetAlarm = (taskId, dateTime) => {
+    const newAlarms = { ...alarms, [taskId]: dateTime };
+    setAlarms(newAlarms);
+    localStorage.setItem('alarms', JSON.stringify(newAlarms));
+    setShowAlarmPopup(null);
+    showToast('⏰ Alarm set successfully!', 'success');
+  };
+
+  // Handle alarm removal
+  const handleRemoveAlarm = (taskId) => {
+    const newAlarms = { ...alarms };
+    delete newAlarms[taskId];
+    setAlarms(newAlarms);
+    localStorage.setItem('alarms', JSON.stringify(newAlarms));
+    setShowAlarmPopup(null);
+    showToast('🔕 Alarm removed', 'info');
   };
 
   return (
@@ -1253,6 +1310,40 @@ function App() {
                       }}>
                         {task.category || 'work'}
                       </div>
+
+                      {/* Alarm Bell Icon */}
+                      <div
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setShowAlarmPopup(task._id);
+                        }}
+                        style={{
+                          position: 'absolute',
+                          top: '10px',
+                          right: '45px',
+                          width: '24px',
+                          height: '24px',
+                          borderRadius: '50%',
+                          backgroundColor: alarms[task._id] ? '#1DB954' : 'transparent',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          cursor: 'pointer',
+                          fontSize: '14px',
+                          transition: 'all 0.2s ease',
+                          border: alarms[task._id] ? 'none' : '1px solid #A7A7A7'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.transform = 'scale(1.1)';
+                          e.currentTarget.style.backgroundColor = alarms[task._id] ? '#1ed760' : '#282828';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.transform = 'scale(1)';
+                          e.currentTarget.style.backgroundColor = alarms[task._id] ? '#1DB954' : 'transparent';
+                        }}
+                      >
+                        {alarms[task._id] ? '🔔' : '🔕'}
+                      </div>
                       
                       <div style={{ display: 'flex', alignItems: 'flex-start', marginTop: '25px' }}>
                         <div
@@ -1363,6 +1454,232 @@ function App() {
         ))}
       </div>
 
+      {/* Alarm Popup */}
+      {showAlarmPopup && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 9998
+        }}
+        onClick={() => setShowAlarmPopup(null)}>
+          <div style={{
+            backgroundColor: darkMode ? '#181818' : '#ffffff',
+            padding: '30px',
+            borderRadius: '16px',
+            boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+            border: darkMode ? '1px solid #282828' : '1px solid rgba(255,255,255,0.2)',
+            maxWidth: '400px',
+            width: '90%'
+          }}
+          onClick={(e) => e.stopPropagation()}>
+            <h3 style={{
+              margin: '0 0 20px 0',
+              color: darkMode ? '#FFFFFF' : '#202124',
+              fontSize: '1.2rem',
+              fontWeight: '600'
+            }}>
+              Set Alarm Reminder
+            </h3>
+            
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{
+                display: 'block',
+                marginBottom: '8px',
+                fontSize: '14px',
+                fontWeight: '500',
+                color: darkMode ? '#A7A7A7' : '#5f6368'
+              }}>
+                Date & Time
+              </label>
+              <input
+                type="datetime-local"
+                min={new Date(Date.now() + 60000).toISOString().slice(0, 16)}
+                defaultValue={alarms[showAlarmPopup] || ''}
+                id={`alarm-input-${showAlarmPopup}`}
+                style={{
+                  width: '100%',
+                  padding: '12px 16px',
+                  backgroundColor: darkMode ? '#282828' : '#ffffff',
+                  border: `1px solid ${darkMode ? '#282828' : '#dadce0'}`,
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  color: darkMode ? '#FFFFFF' : '#202124',
+                  outline: 'none',
+                  transition: 'border-color 0.3s ease'
+                }}
+                onFocus={(e) => e.target.style.borderColor = '#1DB954'}
+                onBlur={(e) => e.target.style.borderColor = darkMode ? '#282828' : '#dadce0'}
+              />
+            </div>
+
+            {alarms[showAlarmPopup] && (
+              <div style={{
+                marginBottom: '20px',
+                padding: '12px',
+                backgroundColor: darkMode ? 'rgba(29, 185, 84, 0.1)' : 'rgba(29, 185, 84, 0.1)',
+                borderRadius: '8px',
+                fontSize: '12px',
+                color: darkMode ? '#A7A7A7' : '#5f6368'
+              }}>
+                Current alarm: {new Date(alarms[showAlarmPopup]).toLocaleString()}
+              </div>
+            )}
+
+            <div style={{
+              display: 'flex',
+              gap: '10px',
+              justifyContent: 'flex-end'
+            }}>
+              {alarms[showAlarmPopup] && (
+                <button
+                  onClick={() => handleRemoveAlarm(showAlarmPopup)}
+                  style={{
+                    padding: '10px 20px',
+                    backgroundColor: '#ea4335',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => e.target.style.backgroundColor = '#d33b2c'}
+                  onMouseLeave={(e) => e.target.style.backgroundColor = '#ea4335'}
+                >
+                  Remove Alarm
+                </button>
+              )}
+              <button
+                onClick={() => setShowAlarmPopup(null)}
+                style={{
+                  padding: '10px 20px',
+                  backgroundColor: darkMode ? '#282828' : '#f1f3f4',
+                  color: darkMode ? '#FFFFFF' : '#202124',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={(e) => e.target.style.backgroundColor = darkMode ? '#3c3c3c' : '#e8eaed'}
+                onMouseLeave={(e) => e.target.style.backgroundColor = darkMode ? '#282828' : '#f1f3f4'}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {
+                  const input = document.getElementById(`alarm-input-${showAlarmPopup}`);
+                  if (input && input.value) {
+                    handleSetAlarm(showAlarmPopup, input.value);
+                  }
+                }}
+                style={{
+                  padding: '10px 20px',
+                  backgroundColor: '#1DB954',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={(e) => e.target.style.backgroundColor = '#1ed760'}
+                onMouseLeave={(e) => e.target.style.backgroundColor = '#1DB954'}
+              >
+                Set Alarm
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Alarm Modal */}
+      {showAlarmModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.8)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 10000,
+          animation: 'fadeIn 0.3s ease'
+        }}>
+          <div style={{
+            backgroundColor: darkMode ? '#181818' : '#ffffff',
+            padding: '40px',
+            borderRadius: '20px',
+            boxShadow: '0 30px 80px rgba(0,0,0,0.4)',
+            border: darkMode ? '1px solid #282828' : '1px solid rgba(255,255,255,0.2)',
+            maxWidth: '500px',
+            width: '90%',
+            textAlign: 'center',
+            animation: 'scaleIn 0.3s ease'
+          }}>
+            <div style={{
+              fontSize: '4rem',
+              marginBottom: '20px'
+            }}>
+              ⏰🔔
+            </div>
+            <h2 style={{
+              margin: '0 0 15px 0',
+              color: darkMode ? '#FFFFFF' : '#202124',
+              fontSize: '1.8rem',
+              fontWeight: '700'
+            }}>
+              Task Reminder!
+            </h2>
+            <p style={{
+              margin: '0 0 30px 0',
+              color: darkMode ? '#A7A7A7' : '#5f6368',
+              fontSize: '1.1rem',
+              lineHeight: '1.5'
+            }}>
+              It's time to: <strong style={{ color: '#1DB954' }}>{showAlarmModal.name}</strong>
+            </p>
+            <button
+              onClick={() => setShowAlarmModal(null)}
+              style={{
+                padding: '15px 30px',
+                backgroundColor: '#1DB954',
+                color: 'white',
+                border: 'none',
+                borderRadius: '10px',
+                fontSize: '16px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                boxShadow: '0 4px 15px rgba(29, 185, 84, 0.3)'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.backgroundColor = '#1ed760';
+                e.target.style.transform = 'scale(1.05)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = '#1DB954';
+                e.target.style.transform = 'scale(1)';
+              }}
+            >
+              Got it! ✅
+            </button>
+          </div>
+        </div>
+      )}
+
       {/* Add CSS animations and responsive styles */}
       <style>{`
         @keyframes slideIn {
@@ -1384,6 +1701,26 @@ function App() {
           to {
             opacity: 1;
             transform: translateX(0);
+          }
+        }
+
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+
+        @keyframes scaleIn {
+          from {
+            opacity: 0;
+            transform: scale(0.8);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1);
           }
         }
         
