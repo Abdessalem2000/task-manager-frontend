@@ -464,10 +464,11 @@ function App() {
       }}>
         {/* Header */}
         <div style={{ 
-          padding: '20px 30px',
+          padding: '20px 40px',
           borderBottom: `1px solid ${theme.border}`,
           backgroundColor: theme.sidebarBg,
-          backdropFilter: 'blur(10px)'
+          backdropFilter: 'blur(10px)',
+          boxSizing: 'border-box'
         }}>
           <div style={{ 
             display: 'flex', 
@@ -543,16 +544,17 @@ function App() {
         </div>
       
       <div style={{ 
-        padding: '30px', 
-        paddingRight: '40px',
+        padding: '30px 40px', 
         flex: '1 1 0%',
         display: 'flex',
         flexDirection: 'column',
         width: '100%',
         maxWidth: 'none',
         margin: '0',
+        marginRight: '0',
         overflow: 'auto',
-        position: 'relative'
+        position: 'relative',
+        boxSizing: 'border-box'
       }}>
           {/* Stats Cards */}
           <div className="stats-grid" style={{ 
@@ -699,8 +701,9 @@ function App() {
             padding: '30px', 
             borderRadius: '20px', 
             boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
-            marginBottom: '30px',
-            border: `1px solid ${theme.border}`
+            marginBottom: '40px',
+            border: `1px solid ${theme.border}`,
+            boxSizing: 'border-box'
           }}>
             <h3 style={{ color: theme.textSecondary, marginBottom: '20px', fontSize: '1.3rem' }}>Add New Task</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
