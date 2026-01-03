@@ -1172,7 +1172,11 @@ function App() {
               fontSize: '1.1rem',
               fontWeight: '600',
               cursor: 'pointer',
-              transition: 'all 0.3s ease'
+              transition: 'all 0.3s ease',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px'
             }}
             onClick={() => setShowProfileSettings(true)}
             onMouseEnter={(e) => {
@@ -1184,36 +1188,15 @@ function App() {
               e.currentTarget.style.textDecoration = 'none';
             }}>
               {user?.name || 'User'}
-            </h3>
-            
-            {/* Daily Streak Display */}
-            <div style={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '8px',
-              marginBottom: '10px',
-              position: 'relative'
-            }}>
-              <div style={{
+              <span style={{
                 fontSize: '1.2rem',
-                fontWeight: '700',
                 color: '#FF6B35',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                animation: showStreakAnimation ? 'streakFire 1s ease-in-out' : 'none'
+                filter: showStreakAnimation ? 'hue-rotate(0deg)' : 'none',
+                animation: showStreakAnimation ? 'flameFlicker 0.5s ease-in-out infinite' : 'none'
               }}>
-                <span style={{
-                  fontSize: '1.5rem',
-                  filter: showStreakAnimation ? 'hue-rotate(0deg)' : 'none',
-                  animation: showStreakAnimation ? 'flameFlicker 0.5s ease-in-out infinite' : 'none'
-                }}>
-                  🔥
-                </span>
-                {dailyStreak} Day Streak!
-              </div>
-            </div>
+                🔥 {dailyStreak}
+              </span>
+            </h3>
             
             {/* Level Indicator */}
             <div style={{
@@ -1241,6 +1224,14 @@ function App() {
               }}>
                 {userXP} XP
               </div>
+              <span style={{
+                fontSize: '1rem',
+                color: '#FF6B35',
+                filter: showStreakAnimation ? 'hue-rotate(0deg)' : 'none',
+                animation: showStreakAnimation ? 'flameFlicker 0.5s ease-in-out infinite' : 'none'
+              }}>
+                🔥
+              </span>
             </div>
             
             {/* XP Progress Bar */}
@@ -2035,6 +2026,44 @@ function App() {
               }}>
                 📊 Weekly Activity
               </h3>
+              
+              {/* Current Streak Insight */}
+              <div style={{
+                backgroundColor: darkMode ? 'rgba(255, 107, 53, 0.1)' : 'rgba(255, 107, 53, 0.1)',
+                border: '1px solid rgba(255, 107, 53, 0.3)',
+                borderRadius: '8px',
+                padding: '12px 16px',
+                marginBottom: '20px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}>
+                <span style={{
+                  fontSize: '1.2rem',
+                  color: '#FF6B35',
+                  filter: showStreakAnimation ? 'hue-rotate(0deg)' : 'none',
+                  animation: showStreakAnimation ? 'flameFlicker 0.5s ease-in-out infinite' : 'none'
+                }}>
+                  🔥
+                </span>
+                <span style={{
+                  fontSize: '14px',
+                  fontWeight: '600',
+                  color: darkMode ? '#FFFFFF' : '#202124'
+                }}>
+                  Current Streak: {dailyStreak} {dailyStreak === 1 ? 'day' : 'days'}
+                </span>
+                {dailyStreak >= 3 && (
+                  <span style={{
+                    fontSize: '12px',
+                    color: '#1DB954',
+                    fontWeight: '500',
+                    marginLeft: 'auto'
+                  }}>
+                    +{Math.floor(dailyStreak / 3) * 20} XP Bonus
+                  </span>
+                )}
+              </div>
               <ResponsiveContainer width="100%" height={250}>
                 <AreaChart data={weeklyActivityData}>
                   <defs>
