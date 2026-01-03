@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Auth from './Auth.jsx';
 import ProfileSettings from './ProfileSettings.jsx';
 import Toast from './Toast.jsx';
+import { LineChart, Line, AreaChart, Area, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -358,6 +359,23 @@ function App() {
     setShowAlarmPopup(null);
     showToast('🔕 Alarm removed', 'info');
   };
+
+  // Mock data for charts
+  const weeklyActivityData = [
+    { day: 'Mon', completed: 4, created: 6 },
+    { day: 'Tue', completed: 7, created: 5 },
+    { day: 'Wed', completed: 3, created: 8 },
+    { day: 'Thu', completed: 9, created: 4 },
+    { day: 'Fri', completed: 6, created: 7 },
+    { day: 'Sat', completed: 8, created: 3 },
+    { day: 'Sun', completed: 5, created: 5 }
+  ];
+
+  const categoryDistribution = [
+    { name: 'Work', value: 45, color: '#1a73e8' },
+    { name: 'Personal', value: 30, color: '#34a853' },
+    { name: 'Shopping', value: 25, color: '#fbbc04' }
+  ];
 
   return (
     <div style={{ 
@@ -1087,6 +1105,174 @@ function App() {
               }}>
                 {completedCount} of {filteredTasks.length} completed
               </p>
+            </div>
+          </div>
+
+          {/* Analytics Section */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: '2fr 1fr',
+            gap: '30px',
+            marginBottom: '40px',
+            width: '100%',
+            maxWidth: 'none'
+          }}>
+            {/* Weekly Activity Chart */}
+            <div style={{
+              background: darkMode ? '#181818' : 'rgba(255, 255, 255, 0.9)',
+              padding: '30px',
+              borderRadius: '20px',
+              boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
+              backdropFilter: 'blur(20px)',
+              border: darkMode ? '1px solid #282828' : '1px solid rgba(255,255,255,0.2)',
+              transition: 'transform 0.3s ease, box-shadow 0.3s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-5px)';
+              e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.15)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.1)';
+            }}>
+              <h3 style={{
+                margin: '0 0 20px 0',
+                color: theme.text,
+                fontSize: '1.3rem',
+                fontWeight: '600'
+              }}>
+                📊 Weekly Activity
+              </h3>
+              <ResponsiveContainer width="100%" height={250}>
+                <AreaChart data={weeklyActivityData}>
+                  <defs>
+                    <linearGradient id="colorCompleted" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#1DB954" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="#1DB954" stopOpacity={0.1}/>
+                    </linearGradient>
+                    <linearGradient id="colorCreated" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#1a73e8" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="#1a73e8" stopOpacity={0.1}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke={darkMode ? '#282828' : '#e0e0e0'} />
+                  <XAxis 
+                    dataKey="day" 
+                    stroke={darkMode ? '#A7A7A7' : '#666'}
+                    tick={{ fill: darkMode ? '#A7A7A7' : '#666' }}
+                  />
+                  <YAxis 
+                    stroke={darkMode ? '#A7A7A7' : '#666'}
+                    tick={{ fill: darkMode ? '#A7A7A7' : '#666' }}
+                  />
+                  <Tooltip 
+                    contentStyle={{
+                      backgroundColor: darkMode ? '#181818' : '#ffffff',
+                      border: darkMode ? '1px solid #282828' : '1px solid #e0e0e0',
+                      borderRadius: '8px',
+                      color: darkMode ? '#FFFFFF' : '#202124'
+                    }}
+                  />
+                  <Legend />
+                  <Area 
+                    type="monotone" 
+                    dataKey="completed" 
+                    stroke="#1DB954" 
+                    strokeWidth={2}
+                    fill="url(#colorCompleted)" 
+                    name="Completed"
+                  />
+                  <Area 
+                    type="monotone" 
+                    dataKey="created" 
+                    stroke="#1a73e8" 
+                    strokeWidth={2}
+                    fill="url(#colorCreated)" 
+                    name="Created"
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+
+            {/* Category Distribution Pie Chart */}
+            <div style={{
+              background: darkMode ? '#181818' : 'rgba(255, 255, 255, 0.9)',
+              padding: '30px',
+              borderRadius: '20px',
+              boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
+              backdropFilter: 'blur(20px)',
+              border: darkMode ? '1px solid #282828' : '1px solid rgba(255,255,255,0.2)',
+              transition: 'transform 0.3s ease, box-shadow 0.3s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-5px)';
+              e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.15)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.1)';
+            }}>
+              <h3 style={{
+                margin: '0 0 20px 0',
+                color: theme.text,
+                fontSize: '1.3rem',
+                fontWeight: '600'
+              }}>
+                🥧 Category Distribution
+              </h3>
+              <ResponsiveContainer width="100%" height={250}>
+                <PieChart>
+                  <Pie
+                    data={categoryDistribution}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="value"
+                  >
+                    {categoryDistribution.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip 
+                    contentStyle={{
+                      backgroundColor: darkMode ? '#181818' : '#ffffff',
+                      border: darkMode ? '1px solid #282828' : '1px solid #e0e0e0',
+                      borderRadius: '8px',
+                      color: darkMode ? '#FFFFFF' : '#202124'
+                    }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+              <div style={{
+                marginTop: '20px',
+                display: 'flex',
+                flexDirection: 'column',
+                gap: '8px'
+              }}>
+                {categoryDistribution.map((category, index) => (
+                  <div key={index} style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}>
+                    <div style={{
+                      width: '12px',
+                      height: '12px',
+                      borderRadius: '2px',
+                      backgroundColor: category.color
+                    }}></div>
+                    <span style={{
+                      fontSize: '12px',
+                      color: darkMode ? '#A7A7A7' : '#666'
+                    }}>
+                      {category.name}: {category.value} tasks
+                    </span>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
 
