@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import Auth from './Auth.jsx';
 import ProfileSettings from './ProfileSettings.jsx';
+import Toast from './Toast.jsx';
 
 function App() {
   const [user, setUser] = useState(null);
   const [tasks, setTasks] = useState([]);
   const [newTaskName, setNewTaskName] = useState('');
   const [toast, setToast] = useState(null);
+  const [toasts, setToasts] = useState([]);
   const [isAddingTask, setIsAddingTask] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -48,12 +50,16 @@ function App() {
     localStorage.setItem('sidebarOpen', JSON.stringify(sidebarOpen));
   }, [sidebarOpen]);
 
-  // Toast notification function
+  // Enhanced toast notification function with queue support
   const showToast = (message, type = 'success') => {
-    setToast({ message, type });
-    setTimeout(() => {
-      setToast(null);
-    }, 3000);
+    const id = Date.now() + Math.random();
+    const newToast = { id, message, type };
+    setToasts(prev => [...prev, newToast]);
+  };
+
+  // Remove toast from queue
+  const removeToast = (id) => {
+    setToasts(prev => prev.filter(toast => toast.id !== id));
   };
 
   // Handle successful authentication
@@ -112,8 +118,8 @@ function App() {
       const reader = new FileReader();
       reader.onload = (e) => {
         setProfilePicture(e.target.result);
-        // Save to localStorage for persistence
         localStorage.setItem('profilePicture', e.target.result);
+        showToast('📸 Profile picture updated!', 'success');
       };
       reader.readAsDataURL(file);
     }
@@ -192,7 +198,7 @@ function App() {
           t._id === taskId ? { ...t, completed: !t.completed } : t
         )
       );
-      showToast(task.completed ? 'Task marked as incomplete' : 'Task completed!', 'success');
+      showToast(task.completed ? 'Task marked as incomplete' : '🎉 Great job! Task completed!', task.completed ? 'info' : 'success');
     })
     .catch(err => {
       console.error("Error updating task:", err);
@@ -213,7 +219,7 @@ function App() {
     .then(res => res.json())
     .then(data => {
       setTasks(prevTasks => prevTasks.filter(task => task._id !== taskId));
-      showToast('Task deleted successfully!', 'success');
+      showToast('Task removed', 'info');
     })
     .catch(err => {
       console.error("Error deleting task:", err);
@@ -249,9 +255,9 @@ function App() {
       setNewTaskName(''); // Clear input
       if (data.task) {
         setTasks(prevTasks => [...prevTasks, data.task]);
-        showToast('Task added successfully!', 'success');
+        showToast('✅ Task added successfully!', 'success');
       } else {
-        showToast('Task added successfully!', 'success');
+        showToast('✅ Task added successfully!', 'success');
       }
     })
     .catch(err => {
@@ -1334,30 +1340,28 @@ function App() {
           </div>
         </div>
       </div>
-
-      {/* Toast Notification */}
-      {toast && (
-        <div style={{
-          position: 'fixed',
-          top: '20px',
-          right: '20px',
-          padding: '16px 24px',
-          backgroundColor: toast.type === 'success' ? '#28a745' : '#dc3545',
-          color: 'white',
-          borderRadius: '12px',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-          zIndex: 1000,
-          animation: 'slideInRight 0.3s ease',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '10px'
-        }}>
-          <span style={{ fontSize: '18px' }}>
-            {toast.type === 'success' ? '✅' : '❌'}
-          </span>
-          <span>{toast.message}</span>
-        </div>
-      )}
+      
+      {/* Toast Container */}
+      <div style={{
+        position: 'fixed',
+        bottom: '20px',
+        right: '20px',
+        zIndex: 9999,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '10px',
+        pointerEvents: 'none'
+      }}>
+        {toasts.map((toast) => (
+          <Toast
+            key={toast.id}
+            message={toast.message}
+            type={toast.type}
+            onClose={() => removeToast(toast.id)}
+            darkMode={darkMode}
+          />
+        ))}
+      </div>
 
       {/* Add CSS animations and responsive styles */}
       <style>{`
@@ -1423,6 +1427,6 @@ function App() {
       `}</style>
     </div>
   );
-}
+};
 
 export default App;

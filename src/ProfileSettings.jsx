@@ -78,7 +78,7 @@ const ProfileSettings = ({ user, onBack, darkMode, showToast }) => {
       reader.onload = (e) => {
         setProfilePicture(e.target.result);
         localStorage.setItem('profilePicture', e.target.result);
-        showToast('Profile picture updated!', 'success');
+        showToast('📸 Profile picture updated!', 'success');
       };
       reader.readAsDataURL(file);
     }
@@ -99,7 +99,7 @@ const ProfileSettings = ({ user, onBack, darkMode, showToast }) => {
       localStorage.setItem('user', JSON.stringify(updatedUser));
       
       setIsLoading(false);
-      showToast('Profile updated successfully!', 'success');
+      showToast('✅ Profile updated successfully!', 'success');
     }, 1000);
   };
 
@@ -108,12 +108,12 @@ const ProfileSettings = ({ user, onBack, darkMode, showToast }) => {
     e.preventDefault();
     
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      showToast('Passwords do not match!', 'error');
+      showToast('❌ Passwords do not match!', 'error');
       return;
     }
     
     if (passwordData.newPassword.length < 6) {
-      showToast('Password must be at least 6 characters!', 'error');
+      showToast('⚠️ Password must be at least 6 characters!', 'error');
       return;
     }
     
@@ -127,7 +127,7 @@ const ProfileSettings = ({ user, onBack, darkMode, showToast }) => {
         confirmPassword: ''
       });
       setIsLoading(false);
-      showToast('Password changed successfully!', 'success');
+      showToast('🔒 Password changed successfully!', 'success');
     }, 1000);
   };
 
