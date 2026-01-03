@@ -249,6 +249,12 @@ function App() {
   const [activeId, setActiveId] = useState(null);
   const [isListening, setIsListening] = useState(false);
   const [voiceCommand, setVoiceCommand] = useState('');
+  const [dailyStreak, setDailyStreak] = useState(0);
+  const [lastActiveDate, setLastActiveDate] = useState(null);
+  const [showStreakAnimation, setShowStreakAnimation] = useState(false);
+  const [habits, setHabits] = useState([]);
+  const [showHabitModal, setShowHabitModal] = useState(false);
+  const [newHabitName, setNewHabitName] = useState('');
 
   // Setup drag and drop sensors
   const sensors = useSensors(
@@ -382,11 +388,108 @@ function App() {
     const savedLevel = localStorage.getItem('userLevel');
     const savedXP = localStorage.getItem('userXP');
     const savedBadges = localStorage.getItem('badges');
+    const savedStreak = localStorage.getItem('dailyStreak');
+    const savedLastActiveDate = localStorage.getItem('lastActiveDate');
+    const savedHabits = localStorage.getItem('habits');
     
     if (savedLevel) setUserLevel(parseInt(savedLevel));
     if (savedXP) setUserXP(parseInt(savedXP));
     if (savedBadges) setBadges(JSON.parse(savedBadges));
+    if (savedStreak) setDailyStreak(parseInt(savedStreak));
+    if (savedLastActiveDate) setLastActiveDate(savedLastActiveDate);
+    if (savedHabits) setHabits(JSON.parse(savedHabits));
   }, []);
+
+  // Check and update daily streak
+  useEffect(() => {
+    const checkDailyStreak = () => {
+      const today = new Date().toDateString();
+      const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000).toDateString();
+      
+      if (lastActiveDate === today) {
+        // Already active today
+        return;
+      } else if (lastActiveDate === yesterday) {
+        // Continue streak
+        const newStreak = dailyStreak + 1;
+        setDailyStreak(newStreak);
+        localStorage.setItem('dailyStreak', newStreak.toString());
+        localStorage.setItem('lastActiveDate', today);
+        
+        // Award streak XP
+        if (newStreak >= 3) {
+          const streakXP = Math.floor(newStreak / 3) * 20; // +20 XP for every 3-day streak
+          awardXP(streakXP, `Streak Master: ${newStreak} days!`);
+        }
+        
+        // Show streak animation
+        setShowStreakAnimation(true);
+        setTimeout(() => setShowStreakAnimation(false), 2000);
+      } else if (lastActiveDate !== today) {
+        // Reset streak (missed a day)
+        setDailyStreak(1);
+        localStorage.setItem('dailyStreak', '1');
+        localStorage.setItem('lastActiveDate', today);
+      }
+    };
+
+    checkDailyStreak();
+  }, [lastActiveDate, dailyStreak]);
+
+  // Habit Management Functions
+  const addHabit = () => {
+    if (newHabitName.trim()) {
+      const newHabit = {
+        id: Date.now(),
+        name: newHabitName.trim(),
+        completed: false,
+        createdAt: new Date().toISOString(),
+        completedDates: []
+      };
+      
+      const updatedHabits = [...habits, newHabit];
+      setHabits(updatedHabits);
+      localStorage.setItem('habits', JSON.stringify(updatedHabits));
+      setNewHabitName('');
+      setShowHabitModal(false);
+      showToast('🎯 Habit created successfully!', 'success');
+    }
+  };
+
+  const toggleHabitComplete = (habitId) => {
+    const today = new Date().toDateString();
+    const updatedHabits = habits.map(habit => {
+      if (habit.id === habitId) {
+        const isCompletedToday = habit.completedDates.includes(today);
+        const newCompletedDates = isCompletedToday
+          ? habit.completedDates.filter(date => date !== today)
+          : [...habit.completedDates, today];
+        
+        return {
+          ...habit,
+          completed: !isCompletedToday,
+          completedDates: newCompletedDates
+        };
+      }
+      return habit;
+    });
+    
+    setHabits(updatedHabits);
+    localStorage.setItem('habits', JSON.stringify(updatedHabits));
+    
+    // Award XP for habit completion
+    const habit = updatedHabits.find(h => h.id === habitId);
+    if (habit && habit.completed) {
+      awardXP(5, 'Habit Completed!');
+    }
+  };
+
+  const deleteHabit = (habitId) => {
+    const updatedHabits = habits.filter(habit => habit.id !== habitId);
+    setHabits(updatedHabits);
+    localStorage.setItem('habits', JSON.stringify(updatedHabits));
+    showToast('🎯 Habit deleted', 'info');
+  };
 
   // Calculate XP required for next level
   const getXPForNextLevel = (level) => {
@@ -415,6 +518,13 @@ function App() {
     const newXP = userXP + xpAmount;
     setUserXP(newXP);
     localStorage.setItem('userXP', newXP.toString());
+    
+    // Update daily activity for streak
+    const today = new Date().toDateString();
+    if (lastActiveDate !== today) {
+      setLastActiveDate(today);
+      localStorage.setItem('lastActiveDate', today);
+    }
     
     // Check for level up
     const newLevel = Math.floor(newXP / 100) + 1;
@@ -1076,6 +1186,35 @@ function App() {
               {user?.name || 'User'}
             </h3>
             
+            {/* Daily Streak Display */}
+            <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '8px',
+              marginBottom: '10px',
+              position: 'relative'
+            }}>
+              <div style={{
+                fontSize: '1.2rem',
+                fontWeight: '700',
+                color: '#FF6B35',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px',
+                animation: showStreakAnimation ? 'streakFire 1s ease-in-out' : 'none'
+              }}>
+                <span style={{
+                  fontSize: '1.5rem',
+                  filter: showStreakAnimation ? 'hue-rotate(0deg)' : 'none',
+                  animation: showStreakAnimation ? 'flameFlicker 0.5s ease-in-out infinite' : 'none'
+                }}>
+                  🔥
+                </span>
+                {dailyStreak} Day Streak!
+              </div>
+            </div>
+            
             {/* Level Indicator */}
             <div style={{
               display: 'flex',
@@ -1159,7 +1298,7 @@ function App() {
                 backgroundColor: selectedCategory === 'all' ? (darkMode ? '#4a4a6a' : '#e8f0fe') : 'transparent',
                 color: theme.text,
                 border: 'none',
-                borderRadius: '12px',
+                borderRadius: '8px',
                 cursor: 'pointer',
                 textAlign: 'left',
                 fontSize: '14px',
@@ -1208,7 +1347,7 @@ function App() {
                 backgroundColor: selectedCategory === 'work' ? (darkMode ? '#4a4a6a' : '#e8f0fe') : 'transparent',
                 color: theme.text,
                 border: 'none',
-                borderRadius: '12px',
+                borderRadius: '8px',
                 cursor: 'pointer',
                 textAlign: 'left',
                 fontSize: '14px',
@@ -1257,7 +1396,7 @@ function App() {
                 backgroundColor: selectedCategory === 'personal' ? (darkMode ? '#4a4a6a' : '#e8f0fe') : 'transparent',
                 color: theme.text,
                 border: 'none',
-                borderRadius: '12px',
+                borderRadius: '8px',
                 cursor: 'pointer',
                 textAlign: 'left',
                 fontSize: '14px',
@@ -1306,7 +1445,7 @@ function App() {
                 backgroundColor: selectedCategory === 'shopping' ? (darkMode ? '#4a4a6a' : '#e8f0fe') : 'transparent',
                 color: theme.text,
                 border: 'none',
-                borderRadius: '12px',
+                borderRadius: '8px',
                 cursor: 'pointer',
                 textAlign: 'left',
                 fontSize: '14px',
@@ -1348,6 +1487,126 @@ function App() {
                 {tasks.filter(t => t.category === 'shopping').length}
               </span>
             </button>
+
+            {/* Habits Section */}
+            <div style={{ marginTop: '20px' }}>
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '10px'
+              }}>
+                <h4 style={{ 
+                  color: theme.textSecondary, 
+                  fontSize: '0.9rem', 
+                  fontWeight: '600', 
+                  textTransform: 'uppercase',
+                  letterSpacing: '0.5px'
+                }}>
+                  🎯 Habits
+                </h4>
+                <button
+                  onClick={() => setShowHabitModal(true)}
+                  style={{
+                    backgroundColor: '#1DB954',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    padding: '4px 8px',
+                    fontSize: '12px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 0.2s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.backgroundColor = '#1ed760';
+                    e.target.style.transform = 'scale(1.05)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.backgroundColor = '#1DB954';
+                    e.target.style.transform = 'scale(1)';
+                  }}
+                >
+                  + Add
+                </button>
+              </div>
+              
+              {habits.map(habit => (
+                <div key={habit.id} style={{
+                  padding: '10px',
+                  backgroundColor: habit.completed ? 'rgba(29, 185, 84, 0.1)' : 'transparent',
+                  border: habit.completed ? '1px solid rgba(29, 185, 84, 0.3)' : '1px solid transparent',
+                  borderRadius: '6px',
+                  marginBottom: '8px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
+                }}
+                onClick={() => toggleHabitComplete(habit.id)}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.backgroundColor = darkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.backgroundColor = habit.completed ? 'rgba(29, 185, 84, 0.1)' : 'transparent';
+                }}
+                >
+                  <div style={{
+                    width: '16px',
+                    height: '16px',
+                    border: '2px solid #1DB954',
+                    borderRadius: '4px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    backgroundColor: habit.completed ? '#1DB954' : 'transparent',
+                    color: habit.completed ? 'white' : 'transparent'
+                  }}>
+                    {habit.completed && <span style={{ fontSize: '10px' }}>✓</span>}
+                  </div>
+                  <span style={{
+                    fontSize: '13px',
+                    color: theme.text,
+                    textDecoration: habit.completed ? 'line-through' : 'none',
+                    opacity: habit.completed ? '0.7' : '1'
+                  }}>
+                    {habit.name}
+                  </span>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      deleteHabit(habit.id);
+                    }}
+                    style={{
+                      marginLeft: 'auto',
+                      backgroundColor: 'transparent',
+                      border: 'none',
+                      color: theme.textSecondary,
+                      cursor: 'pointer',
+                      fontSize: '12px',
+                      opacity: 0.6,
+                      transition: 'opacity 0.2s ease'
+                    }}
+                    onMouseEnter={(e) => e.target.style.opacity = '1'}
+                    onMouseLeave={(e) => e.target.style.opacity = '0.6'}
+                  >
+                    ×
+                  </button>
+                </div>
+              ))}
+              
+              {habits.length === 0 && (
+                <div style={{
+                  textAlign: 'center',
+                  padding: '20px',
+                  color: theme.textSecondary,
+                  fontSize: '12px'
+                }}>
+                  No habits yet. Click + Add to create one!
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Quick Add Button */}
@@ -2563,6 +2822,135 @@ function App() {
         </div>
       )}
 
+      {/* Habit Modal */}
+      {showHabitModal && (
+        <div style={{
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          backgroundColor: 'rgba(0,0,0,0.5)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 9998
+        }}
+        onClick={() => setShowHabitModal(false)}>
+          <div style={{
+            backgroundColor: darkMode ? '#181818' : '#ffffff',
+            padding: '30px',
+            borderRadius: '16px',
+            boxShadow: '0 20px 60px rgba(0,0,0,0.3)',
+            border: darkMode ? '1px solid #282828' : '1px solid rgba(255,255,255,0.2)',
+            maxWidth: '400px',
+            width: '90%'
+          }}
+          onClick={(e) => e.stopPropagation()}>
+            <h3 style={{
+              margin: '0 0 20px 0',
+              color: darkMode ? '#FFFFFF' : '#202124',
+              fontSize: '1.2rem',
+              fontWeight: '600'
+            }}>
+              🎯 Create New Habit
+            </h3>
+            
+            <div style={{ marginBottom: '20px' }}>
+              <label style={{
+                display: 'block',
+                marginBottom: '8px',
+                fontSize: '14px',
+                fontWeight: '500',
+                color: darkMode ? '#A7A7A7' : '#5f6368'
+              }}>
+                Habit Name
+              </label>
+              <input
+                type="text"
+                value={newHabitName}
+                onChange={(e) => setNewHabitName(e.target.value)}
+                placeholder="e.g., Drink 8 glasses of water"
+                style={{
+                  width: '100%',
+                  padding: '12px 16px',
+                  backgroundColor: darkMode ? '#282828' : '#ffffff',
+                  border: `1px solid ${darkMode ? '#282828' : '#dadce0'}`,
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  color: darkMode ? '#FFFFFF' : '#202124',
+                  outline: 'none',
+                  transition: 'border-color 0.3s ease'
+                }}
+                onFocus={(e) => e.target.style.borderColor = '#1DB954'}
+                onBlur={(e) => e.target.style.borderColor = darkMode ? '#282828' : '#dadce0'}
+              />
+            </div>
+
+            <div style={{
+              marginBottom: '20px',
+              padding: '12px',
+              backgroundColor: darkMode ? 'rgba(29, 185, 84, 0.1)' : 'rgba(29, 185, 84, 0.1)',
+              borderRadius: '8px',
+              fontSize: '12px',
+              color: darkMode ? '#A7A7A7' : '#5f6368'
+            }}>
+              💡 Habits are recurring daily tasks. Check them off each day to maintain your streak!
+            </div>
+
+            <div style={{
+              display: 'flex',
+              gap: '10px',
+              justifyContent: 'flex-end'
+            }}>
+              <button
+                onClick={() => setShowHabitModal(false)}
+                style={{
+                  padding: '10px 20px',
+                  backgroundColor: darkMode ? '#282828' : '#f1f3f4',
+                  color: darkMode ? '#FFFFFF' : '#202124',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  cursor: 'pointer',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={(e) => e.target.style.backgroundColor = darkMode ? '#3c3c3c' : '#e8eaed'}
+                onMouseLeave={(e) => e.target.style.backgroundColor = darkMode ? '#282828' : '#f1f3f4'}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={addHabit}
+                disabled={!newHabitName.trim()}
+                style={{
+                  padding: '10px 20px',
+                  backgroundColor: newHabitName.trim() ? '#1DB954' : '#ccc',
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '8px',
+                  fontSize: '14px',
+                  fontWeight: '500',
+                  cursor: newHabitName.trim() ? 'pointer' : 'not-allowed',
+                  transition: 'all 0.2s ease'
+                }}
+                onMouseEnter={(e) => {
+                  if (newHabitName.trim()) {
+                    e.target.style.backgroundColor = '#1ed760';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  e.target.style.backgroundColor = newHabitName.trim() ? '#1DB954' : '#ccc';
+                }}
+              >
+                Create Habit
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Add CSS animations and responsive styles */}
       <style>{`
         @keyframes slideIn {
@@ -2646,6 +3034,48 @@ function App() {
           100% {
             transform: translateY(-50%) scale(1);
             box-shadow: 0 0 0 0 rgba(234, 67, 53, 0);
+          }
+        }
+
+        @keyframes streakFire {
+          0% {
+            transform: scale(1);
+            filter: hue-rotate(0deg);
+          }
+          25% {
+            transform: scale(1.1);
+            filter: hue-rotate(10deg);
+          }
+          50% {
+            transform: scale(1.2);
+            filter: hue-rotate(-10deg);
+          }
+          75% {
+            transform: scale(1.1);
+            filter: hue-rotate(5deg);
+          }
+          100% {
+            transform: scale(1);
+            filter: hue-rotate(0deg);
+          }
+        }
+
+        @keyframes flameFlicker {
+          0%, 100% {
+            filter: brightness(1) hue-rotate(0deg);
+            transform: scale(1);
+          }
+          25% {
+            filter: brightness(1.2) hue-rotate(10deg);
+            transform: scale(1.05);
+          }
+          50% {
+            filter: brightness(1.4) hue-rotate(-10deg);
+            transform: scale(1.1);
+          }
+          75% {
+            filter: brightness(1.2) hue-rotate(5deg);
+            transform: scale(1.05);
           }
         }
         
