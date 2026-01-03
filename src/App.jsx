@@ -136,19 +136,19 @@ function App() {
 
   // Get theme colors
   const theme = darkMode ? {
-    bg: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
-    cardBg: '#2d2d44',
-    text: 'white',
-    textSecondary: 'rgba(255,255,255,0.7)',
-    border: '#3d3d5c',
-    inputBg: '#3d3d5c',
-    sidebarBg: '#252538'
+    bg: '#121212',
+    cardBg: '#181818',
+    text: '#FFFFFF',
+    textSecondary: '#A7A7A7',
+    border: '#282828',
+    inputBg: '#282828',
+    sidebarBg: '#181818'
   } : {
     bg: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-    cardBg: 'white',
+    cardBg: 'rgba(255, 255, 255, 0.9)',
     text: '#202124',
     textSecondary: '#5f6368',
-    border: '#e0e0e0',
+    border: 'rgba(255,255,255,0.2)',
     inputBg: 'white',
     sidebarBg: 'rgba(255,255,255,0.95)'
   };
@@ -851,7 +851,7 @@ function App() {
           }}>
             <div style={{
               background: darkMode 
-                ? 'rgba(45, 45, 68, 0.8)' 
+                ? '#181818' 
                 : 'rgba(255, 255, 255, 0.9)',
               padding: '30px',
               borderRadius: '20px',
@@ -879,7 +879,7 @@ function App() {
             
             <div style={{
               background: darkMode 
-                ? 'rgba(45, 45, 68, 0.8)' 
+                ? '#181818' 
                 : 'rgba(255, 255, 255, 0.9)',
               padding: '30px',
               borderRadius: '20px',
@@ -907,7 +907,7 @@ function App() {
             
             <div style={{
               background: darkMode 
-                ? 'rgba(45, 45, 68, 0.8)' 
+                ? '#181818' 
                 : 'rgba(255, 255, 255, 0.9)',
               padding: '30px',
               borderRadius: '20px',
@@ -936,7 +936,7 @@ function App() {
             {/* Donut Chart Card */}
             <div style={{
               background: darkMode 
-                ? 'rgba(45, 45, 68, 0.8)' 
+                ? '#181818' 
                 : 'rgba(255, 255, 255, 0.9)',
               padding: '30px',
               borderRadius: '20px',
@@ -1201,10 +1201,10 @@ function App() {
                         flexDirection: 'column',
                         padding: '20px',
                         backgroundColor: task.completed 
-                          ? (darkMode ? 'rgba(42, 42, 62, 0.8)' : 'rgba(248, 249, 250, 0.9)')
-                          : (darkMode ? 'rgba(45, 45, 68, 0.8)' : 'rgba(255, 255, 255, 0.9)'),
+                          ? (darkMode ? '#0a0a0a' : '#f8f9fa')
+                          : (darkMode ? '#181818' : 'rgba(255, 255, 255, 0.9)'),
                         backdropFilter: 'blur(20px)',
-                        border: `2px solid ${darkMode ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.2)'}`,
+                        border: darkMode ? '1px solid #282828' : '1px solid rgba(255,255,255,0.2)',
                         borderRadius: '16px',
                         transition: 'all 0.3s ease',
                         animation: `slideIn 0.3s ease ${index * 0.1}s both`,

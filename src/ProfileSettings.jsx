@@ -24,13 +24,13 @@ const ProfileSettings = ({ user, onBack, darkMode, showToast }) => {
 
   // Theme colors
   const theme = darkMode ? {
-    bg: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 100%)',
-    cardBg: 'rgba(45, 45, 68, 0.8)',
-    text: 'white',
-    textSecondary: 'rgba(255,255,255,0.7)',
-    border: 'rgba(255,255,255,0.1)',
-    inputBg: 'rgba(61, 61, 92, 0.8)',
-    sidebarBg: '#252538'
+    bg: '#121212',
+    cardBg: '#181818',
+    text: '#FFFFFF',
+    textSecondary: '#A7A7A7',
+    border: '#282828',
+    inputBg: '#282828',
+    sidebarBg: '#181818'
   } : {
     bg: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
     cardBg: 'rgba(255, 255, 255, 0.9)',
@@ -436,7 +436,7 @@ const ProfileSettings = ({ user, onBack, darkMode, showToast }) => {
           <div style={{
             background: theme.cardBg,
             backdropFilter: 'blur(20px)',
-            border: `1px solid ${theme.border}`,
+            border: darkMode ? '1px solid #282828' : '1px solid rgba(255,255,255,0.2)',
             borderRadius: '20px',
             padding: '30px',
             boxShadow: '0 10px 30px rgba(0,0,0,0.1)'
@@ -528,7 +528,7 @@ const ProfileSettings = ({ user, onBack, darkMode, showToast }) => {
           <div style={{
             background: theme.cardBg,
             backdropFilter: 'blur(20px)',
-            border: `1px solid ${theme.border}`,
+            border: darkMode ? '1px solid #282828' : '1px solid rgba(255,255,255,0.2)',
             borderRadius: '20px',
             padding: '30px',
             boxShadow: '0 10px 30px rgba(0,0,0,0.1)'
