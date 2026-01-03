@@ -100,6 +100,31 @@ function App() {
     }
   }, [user]);
 
+  // Profile picture state
+  const [profilePicture, setProfilePicture] = useState(null);
+
+  // Handle profile picture upload
+  const handleProfilePictureUpload = (event) => {
+    const file = event.target.files[0];
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        setProfilePicture(e.target.result);
+        // Save to localStorage for persistence
+        localStorage.setItem('profilePicture', e.target.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  // Load profile picture from localStorage on mount
+  useEffect(() => {
+    const savedProfilePicture = localStorage.getItem('profilePicture');
+    if (savedProfilePicture) {
+      setProfilePicture(savedProfilePicture);
+    }
+  }, []);
+
   // Filter tasks based on search and category
   const filteredTasks = tasks.filter(task => {
     const matchesSearch = task.name.toLowerCase().includes(searchQuery.toLowerCase());
@@ -292,19 +317,70 @@ function App() {
             marginBottom: '30px'
           }}>
             <div style={{
-              width: '60px',
-              height: '60px',
+              width: '80px',
+              height: '80px',
               borderRadius: '50%',
               backgroundColor: '#1a73e8',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
               margin: '0 auto 15px auto',
-              fontSize: '24px',
+              fontSize: '32px',
               color: 'white',
-              fontWeight: 'bold'
+              fontWeight: 'bold',
+              position: 'relative',
+              cursor: 'pointer',
+              overflow: 'hidden',
+              boxShadow: '0 8px 25px rgba(26, 115, 232, 0.3)',
+              border: `3px solid ${darkMode ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.8)'}`,
+              transition: 'all 0.3s ease'
+            }}
+            onClick={() => document.getElementById('profile-upload').click()}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'scale(1.05)';
+              e.currentTarget.style.boxShadow = '0 12px 35px rgba(26, 115, 232, 0.4)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'scale(1)';
+              e.currentTarget.style.boxShadow = '0 8px 25px rgba(26, 115, 232, 0.3)';
             }}>
-              {user?.name?.charAt(0).toUpperCase() || 'U'}
+              {profilePicture ? (
+                <img 
+                  src={profilePicture} 
+                  alt="Profile" 
+                  style={{
+                    width: '100%',
+                    height: '100%',
+                    objectFit: 'cover',
+                    borderRadius: '50%'
+                  }}
+                />
+              ) : (
+                user?.name?.charAt(0).toUpperCase() || 'U'
+              )}
+              <input
+                id="profile-upload"
+                type="file"
+                accept="image/*"
+                style={{ display: 'none' }}
+                onChange={handleProfilePictureUpload}
+              />
+              <div style={{
+                position: 'absolute',
+                bottom: '0',
+                right: '0',
+                width: '24px',
+                height: '24px',
+                backgroundColor: '#34a853',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '12px',
+                border: `2px solid ${darkMode ? '#2d2d44' : 'white'}`
+              }}>
+                📷
+              </div>
             </div>
             <h3 style={{ 
               color: theme.text, 
