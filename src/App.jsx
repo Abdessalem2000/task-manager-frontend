@@ -481,7 +481,8 @@ function App() {
             alignItems: 'center',
             width: '100%',
             maxWidth: '100%',
-            boxSizing: 'border-box'
+            boxSizing: 'border-box',
+            overflow: 'hidden'
           }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
               {/* Mobile Menu Toggle */}
@@ -514,10 +515,11 @@ function App() {
             {/* Search Bar */}
             <div style={{
               position: 'relative',
-              width: '400px',
-              maxWidth: '500px',
+              width: '300px',
+              maxWidth: '350px',
               flex: '0 0 auto',
-              boxSizing: 'border-box'
+              boxSizing: 'border-box',
+              marginRight: '0'
             }}>
               <input
                 type="text"
@@ -526,6 +528,7 @@ function App() {
                 placeholder="Search tasks..."
                 style={{
                   width: '100%',
+                  maxWidth: '300px',
                   padding: '12px 16px 12px 40px',
                   backgroundColor: theme.inputBg,
                   border: `1px solid ${theme.border}`,
@@ -533,7 +536,8 @@ function App() {
                   fontSize: '14px',
                   color: theme.text,
                   outline: 'none',
-                  transition: 'border-color 0.3s ease'
+                  transition: 'border-color 0.3s ease',
+                  boxSizing: 'border-box'
                 }}
                 onFocus={(e) => e.target.style.borderColor = '#1a73e8'}
                 onBlur={(e) => e.target.style.borderColor = theme.border}
