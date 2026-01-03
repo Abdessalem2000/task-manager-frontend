@@ -342,17 +342,29 @@ function App() {
                 backgroundColor: selectedCategory === 'all' ? (darkMode ? '#4a4a6a' : '#e8f0fe') : 'transparent',
                 color: theme.text,
                 border: 'none',
-                borderRadius: '8px',
+                borderRadius: '12px',
                 cursor: 'pointer',
                 textAlign: 'left',
                 fontSize: '14px',
-                transition: 'all 0.2s ease',
+                fontWeight: selectedCategory === 'all' ? '600' : '500',
+                transition: 'all 0.3s ease',
                 display: 'flex',
                 justifyContent: 'space-between',
-                alignItems: 'center',
-                fontWeight: selectedCategory === 'all' ? '600' : '400'
+                alignItems: 'center'
               }} 
               onClick={() => setSelectedCategory('all')}
+              onMouseEnter={(e) => {
+                if (selectedCategory !== 'all') {
+                  e.currentTarget.style.backgroundColor = darkMode ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.05)';
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (selectedCategory !== 'all') {
+                  e.currentTarget.style.backgroundColor = 'transparent';
+                  e.currentTarget.style.transform = 'translateY(0)';
+                }
+              }}
             >
               <span>📋 All Tasks</span>
               <span style={{
@@ -672,66 +684,114 @@ function App() {
             maxWidth: 'none'
           }}>
             <div style={{
-              background: theme.cardBg,
+              background: darkMode 
+                ? 'rgba(45, 45, 68, 0.8)' 
+                : 'rgba(255, 255, 255, 0.9)',
               padding: '30px',
               borderRadius: '20px',
               boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
+              backdropFilter: 'blur(20px)',
+              border: `1px solid ${darkMode ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.2)'}`,
               textAlign: 'center',
-              transition: 'transform 0.3s ease',
-              border: `1px solid ${theme.border}`
+              transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+              cursor: 'pointer'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-5px)';
+              e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.15)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.1)';
             }}>
               <div style={{ fontSize: '3rem', marginBottom: '10px' }}>📋</div>
-              <h3 style={{ color: theme.textSecondary, margin: '0 0 10px 0', fontSize: '1.1rem' }}>Total Tasks</h3>
-              <p style={{ fontSize: '2.5rem', fontWeight: 'bold', color: '#1a73e8', margin: '0' }}>
+              <h3 style={{ color: theme.textSecondary, margin: '0 0 10px 0', fontSize: '1.1rem', fontWeight: '500' }}>Total Tasks</h3>
+              <p style={{ fontSize: '2.5rem', fontWeight: '700', color: '#1a73e8', margin: '0' }}>
                 {filteredTasks.length}
               </p>
             </div>
             
             <div style={{
-              background: theme.cardBg,
+              background: darkMode 
+                ? 'rgba(45, 45, 68, 0.8)' 
+                : 'rgba(255, 255, 255, 0.9)',
               padding: '30px',
               borderRadius: '20px',
               boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
+              backdropFilter: 'blur(20px)',
+              border: `1px solid ${darkMode ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.2)'}`,
               textAlign: 'center',
-              transition: 'transform 0.3s ease',
-              border: `1px solid ${theme.border}`
+              transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+              cursor: 'pointer'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-5px)';
+              e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.15)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.1)';
             }}>
               <div style={{ fontSize: '3rem', marginBottom: '10px' }}>✅</div>
-              <h3 style={{ color: theme.textSecondary, margin: '0 0 10px 0', fontSize: '1.1rem' }}>Completed</h3>
-              <p style={{ fontSize: '2.5rem', fontWeight: 'bold', color: '#34a853', margin: '0' }}>
+              <h3 style={{ color: theme.textSecondary, margin: '0 0 10px 0', fontSize: '1.1rem', fontWeight: '500' }}>Completed</h3>
+              <p style={{ fontSize: '2.5rem', fontWeight: '700', color: '#34a853', margin: '0' }}>
                 {completedCount}
               </p>
             </div>
             
             <div style={{
-              background: theme.cardBg,
+              background: darkMode 
+                ? 'rgba(45, 45, 68, 0.8)' 
+                : 'rgba(255, 255, 255, 0.9)',
               padding: '30px',
               borderRadius: '20px',
               boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
+              backdropFilter: 'blur(20px)',
+              border: `1px solid ${darkMode ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.2)'}`,
               textAlign: 'center',
-              transition: 'transform 0.3s ease',
-              border: `1px solid ${theme.border}`
+              transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+              cursor: 'pointer'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-5px)';
+              e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.15)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.1)';
             }}>
               <div style={{ fontSize: '3rem', marginBottom: '10px' }}>⏳</div>
-              <h3 style={{ color: theme.textSecondary, margin: '0 0 10px 0', fontSize: '1.1rem' }}>Pending</h3>
-              <p style={{ fontSize: '2.5rem', fontWeight: 'bold', color: '#fbbc04', margin: '0' }}>
+              <h3 style={{ color: theme.textSecondary, margin: '0 0 10px 0', fontSize: '1.1rem', fontWeight: '500' }}>Pending</h3>
+              <p style={{ fontSize: '2.5rem', fontWeight: '700', color: '#fbbc04', margin: '0' }}>
                 {pendingCount}
               </p>
             </div>
 
             {/* Donut Chart Card */}
             <div style={{
-              background: theme.cardBg,
+              background: darkMode 
+                ? 'rgba(45, 45, 68, 0.8)' 
+                : 'rgba(255, 255, 255, 0.9)',
               padding: '30px',
               borderRadius: '20px',
               boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
+              backdropFilter: 'blur(20px)',
+              border: `1px solid ${darkMode ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.2)'}`,
               textAlign: 'center',
-              transition: 'transform 0.3s ease',
-              border: `1px solid ${theme.border}`,
+              transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+              cursor: 'pointer',
               display: 'flex',
               flexDirection: 'column',
               alignItems: 'center',
               justifyContent: 'center'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-5px)';
+              e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.15)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.1)';
             }}>
               <h3 style={{ color: theme.textSecondary, margin: '0 0 20px 0', fontSize: '1.1rem' }}>Progress</h3>
               
@@ -974,22 +1034,26 @@ function App() {
                         display: 'flex',
                         flexDirection: 'column',
                         padding: '20px',
-                        backgroundColor: task.completed ? (darkMode ? '#2a2a3e' : '#f8f9fa') : theme.cardBg,
-                        border: `2px solid ${theme.border}`,
-                        borderRadius: '12px',
+                        backgroundColor: task.completed 
+                          ? (darkMode ? 'rgba(42, 42, 62, 0.8)' : 'rgba(248, 249, 250, 0.9)')
+                          : (darkMode ? 'rgba(45, 45, 68, 0.8)' : 'rgba(255, 255, 255, 0.9)'),
+                        backdropFilter: 'blur(20px)',
+                        border: `2px solid ${darkMode ? 'rgba(255,255,255,0.1)' : 'rgba(255,255,255,0.2)'}`,
+                        borderRadius: '16px',
                         transition: 'all 0.3s ease',
                         animation: `slideIn 0.3s ease ${index * 0.1}s both`,
                         cursor: 'pointer',
                         minHeight: '120px',
-                        position: 'relative'
+                        position: 'relative',
+                        boxShadow: '0 10px 30px rgba(0,0,0,0.1)'
                       }}
                       onMouseEnter={(e) => {
-                        e.currentTarget.style.transform = 'translateY(-2px)';
-                        e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+                        e.currentTarget.style.transform = 'translateY(-5px)';
+                        e.currentTarget.style.boxShadow = '0 20px 40px rgba(0,0,0,0.15)';
                       }}
                       onMouseLeave={(e) => {
                         e.currentTarget.style.transform = 'translateY(0)';
-                        e.currentTarget.style.boxShadow = 'none';
+                        e.currentTarget.style.boxShadow = '0 10px 30px rgba(0,0,0,0.1)';
                       }}
                     >
                       {/* Priority Badge */}
