@@ -464,7 +464,7 @@ function App() {
       }}>
         {/* Header */}
         <div style={{ 
-          padding: '20px 40px',
+          padding: '20px 30px',
           borderBottom: `1px solid ${theme.border}`,
           backgroundColor: theme.sidebarBg,
           backdropFilter: 'blur(10px)',
@@ -544,7 +544,7 @@ function App() {
         </div>
       
       <div style={{ 
-        padding: '30px 40px', 
+        padding: '30px', 
         flex: '1 1 0%',
         display: 'flex',
         flexDirection: 'column',
