@@ -247,6 +247,8 @@ function App() {
   const [badges, setBadges] = useState([]);
   const [showLevelUp, setShowLevelUp] = useState(false);
   const [activeId, setActiveId] = useState(null);
+  const [isListening, setIsListening] = useState(false);
+  const [voiceCommand, setVoiceCommand] = useState('');
 
   // Setup drag and drop sensors
   const sensors = useSensors(
@@ -508,6 +510,96 @@ function App() {
   // Handle drag start event
   const handleDragStart = (event) => {
     setActiveId(event.active.id);
+  };
+
+  // Voice Recognition Functions
+  const startVoiceRecognition = () => {
+    if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+      showToast('🎤 Voice recognition not supported in this browser', 'error');
+      return;
+    }
+
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    const recognition = new SpeechRecognition();
+    
+    recognition.continuous = false;
+    recognition.interimResults = false;
+    recognition.lang = 'en-US';
+
+    recognition.onstart = () => {
+      setIsListening(true);
+      showToast('🎤 Listening...', 'info');
+    };
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript.toLowerCase();
+      setVoiceCommand(transcript);
+      processVoiceCommand(transcript);
+    };
+
+    recognition.onerror = (event) => {
+      setIsListening(false);
+      showToast('🎤 Voice recognition error: ' + event.error, 'error');
+    };
+
+    recognition.onend = () => {
+      setIsListening(false);
+    };
+
+    recognition.start();
+  };
+
+  const processVoiceCommand = (command) => {
+    // Play success sound
+    const successSound = new Audio('data:audio/wav;base64,UklGRnoGAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQoGAACBhYqFbF1fdJivrJBhNjVgodDbq2EcBj+a2/LDciUFLIHO8tiJNwgZaLvt559NEAxQp+PwtmMcBjiR1/LMeSwFJHfH8N2QQAoUXrTp66hVFApGn+DyvmwhBSuBzvLZiTYIG2m98OScTgwOUarm7blmGgU7k9n1unEiBC13yO/eizEIHWq+8+OWT');
+    successSound.play();
+
+    // Process different voice commands
+    if (command.startsWith('add task')) {
+      const taskName = command.replace('add task', '').trim();
+      if (taskName) {
+        setNewTaskName(taskName);
+        setTaskPriority('medium');
+        setTaskCategory('work');
+        setTimeout(() => addTask(), 100);
+        showToast(`🎤 Task added: "${taskName}"`, 'success');
+      } else {
+        showToast('🎤 Please specify a task name', 'error');
+      }
+    } else if (command === 'clear all') {
+      setSearchQuery('');
+      showToast('🎤 Search cleared', 'success');
+    } else if (command === 'open profile') {
+      setShowProfileSettings(true);
+      showToast('🎤 Opening profile settings', 'success');
+    } else if (command.startsWith('search for')) {
+      const searchTerm = command.replace('search for', '').trim();
+      if (searchTerm) {
+        setSearchQuery(searchTerm);
+        showToast(`🎤 Searching for: "${searchTerm}"`, 'success');
+      } else {
+        showToast('🎤 Please specify a search term', 'error');
+      }
+    } else if (command === 'complete task') {
+      // Complete the first incomplete task
+      const incompleteTask = filteredTasks.find(t => !t.completed);
+      if (incompleteTask) {
+        toggleTaskComplete(incompleteTask._id);
+        showToast(`🎤 Task completed: "${incompleteTask.name}"`, 'success');
+      } else {
+        showToast('🎤 No incomplete tasks found', 'error');
+      }
+    } else if (command.startsWith('set priority')) {
+      const priority = command.includes('high') ? 'high' : command.includes('low') ? 'low' : 'medium';
+      setTaskPriority(priority);
+      showToast(`🎤 Priority set to: ${priority}`, 'success');
+    } else if (command.startsWith('set category')) {
+      const category = command.includes('personal') ? 'personal' : command.includes('shopping') ? 'shopping' : 'work';
+      setTaskCategory(category);
+      showToast(`🎤 Category set to: ${category}`, 'success');
+    } else {
+      showToast(`🎤 Command not recognized: "${command}"`, 'error');
+    }
   };
 
   // Get theme colors
@@ -1279,6 +1371,55 @@ function App() {
               boxSizing: 'border-box',
               marginRight: '0'
             }}>
+              {/* Search Icon */}
+              <div style={{
+                position: 'absolute',
+                left: '12px',
+                top: '50%',
+                transform: 'translateY(-50%)',
+                fontSize: '16px',
+                color: theme.textSecondary,
+                pointerEvents: 'none'
+              }}>
+                🔍
+              </div>
+              
+              {/* Microphone Button */}
+              <button
+                onClick={startVoiceRecognition}
+                disabled={isListening}
+                style={{
+                  position: 'absolute',
+                  right: '12px',
+                  top: '50%',
+                  transform: 'translateY(-50%)',
+                  backgroundColor: isListening ? '#ea4335' : 'transparent',
+                  border: 'none',
+                  borderRadius: '50%',
+                  width: '32px',
+                  height: '32px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: isListening ? 'not-allowed' : 'pointer',
+                  fontSize: '16px',
+                  transition: 'all 0.3s ease',
+                  animation: isListening ? 'pulse 1.5s ease-in-out infinite' : 'none'
+                }}
+                onMouseEnter={(e) => {
+                  if (!isListening) {
+                    e.target.style.backgroundColor = darkMode ? '#3a3a5a' : '#e8f0fe';
+                  }
+                }}
+                onMouseLeave={(e) => {
+                  if (!isListening) {
+                    e.target.style.backgroundColor = 'transparent';
+                  }
+                }}
+              >
+                🎤
+              </button>
+              
               <input
                 type="text"
                 value={searchQuery}
@@ -1287,7 +1428,7 @@ function App() {
                 style={{
                   width: '100%',
                   maxWidth: '300px',
-                  padding: '12px 16px 12px 40px',
+                  padding: '12px 50px 12px 40px',
                   backgroundColor: theme.inputBg,
                   border: `1px solid ${theme.border}`,
                   borderRadius: '12px',
@@ -2357,6 +2498,21 @@ function App() {
           100% {
             transform: scale(1);
             box-shadow: 0 30px 80px rgba(255, 215, 0, 0.4);
+          }
+        }
+
+        @keyframes pulse {
+          0% {
+            transform: translateY(-50%) scale(1);
+            box-shadow: 0 0 0 0 rgba(234, 67, 53, 0.7);
+          }
+          70% {
+            transform: translateY(-50%) scale(1.05);
+            box-shadow: 0 0 0 10px rgba(234, 67, 53, 0);
+          }
+          100% {
+            transform: translateY(-50%) scale(1);
+            box-shadow: 0 0 0 0 rgba(234, 67, 53, 0);
           }
         }
         
