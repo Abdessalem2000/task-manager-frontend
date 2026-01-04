@@ -1268,7 +1268,7 @@ function App() {
               e.currentTarget.style.color = theme.text;
               e.currentTarget.style.textDecoration = 'none';
             }}>
-              <span className="text-2xl">{user?.name || 'User'} 🔥</span>
+              <span style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>{user?.name || 'User'} 🔥</span>
             </h3>
             
             {/* Level Indicator */}
