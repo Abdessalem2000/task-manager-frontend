@@ -273,19 +273,31 @@ function App() {
     const savedUser = localStorage.getItem('user');
     
     if (token && savedUser) {
-      setUser(JSON.parse(savedUser));
+      try {
+        setUser(JSON.parse(savedUser));
+      } catch (e) {
+        console.error('Error parsing savedUser:', e);
+      }
     }
 
     // Check for saved theme preference
     const savedTheme = localStorage.getItem('darkMode');
     if (savedTheme) {
-      setDarkMode(JSON.parse(savedTheme));
+      try {
+        setDarkMode(JSON.parse(savedTheme));
+      } catch (e) {
+        console.error('Error parsing savedTheme:', e);
+      }
     }
 
     // Check for saved sidebar preference
     const savedSidebar = localStorage.getItem('sidebarOpen');
     if (savedSidebar) {
-      setSidebarOpen(JSON.parse(savedSidebar));
+      try {
+        setSidebarOpen(JSON.parse(savedSidebar));
+      } catch (e) {
+        console.error('Error parsing savedSidebar:', e);
+      }
     }
   }, []);
 
@@ -1288,7 +1300,7 @@ function App() {
               e.currentTarget.style.color = theme.text;
               e.currentTarget.style.textDecoration = 'none';
             }}>
-              <span style={{ fontSize: '1.5rem', fontWeight: 'bold' }}>{user?.name || 'User'} 🔥</span>
+              <span>User Name</span>
             </h3>
             
             {/* Level Indicator */}
