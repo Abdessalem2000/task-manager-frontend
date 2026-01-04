@@ -23,9 +23,7 @@ import {
   useSortable,
 } from '@dnd-kit/sortable';
 
-// Import CSS for dnd-kit
-import '@dnd-kit/core/dist/style.css';
-import '@dnd-kit/sortable/dist/style.css';
+// Note: dnd-kit CSS styles are handled inline
 
 // Sortable Task Card Component
 const SortableTaskCard = ({ task, theme, darkMode, toggleTaskComplete, deleteTask, alarms, setShowAlarmPopup, priorityColors, categoryColors, index }) => {
@@ -226,7 +224,7 @@ const SortableTaskCard = ({ task, theme, darkMode, toggleTaskComplete, deleteTas
 };
 
 function App() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState({ name: 'yahia', email: 'yahia@example.com' });
   const [tasks, setTasks] = useState([]);
   const [newTaskName, setNewTaskName] = useState('');
   const [toast, setToast] = useState(null);
@@ -425,9 +423,9 @@ function App() {
     
     // Initialize XP if not exists
     if (!savedXP) {
-      console.log('🔥 Initializing XP to 0');
-      setUserXP(0);
-      localStorage.setItem('userXP', '0');
+      console.log('🔥 Initializing XP to 10');
+      setUserXP(10);
+      localStorage.setItem('userXP', '10');
     }
     
     // Initialize level if not exists
@@ -1270,15 +1268,7 @@ function App() {
               e.currentTarget.style.color = theme.text;
               e.currentTarget.style.textDecoration = 'none';
             }}>
-              {user?.name || 'User'}
-              <span style={{
-                fontSize: '1.2rem',
-                color: '#FF6B35',
-                filter: showStreakAnimation ? 'hue-rotate(0deg)' : 'none',
-                animation: showStreakAnimation ? 'flameFlicker 0.5s ease-in-out infinite' : 'none'
-              }}>
-                🔥 {dailyStreak}
-              </span>
+              <span className="text-2xl">{user?.name || 'User'} 🔥</span>
             </h3>
             
             {/* Level Indicator */}
@@ -1338,9 +1328,12 @@ function App() {
             </div>
             
             <div style={{
-              fontSize: '10px',
-              color: theme.textSecondary,
-              textAlign: 'center'
+              fontSize: '12px',
+              fontWeight: '600',
+              color: '#1DB954',
+              textAlign: 'center',
+              marginTop: '5px',
+              textShadow: '0 0 4px rgba(29, 185, 84, 0.3)'
             }}>
               {getNextLevelXP() - userXP} XP to Level {userLevel + 1}
             </div>
