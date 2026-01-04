@@ -291,12 +291,12 @@ function App() {
 
   // Save theme preference
   useEffect(() => {
-    localStorage.setItem('darkMode', JSON.stringify(darkMode));
+    localStorage.setItem('darkMode', JSON.stringify(darkMode || false));
   }, [darkMode]);
 
   // Save sidebar preference
   useEffect(() => {
-    localStorage.setItem('sidebarOpen', JSON.stringify(sidebarOpen));
+    localStorage.setItem('sidebarOpen', JSON.stringify(sidebarOpen || true));
   }, [sidebarOpen]);
 
   // Enhanced toast notification function with queue support
@@ -494,12 +494,12 @@ function App() {
 
   // Auto-save badges whenever they change
   useEffect(() => {
-    localStorage.setItem('badges', JSON.stringify(badges));
+    localStorage.setItem('badges', JSON.stringify(badges || []));
   }, [badges]);
 
   // Auto-save habits whenever they change
   useEffect(() => {
-    localStorage.setItem('habits', JSON.stringify(habits));
+    localStorage.setItem('habits', JSON.stringify(habits || []));
   }, [habits]);
 
   // Check and update daily streak
@@ -3262,5 +3262,6 @@ function App() {
 };
 
 export default App;
-/ /   t o S t r i n g   f i x   d e p l o y e d  
+/ /   t o S t r i n g   f i x   d e p l o y e d 
+ 
  
