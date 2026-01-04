@@ -1300,7 +1300,7 @@ function App() {
               e.currentTarget.style.color = theme.text;
               e.currentTarget.style.textDecoration = 'none';
             }}>
-              <span>User Name</span>
+              <span>yahia 🔥</span>
             </h3>
             
             {/* Level Indicator */}
