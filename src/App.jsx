@@ -224,6 +224,7 @@ const SortableTaskCard = ({ task, theme, darkMode, toggleTaskComplete, deleteTas
 };
 
 function App() {
+  console.log('🔥 App is mounting...');
   try {
   const [user, setUser] = useState({ name: 'yahia', email: 'yahia@example.com' });
   const [tasks, setTasks] = useState([]);
@@ -269,6 +270,7 @@ function App() {
 
   // Check for existing authentication on mount
   useEffect(() => {
+    console.log('🔥 useEffect is running...');
     const token = localStorage.getItem('token');
     const savedUser = localStorage.getItem('user');
     
