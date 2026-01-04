@@ -224,6 +224,7 @@ const SortableTaskCard = ({ task, theme, darkMode, toggleTaskComplete, deleteTas
 };
 
 function App() {
+  try {
   const [user, setUser] = useState({ name: 'yahia', email: 'yahia@example.com' });
   const [tasks, setTasks] = useState([]);
   const [newTaskName, setNewTaskName] = useState('');
@@ -332,6 +333,12 @@ function App() {
     const token = localStorage.getItem('token');
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
     
+    // Only fetch if we have a valid API URL
+    if (!API_URL || API_URL === 'http://localhost:3000') {
+      console.log('Using demo mode - no API calls');
+      return;
+    }
+    
     fetch(`${API_URL}/api/tasks`, {
       headers: {
         'Authorization': `Bearer ${token}`
@@ -343,9 +350,10 @@ function App() {
           setTasks(data);
         }
       })
-      .catch(err => {
-        console.error("Error fetching tasks:", err);
-        showToast('Failed to fetch tasks', 'error');
+      .catch(error => {
+        console.error('Error fetching tasks:', error);
+        // Don't crash the app if API fails
+        setTasks([]);
       });
   };
 
@@ -1404,7 +1412,7 @@ function App() {
                 fontSize: '12px',
                 fontWeight: '600'
               }}>
-                {tasks.length}
+                {tasks?.length || 0}
               </span>
             </button>
             <button
@@ -1913,7 +1921,7 @@ function App() {
               <div style={{ fontSize: '3rem', marginBottom: '10px' }}>📋</div>
               <h3 style={{ color: theme.textSecondary, margin: '0 0 10px 0', fontSize: '1.1rem', fontWeight: '500' }}>Total Tasks</h3>
               <p style={{ fontSize: '2.5rem', fontWeight: '700', color: '#1a73e8', margin: '0' }}>
-                {filteredTasks.length}
+                {filteredTasks?.length || 0}
               </p>
             </div>
             
@@ -2015,7 +2023,7 @@ function App() {
                   />
                   
                   {/* Progress circle */}
-                  {filteredTasks.length > 0 && (
+                  {filteredTasks?.length > 0 && (
                     <circle
                       cx="60"
                       cy="60"
@@ -2062,7 +2070,7 @@ function App() {
                 color: theme.textSecondary,
                 fontWeight: '500'
               }}>
-                {completedCount} of {filteredTasks.length} completed
+                {completedCount} of {filteredTasks?.length || 0} completed
               </p>
             </div>
           </div>
@@ -2464,7 +2472,7 @@ function App() {
             </div>
             
             <div style={{ padding: '20px 30px 30px 30px' }}>
-              {filteredTasks.length === 0 ? (
+              {filteredTasks?.length === 0 ? (
                 <div style={{ 
                   textAlign: 'center', 
                   padding: '60px 20px',
@@ -2486,7 +2494,7 @@ function App() {
                   onDragEnd={handleDragEnd}
                 >
                   <SortableContext
-                    items={filteredTasks.map(task => task._id)}
+                    items={filteredTasks?.map(task => task?._id) || []}
                     strategy={verticalListSortingStrategy}
                   >
                     <div className="task-grid" style={{ 
@@ -2496,7 +2504,7 @@ function App() {
                       width: '100%',
                       maxWidth: 'none'
                     }}>
-                      {filteredTasks.map((task, index) => (
+                      {filteredTasks?.map((task, index) => (
                         <SortableTaskCard
                           key={task._id}
                           task={task}
@@ -3224,6 +3232,21 @@ function App() {
       `}</style>
     </div>
   );
+  } catch (error) {
+    console.error('App component error:', error);
+    return (
+      <div style={{ padding: '20px', textAlign: 'center' }}>
+        <h2>Something went wrong</h2>
+        <p>Please refresh the page</p>
+        <details style={{ marginTop: '20px', textAlign: 'left' }}>
+          <summary>Error details</summary>
+          <pre style={{ background: '#f5f5f5', padding: '10px', borderRadius: '4px' }}>
+            {error?.message || 'Unknown error'}
+          </pre>
+        </details>
+      </div>
+    );
+  }
 };
 
 export default App;
