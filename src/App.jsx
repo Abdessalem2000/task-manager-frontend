@@ -407,12 +407,24 @@ function App() {
       savedHabits
     });
     
-    if (savedLevel) setUserLevel(parseInt(savedLevel));
-    if (savedXP) setUserXP(parseInt(savedXP));
-    if (savedBadges) setBadges(JSON.parse(savedBadges));
-    if (savedStreak) setDailyStreak(parseInt(savedStreak));
+    if (savedLevel) setUserLevel(parseInt(savedLevel) || 1);
+    if (savedXP) setUserXP(parseInt(savedXP) || 0);
+    if (savedBadges) {
+      try {
+        setBadges(JSON.parse(savedBadges) || []);
+      } catch (e) {
+        setBadges([]);
+      }
+    }
+    if (savedStreak) setDailyStreak(parseInt(savedStreak) || 1);
     if (savedLastActiveDate) setLastActiveDate(savedLastActiveDate);
-    if (savedHabits) setHabits(JSON.parse(savedHabits));
+    if (savedHabits) {
+      try {
+        setHabits(JSON.parse(savedHabits) || []);
+      } catch (e) {
+        setHabits([]);
+      }
+    }
     
     // Initialize streak if not exists
     if (!savedStreak) {
@@ -460,17 +472,17 @@ function App() {
 
   // Auto-save XP whenever it changes
   useEffect(() => {
-    localStorage.setItem('userXP', userXP.toString());
+    localStorage.setItem('userXP', (userXP || 0).toString());
   }, [userXP]);
 
   // Auto-save level whenever it changes
   useEffect(() => {
-    localStorage.setItem('userLevel', userLevel.toString());
+    localStorage.setItem('userLevel', (userLevel || 1).toString());
   }, [userLevel]);
 
   // Auto-save streak whenever it changes
   useEffect(() => {
-    localStorage.setItem('dailyStreak', dailyStreak.toString());
+    localStorage.setItem('dailyStreak', (dailyStreak || 1).toString());
   }, [dailyStreak]);
 
   // Auto-save last active date whenever it changes
@@ -503,7 +515,7 @@ function App() {
         // Continue streak
         const newStreak = dailyStreak + 1;
         setDailyStreak(newStreak);
-        localStorage.setItem('dailyStreak', newStreak.toString());
+        localStorage.setItem('dailyStreak', (newStreak || 1).toString());
         localStorage.setItem('lastActiveDate', today);
         
         // Award streak XP
