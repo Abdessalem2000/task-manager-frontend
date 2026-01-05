@@ -669,7 +669,12 @@ function App() {
   useEffect(() => {
     const savedAlarms = localStorage.getItem('alarms');
     if (savedAlarms) {
-      setAlarms(JSON.parse(savedAlarms));
+      try {
+        setAlarms(JSON.parse(savedAlarms));
+      } catch (e) {
+        console.error('Error parsing savedAlarms:', e);
+        setAlarms({});
+      }
     }
   }, []);
 
