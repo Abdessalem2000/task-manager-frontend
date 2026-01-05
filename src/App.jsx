@@ -684,7 +684,7 @@ function App() {
       const now = new Date();
       Object.entries(alarms).forEach(([taskId, alarmTime]) => {
         if (alarmTime && new Date(alarmTime) <= now) {
-          const task = tasks.find(t => t._id === taskId);
+          const task = (tasks || []).find(t => t._id === taskId);
           if (task) {
             setShowAlarmModal(task);
             // Play ding sound
@@ -706,7 +706,7 @@ function App() {
   }, [alarms, tasks]);
 
   // Filter tasks based on search and category
-  const filteredTasks = tasks.filter(task => {
+  const filteredTasks = (tasks || []).filter(task => {
     const matchesSearch = task.name.toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = selectedCategory === 'all' || task.category === selectedCategory;
     return matchesSearch && matchesCategory;
@@ -718,20 +718,6 @@ function App() {
 
     if (active.id !== over.id) {
       const oldIndex = filteredTasks.findIndex((task) => task._id === active.id);
-      const newIndex = filteredTasks.findIndex((task) => task._id === over.id);
-      
-      if (oldIndex !== -1 && newIndex !== -1) {
-        const newTasks = arrayMove(filteredTasks, oldIndex, newIndex);
-        
-        // Update the order in the main tasks array
-        const updatedTasks = tasks.map(task => {
-          const newTask = newTasks.find(t => t._id === task._id);
-          return newTask || task;
-        });
-        
-        setTasks(updatedTasks);
-        showToast('📋 Task order updated!', 'success');
-      }
     }
     
     setActiveId(null);
@@ -998,7 +984,7 @@ function App() {
   };
 
   const toggleTaskComplete = (taskId) => {
-    const task = tasks.find(t => t._id === taskId);
+    const task = (tasks || []).find(t => t._id === taskId);
     if (!task) return;
 
     const token = localStorage.getItem('token');
@@ -1028,7 +1014,7 @@ function App() {
         awardXP(10, 'First Task Completed');
         
         // Check for weekly warrior badge (7 tasks completed in a week)
-        const completedThisWeek = tasks.filter(t => 
+        const completedThisWeek = (tasks || []).filter(t => 
           t.completed && 
           new Date(t.updatedAt || t.createdAt) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
         ).length;
