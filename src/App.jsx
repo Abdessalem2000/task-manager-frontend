@@ -271,6 +271,21 @@ function App() {
   // Check for existing authentication on mount
   useEffect(() => {
     console.log('🔥 useEffect is running...');
+    
+    // Safety check: Clear corrupted localStorage
+    try {
+      const testKeys = ['user', 'token', 'darkMode', 'sidebarOpen', 'userLevel', 'userXP', 'badges', 'dailyStreak', 'lastActiveDate', 'habits', 'alarms'];
+      testKeys.forEach(key => {
+        const value = localStorage.getItem(key);
+        if (value && (value.includes('undefined') || value.includes('[object Object]'))) {
+          console.warn(`Clearing corrupted localStorage key: ${key}`);
+          localStorage.removeItem(key);
+        }
+      });
+    } catch (e) {
+      console.warn('localStorage safety check failed:', e);
+    }
+    
     const token = localStorage.getItem('token');
     const savedUser = localStorage.getItem('user');
     
@@ -279,6 +294,7 @@ function App() {
         setUser(JSON.parse(savedUser));
       } catch (e) {
         console.error('Error parsing savedUser:', e);
+        localStorage.removeItem('user');
       }
     }
 
