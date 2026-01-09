@@ -20,11 +20,15 @@ const Auth = ({ onAuthSuccess }) => {
     e.preventDefault();
     setIsLoading(true);
 
-    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+    const API_URL = 'https://task-management-api.vercel.app'; // HARDCODED TO FIX CONNECTION ISSUES
     const endpoint = isLogin ? '/api/v1/auth/login' : '/api/v1/auth/register';
+    const fullUrl = `${API_URL}${endpoint}`;
+    
+    console.log('🔐 Making auth request to:', fullUrl);
+    console.log('🔐 Form data:', { ...formData, password: '***' });
     
     try {
-      const response = await fetch(`${API_URL}${endpoint}`, {
+      const response = await fetch(fullUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
@@ -39,11 +43,12 @@ const Auth = ({ onAuthSuccess }) => {
         localStorage.setItem('user', JSON.stringify(data.user));
         onAuthSuccess(data.user);
       } else {
-        alert(data.msg || 'Authentication failed');
+        console.error('❌ Auth failed:', data);
+        alert(`❌ Login Failed: ${data.msg || 'Authentication failed'}`);
       }
     } catch (error) {
-      console.error('Auth error:', error);
-      alert('Network error. Please try again.');
+      console.error('❌ Network error:', error);
+      alert(`❌ Network Error: ${error.message}. Please check your connection and try again.`);
     } finally {
       setIsLoading(false);
     }
@@ -92,6 +97,7 @@ const Auth = ({ onAuthSuccess }) => {
                 onChange={handleChange}
                 required={!isLogin}
                 placeholder="Enter your name"
+                id="auth-name-input"
                 style={{
                   width: '100%',
                   padding: '12px',
@@ -120,6 +126,7 @@ const Auth = ({ onAuthSuccess }) => {
               onChange={handleChange}
               required
               placeholder="Enter your email"
+              id="auth-email-input"
               style={{
                 width: '100%',
                 padding: '12px',
@@ -147,6 +154,7 @@ const Auth = ({ onAuthSuccess }) => {
               onChange={handleChange}
               required
               placeholder="Enter your password"
+              id="auth-password-input"
               style={{
                 width: '100%',
                 padding: '12px',

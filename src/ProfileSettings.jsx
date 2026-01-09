@@ -251,7 +251,7 @@ const ProfileSettings = ({ user, onBack, darkMode, showToast, userLevel, userXP,
                 profileData.fullName?.charAt(0).toUpperCase() || 'U'
               )}
               <input
-                id="profile-upload-settings"
+                id="profile-upload-settings-file"
                 type="file"
                 accept="image/*"
                 style={{ display: 'none' }}

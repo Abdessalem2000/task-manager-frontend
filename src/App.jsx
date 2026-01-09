@@ -25,6 +25,70 @@ import {
 
 // Note: dnd-kit CSS styles are handled inline
 
+// Theme Toggle Component
+const ThemeToggle = ({ darkMode, setDarkMode, theme, position = 'header' }) => {
+  const handleThemeToggle = () => {
+    const newTheme = !darkMode;
+    setDarkMode(newTheme);
+    
+    // Save with safety check as 'light' or 'dark'
+    try {
+      localStorage.setItem('darkMode', JSON.stringify(newTheme ? 'dark' : 'light'));
+    } catch (e) {
+      console.warn('Failed to save theme preference:', e);
+    }
+  };
+
+  return (
+    <button
+      onClick={handleThemeToggle}
+      style={{
+        backgroundColor: position === 'next-to-name' ? '#FF6B35' : 'transparent',
+        border: position === 'next-to-name' ? '2px solid #FF6B35' : `1px solid ${theme.border}`,
+        borderRadius: '8px',
+        padding: position === 'next-to-name' ? '6px 10px' : '8px 12px',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '4px',
+        fontSize: position === 'next-to-name' ? '16px' : '14px',
+        color: position === 'next-to-name' ? 'white' : '#FF6B35',
+        transition: 'all 0.2s ease',
+        fontWeight: '600',
+        zIndex: 9999,
+        position: 'relative',
+        boxShadow: position === 'next-to-name' ? '0 2px 8px rgba(255, 107, 53, 0.4)' : 'none'
+      }}
+      onMouseEnter={(e) => {
+        if (position === 'next-to-name') {
+          e.target.style.backgroundColor = '#FF5722';
+          e.target.style.transform = 'scale(1.1)';
+        } else {
+          e.target.style.backgroundColor = theme.hoverBg;
+          e.target.style.transform = 'scale(1.05)';
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (position === 'next-to-name') {
+          e.target.style.backgroundColor = '#FF6B35';
+          e.target.style.transform = 'scale(1)';
+        } else {
+          e.target.style.backgroundColor = 'transparent';
+          e.target.style.transform = 'scale(1)';
+        }
+      }}
+      title={`Switch to ${darkMode ? 'light' : 'dark'} mode`}
+    >
+      {darkMode ? '☀️' : '🌙'}
+      {position !== 'next-to-name' && (
+        <span style={{ fontSize: '12px' }}>
+          {darkMode ? 'Light' : 'Dark'}
+        </span>
+      )}
+    </button>
+  );
+};
+
 // Sortable Task Card Component
 const SortableTaskCard = ({ task, theme, darkMode, toggleTaskComplete, deleteTask, alarms, setShowAlarmPopup, priorityColors, categoryColors, index }) => {
   const {
@@ -302,9 +366,16 @@ function App() {
     const savedTheme = localStorage.getItem('darkMode');
     if (savedTheme) {
       try {
-        setDarkMode(JSON.parse(savedTheme));
+        const parsed = JSON.parse(savedTheme);
+        // Handle both boolean and string formats for compatibility
+        if (typeof parsed === 'string') {
+          setDarkMode(parsed === 'dark');
+        } else {
+          setDarkMode(parsed || false);
+        }
       } catch (e) {
         console.error('Error parsing savedTheme:', e);
+        setDarkMode(false);
       }
     }
 
@@ -319,9 +390,13 @@ function App() {
     }
   }, []);
 
-  // Save theme preference
+  // Save theme preference with safety check
   useEffect(() => {
-    localStorage.setItem('darkMode', JSON.stringify(darkMode || false));
+    try {
+      localStorage.setItem('darkMode', JSON.stringify(darkMode ? 'dark' : 'light'));
+    } catch (e) {
+      console.warn('Failed to save theme preference:', e);
+    }
   }, [darkMode]);
 
   // Save sidebar preference
@@ -356,12 +431,22 @@ function App() {
     showToast('Logged out successfully', 'success');
   };
 
+  // Handle clear session (fix 401 errors)
+  const handleClearSession = () => {
+    localStorage.clear();
+    setUser(null);
+    setTasks([]);
+    setDarkMode(false);
+    showToast('Session cleared! Please refresh and re-login.', 'info');
+  };
+
   // Fetch tasks (only when user is authenticated)
   const fetchTasks = () => {
     if (!user) return;
+    // ... (rest of the code remains the same)
     
     const token = localStorage.getItem('token');
-    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+    const API_URL = 'https://task-manager-api-git-master-abdessalem-kentaches-projects.vercel.app'; // CORRECTED API URL
     
     // Only fetch if we have a valid API URL
     if (!API_URL || API_URL === 'http://localhost:3000') {
@@ -974,7 +1059,8 @@ function App() {
     textSecondary: '#A7A7A7',
     border: '#282828',
     inputBg: '#282828',
-    sidebarBg: '#181818'
+    sidebarBg: '#181818',
+    hoverBg: 'rgba(255,255,255,0.1)'
   } : {
     bg: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
     cardBg: 'rgba(255, 255, 255, 0.9)',
@@ -982,7 +1068,8 @@ function App() {
     textSecondary: '#5f6368',
     border: 'rgba(255,255,255,0.2)',
     inputBg: 'white',
-    sidebarBg: 'rgba(255,255,255,0.95)'
+    sidebarBg: 'rgba(255,255,255,0.95)',
+    hoverBg: 'rgba(0,0,0,0.05)'
   };
 
   // Priority colors
@@ -1004,7 +1091,7 @@ function App() {
     if (!task) return;
 
     const token = localStorage.getItem('token');
-    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+    const API_URL = 'https://task-manager-api-git-master-abdessalem-kentaches-projects.vercel.app'; // CORRECTED API URL
     
     fetch(`${API_URL}/api/tasks/${taskId}`, {
       method: 'PUT',
@@ -1050,7 +1137,7 @@ function App() {
 
   const deleteTask = (taskId) => {
     const token = localStorage.getItem('token');
-    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+    const API_URL = 'https://task-manager-api-git-master-abdessalem-kentaches-projects.vercel.app'; // CORRECTED API URL
     
     fetch(`${API_URL}/api/tasks/${taskId}`, {
       method: 'DELETE',
@@ -1076,7 +1163,7 @@ function App() {
 
     setIsAddingTask(true);
     const token = localStorage.getItem('token');
-    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+    const API_URL = 'https://task-manager-api-git-master-abdessalem-kentaches-projects.vercel.app'; // CORRECTED API URL
     const taskData = {
       name: newTaskName,
       completed: false,
@@ -1197,6 +1284,23 @@ function App() {
       right: '0',
       color: theme.text
     }}>
+      {/* DEBUG TEXT - TEST VERSION 2.0 */}
+      <div style={{
+        position: 'fixed',
+        top: '0',
+        left: '0',
+        right: '0',
+        backgroundColor: '#FF0000',
+        color: '#FFFFFF',
+        padding: '10px',
+        textAlign: 'center',
+        fontSize: '16px',
+        fontWeight: 'bold',
+        zIndex: 99999,
+        boxShadow: '0 2px 10px rgba(255,0,0,0.5)'
+      }}>
+        🚀 TEST VERSION 2.0 - Theme Toggle Should Be Visible Now! 🚀
+      </div>
       {/* Sidebar */}
       <div style={{
         width: sidebarOpen ? '280px' : '0',
@@ -1260,7 +1364,7 @@ function App() {
                 user?.name?.charAt(0).toUpperCase() || 'U'
               )}
               <input
-                id="profile-upload"
+                id="profile-upload-app"
                 type="file"
                 accept="image/*"
                 style={{ display: 'none' }}
@@ -1288,31 +1392,37 @@ function App() {
               📷
             </div>
             </div>
-            <h3 style={{ 
-              color: theme.text, 
-              margin: '0 0 5px 0', 
-              fontSize: '1.1rem',
-              fontWeight: '600',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease',
+            <div style={{
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'center',
-              gap: '8px'
-            }}
-            onClick={() => setShowProfileSettings(true)}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.color = '#1a73e8';
-              e.currentTarget.style.textDecoration = 'underline';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.color = theme.text;
-              e.currentTarget.style.textDecoration = 'none';
+              gap: '8px',
+              marginBottom: '10px'
             }}>
-              <span>{user && user.name ? user.name : 'yahia'} 🔥</span>
-            </h3>
-            
-            {/* Level Indicator */}
+              <h3 style={{ 
+                color: theme.text, 
+                margin: '0', 
+                fontSize: '1.1rem',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'all 0.3s ease',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '8px'
+              }}
+              onClick={() => setShowProfileSettings(true)}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.color = '#1a73e8';
+                e.currentTarget.style.textDecoration = 'underline';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.color = theme.text;
+                e.currentTarget.style.textDecoration = 'none';
+              }}>
+                <span>{user && user.name ? user.name : 'yahia'} 🔥</span>
+              </h3>
+              <ThemeToggle darkMode={darkMode} setDarkMode={setDarkMode} theme={theme} position="next-to-name" />
+            </div>
             <div style={{
               display: 'flex',
               alignItems: 'center',
@@ -1385,6 +1495,11 @@ function App() {
             }}>
               {user?.email || 'user@example.com'}
             </p>
+          </div>
+
+          {/* FORCED VISIBLE THEME TOGGLE */}
+          <div style={{ marginTop: '30px', marginBottom: '20px' }}>
+            <ThemeToggle darkMode={darkMode} setDarkMode={setDarkMode} theme={theme} />
           </div>
 
           {/* Category Navigation */}
@@ -1752,31 +1867,38 @@ function App() {
 
           {/* Theme Toggle */}
           <div style={{ marginTop: '30px' }}>
+            <ThemeToggle darkMode={darkMode} setDarkMode={setDarkMode} theme={theme} />
+          </div>
+
+          {/* Session Management */}
+          <div style={{ marginTop: '20px' }}>
             <button
-              onClick={() => setDarkMode(!darkMode)}
+              onClick={handleClearSession}
               style={{
                 width: '100%',
                 padding: '12px 16px',
-                backgroundColor: darkMode ? '#fbbc04' : '#1a73e8',
+                backgroundColor: '#FF6B35',
                 color: 'white',
-                border: 'none',
+                border: '2px solid #FF6B35',
                 borderRadius: '8px',
                 cursor: 'pointer',
                 fontSize: '14px',
-                fontWeight: '500',
+                fontWeight: '600',
                 transition: 'all 0.2s ease',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px'
+                marginBottom: '10px'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.backgroundColor = '#FF5722';
+                e.target.style.transform = 'scale(1.02)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.backgroundColor = '#FF6B35';
+                e.target.style.transform = 'scale(1)';
               }}
             >
-              {darkMode ? '☀️ Light Mode' : '🌙 Dark Mode'}
+              🔄 Clear Session (Fix 401)
             </button>
-          </div>
-
-          {/* Logout */}
-          <div style={{ marginTop: '20px' }}>
+            
             <button
               onClick={handleLogout}
               style={{
@@ -1788,6 +1910,7 @@ function App() {
                 borderRadius: '8px',
                 cursor: 'pointer',
                 fontSize: '14px',
+                fontWeight: '500',
                 transition: 'all 0.2s ease'
               }}
             >
@@ -1857,7 +1980,7 @@ function App() {
                 fontSize: '2rem',
                 fontWeight: '700'
               }}>
-                Task Manager
+                TASK V2
               </h1>
             </div>
 
@@ -1905,6 +2028,9 @@ function App() {
                 onBlur={(e) => e.target.style.borderColor = theme.border}
               />
             </div>
+
+            {/* Theme Toggle */}
+            <ThemeToggle darkMode={darkMode} setDarkMode={setDarkMode} theme={theme} />
           </div>
         </div>
       
