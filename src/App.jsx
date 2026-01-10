@@ -1161,22 +1161,14 @@ function App() {
     }
 
     setIsAddingTask(true);
-    const token = localStorage.getItem('token');
     const API_URL = 'https://task-manager-api-git-master-abdessalem-kentaches-projects.vercel.app/api/tasks'; // EXACT API URL
-    const taskData = {
-      name: newTaskName,
-      completed: false,
-      priority: taskPriority,
-      category: taskCategory
-    };
     
-    fetch(`${API_URL}/api/tasks`, {
+    fetch(`${API_URL}`, {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        'Content-Type': 'application/json'
       },
-      body: JSON.stringify(taskData)
+      body: JSON.stringify({ "name": newTaskName })
     })
     .then(res => res.json())
     .then(data => {
