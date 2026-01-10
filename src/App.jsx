@@ -446,7 +446,7 @@ function App() {
     // ... (rest of the code remains the same)
     
     const token = localStorage.getItem('token');
-    const API_URL = 'https://task-manager-api-git-master-abdessalem-kentaches-projects.vercel.app'; // CORRECTED API URL
+    const API_URL = 'https://task-manager-api-git-master-abdessalem-kentaches-projects.vercel.app/api/tasks'; // EXACT API URL
     
     // Only fetch if we have a valid API URL
     if (!API_URL || API_URL === 'http://localhost:3000') {
@@ -454,9 +454,9 @@ function App() {
       return;
     }
     
-    fetch(`${API_URL}/api/tasks`, {
+    fetch(`${API_URL}`, {
       headers: {
-        'Authorization': `Bearer ${token}`
+        'Content-Type': 'application/json'
       }
     })
       .then(res => res.json())
@@ -1091,13 +1091,12 @@ function App() {
     if (!task) return;
 
     const token = localStorage.getItem('token');
-    const API_URL = 'https://task-manager-api-git-master-abdessalem-kentaches-projects.vercel.app'; // CORRECTED API URL
+    const API_URL = 'https://task-manager-api-git-master-abdessalem-kentaches-projects.vercel.app/api/tasks'; // EXACT API URL
     
-    fetch(`${API_URL}/api/tasks/${taskId}`, {
+    fetch(`${API_URL}/${taskId}`, {
       method: 'PUT',
       headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
         name: task.name,
@@ -1137,7 +1136,7 @@ function App() {
 
   const deleteTask = (taskId) => {
     const token = localStorage.getItem('token');
-    const API_URL = 'https://task-manager-api-git-master-abdessalem-kentaches-projects.vercel.app'; // CORRECTED API URL
+    const API_URL = 'https://task-manager-api-git-master-abdessalem-kentaches-projects.vercel.app/api/tasks'; // EXACT API URL
     
     fetch(`${API_URL}/api/tasks/${taskId}`, {
       method: 'DELETE',
@@ -1163,7 +1162,7 @@ function App() {
 
     setIsAddingTask(true);
     const token = localStorage.getItem('token');
-    const API_URL = 'https://task-manager-api-git-master-abdessalem-kentaches-projects.vercel.app'; // CORRECTED API URL
+    const API_URL = 'https://task-manager-api-git-master-abdessalem-kentaches-projects.vercel.app/api/tasks'; // EXACT API URL
     const taskData = {
       name: newTaskName,
       completed: false,
