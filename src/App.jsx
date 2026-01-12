@@ -1163,6 +1163,9 @@ function App() {
     setIsAddingTask(true);
     const API_URL = 'https://task-manager-api-git-master-abdessalem-kentaches-projects.vercel.app'; // BASE API URL
     
+    console.log(' Task submission - URL:', `${API_URL}/api/tasks`);
+    console.log(' Task submission - Body:', JSON.stringify({ "name": newTaskName }));
+    
     fetch(`${API_URL}/api/tasks`, {
       method: 'POST',
       headers: {
@@ -1170,18 +1173,26 @@ function App() {
       },
       body: JSON.stringify({ "name": newTaskName })
     })
-    .then(res => res.json())
+    .then(res => {
+      console.log(' Task submission - Response status:', res.status);
+      if (!res.ok) {
+        throw new Error(`HTTP error! status: ${res.status}`);
+      }
+      return res.json();
+    })
     .then(data => {
+      console.log(' Task submission - Response data:', data);
       setNewTaskName(''); // Clear input
       if (data.task) {
         setTasks(prevTasks => [...prevTasks, data.task]);
-        showToast('✅ Task added successfully!', 'success');
+        showToast(' Task added successfully!', 'success');
       } else {
-        showToast('✅ Task added successfully!', 'success');
+        showToast(' Task added successfully!', 'success');
       }
     })
     .catch(err => {
-      console.error("Error adding task:", err);
+      console.error(" Error adding task:", err);
+      console.error(" Error details:", err.message);
       showToast('Failed to add task', 'error');
     })
     .finally(() => {
