@@ -1091,12 +1091,11 @@ function App() {
     if (!task) return;
 
     const token = localStorage.getItem('token');
-    const API_URL = 'https://task-manager-api-git-master-abdessalem-kentaches-projects.vercel.app'; // BASE API URL
-    
-    fetch(`${API_URL}/${taskId}`, {
+    fetch(`/api/tasks/${taskId}`, {
       method: 'PUT',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
       },
       body: JSON.stringify({
         name: task.name,
@@ -1137,7 +1136,6 @@ function App() {
   const deleteTask = (taskId) => {
     const token = localStorage.getItem('token');
     const API_URL = 'https://task-manager-api-git-master-abdessalem-kentaches-projects.vercel.app'; // BASE API URL
-    
     fetch(`${API_URL}/api/tasks/${taskId}`, {
       method: 'DELETE',
       headers: {
@@ -1161,12 +1159,10 @@ function App() {
     }
 
     setIsAddingTask(true);
-    const API_URL = 'https://task-manager-api-git-master-abdessalem-kentaches-projects.vercel.app'; // BASE API URL
-    
-    console.log(' Task submission - URL:', `${API_URL}/api/tasks`);
+    console.log(' Task submission - URL:', '/api/tasks');
     console.log(' Task submission - Body:', JSON.stringify({ "name": newTaskName }));
     
-    fetch(`${API_URL}/api/tasks`, {
+    fetch('/api/tasks', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
