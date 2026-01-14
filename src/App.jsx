@@ -444,19 +444,30 @@ function App() {
   const fetchTasks = () => {
     if (!user) return;
     
+    console.log('🔥 Loading tasks from localStorage...');
     const savedTasks = localStorage.getItem('tasks');
+    console.log('🔥 Saved tasks found:', savedTasks ? 'YES' : 'NO');
+    
     if (savedTasks) {
       try {
         const parsedTasks = JSON.parse(savedTasks);
+        console.log('🔥 Parsed tasks:', parsedTasks);
         if (Array.isArray(parsedTasks)) {
           setTasks(parsedTasks);
+          console.log('🔥 Tasks set successfully:', parsedTasks.length);
+        } else {
+          console.log('🔥 Parsed tasks is not array, initializing empty');
+          setTasks([]);
+          localStorage.setItem('tasks', JSON.stringify([]));
         }
       } catch (e) {
-        console.error('Error parsing saved tasks:', e);
+        console.error('🔥 Error parsing saved tasks:', e);
         setTasks([]);
+        localStorage.setItem('tasks', JSON.stringify([]));
       }
     } else {
       // Initialize with empty array if no tasks exist
+      console.log('🔥 No saved tasks found, initializing empty array');
       setTasks([]);
       localStorage.setItem('tasks', JSON.stringify([]));
     }
@@ -1113,10 +1124,18 @@ function App() {
   };
 
   const addTask = () => {
+    console.log('🔥 addTask called!');
+    console.log('🔥 newTaskName:', newTaskName);
+    console.log('🔥 taskPriority:', taskPriority);
+    console.log('🔥 taskCategory:', taskCategory);
+    console.log('🔥 current tasks:', tasks);
+    
     if (!newTaskName.trim()) {
+      console.log('🔥 Empty task name, returning');
       return; // Don't add empty tasks
     }
 
+    console.log('🔥 Creating new task...');
     const newTask = {
       _id: Date.now().toString(),
       name: newTaskName.trim(),
@@ -1127,12 +1146,26 @@ function App() {
       updatedAt: new Date().toISOString()
     };
     
+    console.log('🔥 New task created:', newTask);
+    
+    console.log('🔥 Creating updated tasks array...');
     const updatedTasks = [...tasks, newTask];
+    console.log('🔥 Updated tasks array:', updatedTasks);
+    
+    console.log('🔥 Setting tasks state...');
     setTasks(updatedTasks);
+    
+    console.log('🔥 Saving to localStorage...');
     localStorage.setItem('tasks', JSON.stringify(updatedTasks));
+    
+    console.log('🔥 Clearing input...');
     setNewTaskName('');
     setIsAddingTask(false);
+    
+    console.log('🔥 Showing toast...');
     showToast('🎯 Task added successfully!', 'success');
+    
+    console.log('🔥 addTask completed!');
   };
 
   // Show Profile Settings if requested
