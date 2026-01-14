@@ -443,18 +443,16 @@ function App() {
   // Fetch tasks (only when user is authenticated)
   const fetchTasks = () => {
     if (!user) return;
-    // ... (rest of the code remains the same)
     
     const token = localStorage.getItem('token');
-    const API_URL = 'https://task-manager-api-git-master-abdessalem-kentaches-projects.vercel.app'; // BASE API URL
     
-    // Only fetch if we have a valid API URL
-    if (!API_URL || API_URL === 'http://localhost:3000') {
+    // Only fetch if we have a valid token
+    if (!token) {
       console.log('Using demo mode - no API calls');
       return;
     }
     
-    fetch(`${API_URL}/api/tasks`, {
+    fetch('/api/tasks', {
       headers: {
         'Content-Type': 'application/json'
       }
@@ -1135,8 +1133,7 @@ function App() {
 
   const deleteTask = (taskId) => {
     const token = localStorage.getItem('token');
-    const API_URL = 'https://task-manager-api-git-master-abdessalem-kentaches-projects.vercel.app'; // BASE API URL
-    fetch(`${API_URL}/api/tasks/${taskId}`, {
+    fetch(`/api/tasks/${taskId}`, {
       method: 'DELETE',
       headers: {
         'Authorization': `Bearer ${token}`
