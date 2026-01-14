@@ -438,7 +438,6 @@ function App() {
   }, [user]);
 
   // Profile picture state
-  const [profilePicture, setProfilePicture] = useState(null);
 
   // Handle profile picture upload
   const handleProfilePictureUpload = (event) => {
