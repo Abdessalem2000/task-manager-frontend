@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import Auth from './Auth.jsx';
-import ProfileSettings from './ProfileSettings.jsx';
-import Toast from './Toast.jsx';
+import Auth from '../src/Auth.jsx';
+import ProfileSettings from '../src/ProfileSettings.jsx';
+import Toast from '../src/Toast.jsx';
 import { LineChart, Line, AreaChart, Area, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import {
   DndContext,
