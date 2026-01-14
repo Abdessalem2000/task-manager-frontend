@@ -1091,7 +1091,7 @@ function App() {
     showToast('Task removed', 'info');
   };
 
-  const addTask = () => {
+  const addTask = async () => {
     console.log('🔥 addTask called!');
     console.log('🔥 newTaskName:', newTaskName);
     console.log('🔥 taskPriority:', taskPriority);
@@ -1103,37 +1103,60 @@ function App() {
       return; // Don't add empty tasks
     }
 
-    console.log('🔥 Creating new task...');
-    const newTask = {
-      _id: Date.now().toString(),
-      name: newTaskName.trim(),
-      completed: false,
-      priority: taskPriority,
-      category: taskCategory,
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
-    
-    console.log('🔥 New task created:', newTask);
-    
-    console.log('🔥 Creating updated tasks array...');
-    const updatedTasks = [...tasks, newTask];
-    console.log('🔥 Updated tasks array:', updatedTasks);
-    
-    console.log('🔥 Setting tasks state...');
-    setTasks(updatedTasks);
-    
-    console.log('🔥 Saving to localStorage...');
-    localStorage.setItem('tasks', JSON.stringify(updatedTasks));
-    
-    console.log('🔥 Clearing input...');
-    setNewTaskName('');
-    setIsAddingTask(false);
-    
-    console.log('🔥 Showing toast...');
-    showToast('🎯 Task added successfully!', 'success');
-    
-    console.log('🔥 addTask completed!');
+    console.log('🔥 Calling unified API...');
+    try {
+      const response = await fetch('/api/tasks', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: newTaskName.trim(),
+          priority: taskPriority,
+          category: taskCategory
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status}`);
+      }
+
+      const newTask = await response.json();
+      console.log('🔥 API response:', newTask);
+      
+      // Add priority and category from frontend state
+      const enrichedTask = {
+        ...newTask,
+        priority: taskPriority,
+        category: taskCategory,
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      
+      console.log('🔥 Enriched task:', enrichedTask);
+      
+      console.log('🔥 Creating updated tasks array...');
+      const updatedTasks = [...tasks, enrichedTask];
+      console.log('🔥 Updated tasks array:', updatedTasks);
+      
+      console.log('🔥 Setting tasks state...');
+      setTasks(updatedTasks);
+      
+      console.log('🔥 Saving to localStorage...');
+      localStorage.setItem('tasks', JSON.stringify(updatedTasks));
+      
+      console.log('🔥 Clearing input...');
+      setNewTaskName('');
+      setIsAddingTask(false);
+      
+      console.log('🔥 Showing toast...');
+      showToast('🎯 Task added successfully!', 'success');
+      
+      console.log('🔥 addTask completed!');
+    } catch (error) {
+      console.error('🔥 API Error:', error);
+      showToast('❌ Failed to add task. Please try again.', 'error');
+    }
   };
 
   // Show Profile Settings if requested
@@ -3346,4 +3369,10 @@ function App() {
   }
 }
 
-export default App;
+export default function AppWrapper() {
+  return (
+    <ErrorBoundary>
+      <App />
+    </ErrorBoundary>
+  );
+}
