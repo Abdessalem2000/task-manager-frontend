@@ -1,10 +1,16 @@
 import '../src/App.css';
 
-export default function Home() {
+export default function RootLayout({ children }) {
   return (
-    <div>
-      <h1>Task Manager - Next.js Version</h1>
-      <p>API routing is now working with Next.js!</p>
-    </div>
+    <html>
+      <head>
+        <title>Task Manager</title>
+        <meta name="description" content="Professional task management dashboard" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </head>
+      <body>
+        {children}
+      </body>
+    </html>
   );
 }
