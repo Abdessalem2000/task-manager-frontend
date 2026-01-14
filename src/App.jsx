@@ -424,6 +424,11 @@ function App() {
       setTasks(tasks || []);
     } catch (error) {
       console.error('🔥 Error fetching tasks from API:', error);
+      console.error('🔥 Error details:', {
+        message: error.message,
+        stack: error.stack,
+        name: error.name
+      });
       // Fallback to empty array to prevent crashes
       setTasks([]);
       showToast('⚠️ Using offline mode. Tasks may not sync.', 'warning');
