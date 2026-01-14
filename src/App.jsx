@@ -319,6 +319,7 @@ function App() {
   const [habits, setHabits] = useState([]);
   const [showHabitModal, setShowHabitModal] = useState(false);
   const [newHabitName, setNewHabitName] = useState('');
+  const [profilePicture, setProfilePicture] = useState(null);
 
   // Setup drag and drop sensors
   const sensors = useSensors(
