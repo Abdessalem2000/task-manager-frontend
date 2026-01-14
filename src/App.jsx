@@ -440,34 +440,26 @@ function App() {
     showToast('Session cleared! Please refresh and re-login.', 'info');
   };
 
-  // Fetch tasks (only when user is authenticated)
+  // Load tasks from localStorage (only when user is authenticated)
   const fetchTasks = () => {
     if (!user) return;
     
-    const token = localStorage.getItem('token');
-    
-    // Only fetch if we have a valid token
-    if (!token) {
-      console.log('Using demo mode - no API calls');
-      return;
-    }
-    
-    fetch('/api/tasks', {
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    })
-      .then(res => res.json())
-      .then(data => {
-        if(Array.isArray(data)) {
-          setTasks(data);
+    const savedTasks = localStorage.getItem('tasks');
+    if (savedTasks) {
+      try {
+        const parsedTasks = JSON.parse(savedTasks);
+        if (Array.isArray(parsedTasks)) {
+          setTasks(parsedTasks);
         }
-      })
-      .catch(error => {
-        console.error('Error fetching tasks:', error);
-        // Don't crash the app if API fails
+      } catch (e) {
+        console.error('Error parsing saved tasks:', e);
         setTasks([]);
-      });
+      }
+    } else {
+      // Initialize with empty array if no tasks exist
+      setTasks([]);
+      localStorage.setItem('tasks', JSON.stringify([]));
+    }
   };
 
   // Fetch tasks when user changes
@@ -1088,66 +1080,36 @@ function App() {
     const task = (tasks || []).find(t => t._id === taskId);
     if (!task) return;
 
-    const token = localStorage.getItem('token');
-    fetch(`/api/tasks/${taskId}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${token}`
-      },
-      body: JSON.stringify({
-        name: task.name,
-        completed: !task.completed
-      })
-    })
-    .then(res => res.json())
-    .then(data => {
-      setTasks(prevTasks => 
-        prevTasks.map(t => 
-          t._id === taskId ? { ...t, completed: !t.completed } : t
-        )
-      );
+    const updatedTasks = tasks.map(t => 
+      t._id === taskId ? { ...t, completed: !t.completed, updatedAt: new Date().toISOString() } : t
+    );
+    
+    setTasks(updatedTasks);
+    localStorage.setItem('tasks', JSON.stringify(updatedTasks));
+    
+    // Award XP for completing tasks
+    if (!task.completed) {
+      awardXP(10, 'First Task Completed');
       
-      // Award XP for completing tasks
-      if (!task.completed) {
-        awardXP(10, 'First Task Completed');
-        
-        // Check for weekly warrior badge (7 tasks completed in a week)
-        const completedThisWeek = (tasks || []).filter(t => 
-          t.completed && 
-          new Date(t.updatedAt || t.createdAt) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
-        ).length;
-        
-        if (completedThisWeek >= 7) {
-          awardXP(0, 'Weekly Warrior');
-        }
+      // Check for weekly warrior badge (7 tasks completed in a week)
+      const completedThisWeek = updatedTasks.filter(t => 
+        t.completed && 
+        new Date(t.updatedAt || t.createdAt) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+      ).length;
+      
+      if (completedThisWeek >= 7) {
+        awardXP(0, 'Weekly Warrior');
       }
-      
-      showToast(task.completed ? 'Task marked as incomplete' : '🎉 Great job! Task completed!', task.completed ? 'info' : 'success');
-    })
-    .catch(err => {
-      console.error("Error updating task:", err);
-      showToast('Failed to update task', 'error');
-    });
+    }
+    
+    showToast(task.completed ? 'Task marked as incomplete' : ' Great job! Task completed!', task.completed ? 'info' : 'success');
   };
 
   const deleteTask = (taskId) => {
-    const token = localStorage.getItem('token');
-    fetch(`/api/tasks/${taskId}`, {
-      method: 'DELETE',
-      headers: {
-        'Authorization': `Bearer ${token}`
-      }
-    })
-    .then(res => res.json())
-    .then(data => {
-      setTasks(prevTasks => prevTasks.filter(task => task._id !== taskId));
-      showToast('Task removed', 'info');
-    })
-    .catch(err => {
-      console.error("Error deleting task:", err);
-      showToast('Failed to delete task', 'error');
-    });
+    const updatedTasks = tasks.filter(task => task._id !== taskId);
+    setTasks(updatedTasks);
+    localStorage.setItem('tasks', JSON.stringify(updatedTasks));
+    showToast('Task removed', 'info');
   };
 
   const addTask = () => {
@@ -1155,42 +1117,22 @@ function App() {
       return; // Don't add empty tasks
     }
 
-    setIsAddingTask(true);
-    console.log(' Task submission - URL:', '/api/tasks');
-    console.log(' Task submission - Body:', JSON.stringify({ "name": newTaskName }));
+    const newTask = {
+      _id: Date.now().toString(),
+      name: newTaskName.trim(),
+      completed: false,
+      priority: taskPriority,
+      category: taskCategory,
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
+    };
     
-    fetch('/api/tasks', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ "name": newTaskName })
-    })
-    .then(res => {
-      console.log(' Task submission - Response status:', res.status);
-      if (!res.ok) {
-        throw new Error(`HTTP error! status: ${res.status}`);
-      }
-      return res.json();
-    })
-    .then(data => {
-      console.log(' Task submission - Response data:', data);
-      setNewTaskName(''); // Clear input
-      if (data.task) {
-        setTasks(prevTasks => [...prevTasks, data.task]);
-        showToast(' Task added successfully!', 'success');
-      } else {
-        showToast(' Task added successfully!', 'success');
-      }
-    })
-    .catch(err => {
-      console.error(" Error adding task:", err);
-      console.error(" Error details:", err.message);
-      showToast('Failed to add task', 'error');
-    })
-    .finally(() => {
-      setIsAddingTask(false);
-    });
+    const updatedTasks = [...tasks, newTask];
+    setTasks(updatedTasks);
+    localStorage.setItem('tasks', JSON.stringify(updatedTasks));
+    setNewTaskName('');
+    setIsAddingTask(false);
+    showToast('🎯 Task added successfully!', 'success');
   };
 
   // Show Profile Settings if requested
