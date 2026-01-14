@@ -287,6 +287,31 @@ const SortableTaskCard = ({ task, theme, darkMode, toggleTaskComplete, deleteTas
   );
 };
 
+// Global Error Boundary Component
+const ErrorBoundary = ({ children }) => {
+  const [hasError, setHasError] = useState(false);
+  const [error, setError] = useState(null);
+
+  const handleError = (error, errorInfo) => {
+    console.error('🚨 ERROR BOUNDARY CAUGHT:', error, errorInfo);
+    setHasError(true);
+    setError(error);
+  };
+
+  if (hasError) {
+    return (
+      <div style={{ padding: '20px', textAlign: 'center', color: 'red' }}>
+        <h2>🚨 Something went wrong</h2>
+        <p>UI has been protected from crashing.</p>
+        <p>Check console for details.</p>
+        <button onClick={() => window.location.reload()}>Reload Page</button>
+      </div>
+    );
+  }
+
+  return <>{children}</>;
+};
+
 function App() {
   console.log('🔥 App is mounting...');
   try {
@@ -332,64 +357,6 @@ function App() {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
-
-  // Check for existing authentication on mount
-  useEffect(() => {
-    console.log('🔥 useEffect is running...');
-    
-    // Safety check: Clear corrupted localStorage
-    try {
-      const testKeys = ['user', 'token', 'darkMode', 'sidebarOpen', 'userLevel', 'userXP', 'badges', 'dailyStreak', 'lastActiveDate', 'habits', 'alarms'];
-      testKeys.forEach(key => {
-        const value = localStorage.getItem(key);
-        if (value && (value.includes('undefined') || value.includes('[object Object]'))) {
-          console.warn(`Clearing corrupted localStorage key: ${key}`);
-          localStorage.removeItem(key);
-        }
-      });
-    } catch (e) {
-      console.warn('localStorage safety check failed:', e);
-    }
-    
-    const token = localStorage.getItem('token');
-    const savedUser = localStorage.getItem('user');
-    
-    if (token && savedUser) {
-      try {
-        setUser(JSON.parse(savedUser));
-      } catch (e) {
-        console.error('Error parsing savedUser:', e);
-        localStorage.removeItem('user');
-      }
-    }
-
-    // Check for saved theme preference
-    const savedTheme = localStorage.getItem('darkMode');
-    if (savedTheme) {
-      try {
-        const parsed = JSON.parse(savedTheme);
-        // Handle both boolean and string formats for compatibility
-        if (typeof parsed === 'string') {
-          setDarkMode(parsed === 'dark');
-        } else {
-          setDarkMode(parsed || false);
-        }
-      } catch (e) {
-        console.error('Error parsing savedTheme:', e);
-        setDarkMode(false);
-      }
-    }
-
-    // Check for saved sidebar preference
-    const savedSidebar = localStorage.getItem('sidebarOpen');
-    if (savedSidebar) {
-      try {
-        setSidebarOpen(JSON.parse(savedSidebar));
-      } catch (e) {
-        console.error('Error parsing savedSidebar:', e);
-      }
-    }
-  }, []);
 
   // Save theme preference with safety check
   useEffect(() => {
