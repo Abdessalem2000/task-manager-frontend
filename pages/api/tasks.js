@@ -26,12 +26,17 @@ const TaskSchema = new mongoose.Schema({
 const Task = mongoose.models.Task || mongoose.model('Task', TaskSchema);
 
 export default async function handler(req, res) {
+  console.log('🔥 API Route Hit:', req.method, req.url);
+  console.log('🔥 Request headers:', req.headers);
+  console.log('🔥 Request body:', req.body);
+  
   // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
   
   if (req.method === 'OPTIONS') {
+    console.log('🔥 OPTIONS request - returning 200');
     return res.status(200).end();
   }
 
@@ -90,7 +95,8 @@ export default async function handler(req, res) {
         return res.status(200).json({ message: 'Task deleted successfully' });
 
       default:
-        return res.status(405).json({ error: 'Method not allowed' });
+        res.setHeader('Allow', ['GET', 'POST', 'PUT', 'DELETE']);
+        return res.status(405).end(`Method ${req.method} Not Allowed`);
     }
   } catch (error) {
     console.error('API Error:', error);
