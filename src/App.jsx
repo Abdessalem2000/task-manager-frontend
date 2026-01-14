@@ -317,6 +317,7 @@ function App() {
   try {
   const [user, setUser] = useState({ name: 'yahia', email: 'yahia@example.com' });
   const [tasks, setTasks] = useState([]);
+  const [dbConnected, setDbConnected] = useState(false);
   const [newTaskName, setNewTaskName] = useState('');
   const [toast, setToast] = useState(null);
   const [toasts, setToasts] = useState([]);
@@ -419,9 +420,23 @@ function App() {
         throw new Error(`API Error: ${response.status}`);
       }
       
-      const tasks = await response.json();
+      const data = await response.json();
+      console.log('🔥 API response:', data);
+      
+      // Handle both old format (direct array) and new format (object with tasks and dbConnected)
+      const tasks = data.tasks || data;
+      const connected = data.dbConnected !== undefined ? data.dbConnected : true;
+      
       console.log('🔥 Tasks fetched from API:', tasks);
+      console.log('🔥 DB Connected:', connected);
+      
       setTasks(tasks || []);
+      setDbConnected(connected);
+      
+      // Show success message if DB is connected
+      if (connected && !dbConnected) {
+        showToast('🟢 Database connected successfully!', 'success');
+      }
     } catch (error) {
       console.error('🔥 Error fetching tasks from API:', error);
       console.error('🔥 Error details:', {
@@ -431,7 +446,12 @@ function App() {
       });
       // Fallback to empty array to prevent crashes
       setTasks([]);
-      showToast('⚠️ Using offline mode. Tasks may not sync.', 'warning');
+      setDbConnected(false);
+      
+      // Only show offline mode if we haven't connected before
+      if (!dbConnected) {
+        showToast('⚠️ Using offline mode. Tasks may not sync.', 'warning');
+      }
     }
   };
 
@@ -1157,6 +1177,11 @@ function App() {
       const newTask = await response.json();
       console.log('🔥 API response:', newTask);
       
+      // Update database connection status
+      if (newTask.dbConnected !== undefined) {
+        setDbConnected(newTask.dbConnected);
+      }
+      
       // Add priority and category from frontend state
       const enrichedTask = {
         ...newTask,
@@ -1278,10 +1303,28 @@ function App() {
       right: '0',
       color: theme.text
     }}>
-      {/* DEBUG TEXT - TEST VERSION 2.0 */}
+      {/* Database Status Indicator */}
       <div style={{
         position: 'fixed',
         top: '0',
+        left: '0',
+        right: '0',
+        backgroundColor: dbConnected ? '#1DB954' : '#FF6B6B',
+        color: 'white',
+        padding: '8px',
+        textAlign: 'center',
+        fontSize: '12px',
+        fontWeight: '600',
+        zIndex: 99998,
+        boxShadow: '0 2px 10px rgba(0,0,0,0.2)'
+      }}>
+        {dbConnected ? '🟢 Database Connected' : '🔴 Offline Mode'}
+      </div>
+      
+      {/* DEBUG TEXT - TEST VERSION 2.0 */}
+      <div style={{
+        position: 'fixed',
+        top: '30px',
         left: '0',
         right: '0',
         backgroundColor: '#FF0000',
