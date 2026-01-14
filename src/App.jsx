@@ -408,36 +408,25 @@ function App() {
     showToast('Session cleared! Please refresh and re-login.', 'info');
   };
 
-  // Load tasks from localStorage (only when user is authenticated)
-  const fetchTasks = () => {
+  // Load tasks from API (only when user is authenticated)
+  const fetchTasks = async () => {
     if (!user) return;
     
-    console.log('🔥 Loading tasks from localStorage...');
-    const savedTasks = localStorage.getItem('tasks');
-    console.log('🔥 Saved tasks found:', savedTasks ? 'YES' : 'NO');
-    
-    if (savedTasks) {
-      try {
-        const parsedTasks = JSON.parse(savedTasks);
-        console.log('🔥 Parsed tasks:', parsedTasks);
-        if (Array.isArray(parsedTasks)) {
-          setTasks(parsedTasks);
-          console.log('🔥 Tasks set successfully:', parsedTasks.length);
-        } else {
-          console.log('🔥 Parsed tasks is not array, initializing empty');
-          setTasks([]);
-          localStorage.setItem('tasks', JSON.stringify([]));
-        }
-      } catch (e) {
-        console.error('🔥 Error parsing saved tasks:', e);
-        setTasks([]);
-        localStorage.setItem('tasks', JSON.stringify([]));
+    console.log('🔥 Loading tasks from API...');
+    try {
+      const response = await fetch('/api/tasks');
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status}`);
       }
-    } else {
-      // Initialize with empty array if no tasks exist
-      console.log('🔥 No saved tasks found, initializing empty array');
+      
+      const tasks = await response.json();
+      console.log('🔥 Tasks fetched from API:', tasks);
+      setTasks(tasks || []);
+    } catch (error) {
+      console.error('🔥 Error fetching tasks from API:', error);
+      // Fallback to empty array to prevent crashes
       setTasks([]);
-      localStorage.setItem('tasks', JSON.stringify([]));
+      showToast('⚠️ Using offline mode. Tasks may not sync.', 'warning');
     }
   };
 
@@ -1055,40 +1044,80 @@ function App() {
     shopping: '#fbbc04'
   };
 
-  const toggleTaskComplete = (taskId) => {
+  const toggleTaskComplete = async (taskId) => {
     const task = (tasks || []).find(t => t._id === taskId);
     if (!task) return;
 
-    const updatedTasks = tasks.map(t => 
-      t._id === taskId ? { ...t, completed: !t.completed, updatedAt: new Date().toISOString() } : t
-    );
-    
-    setTasks(updatedTasks);
-    localStorage.setItem('tasks', JSON.stringify(updatedTasks));
-    
-    // Award XP for completing tasks
-    if (!task.completed) {
-      awardXP(10, 'First Task Completed');
-      
-      // Check for weekly warrior badge (7 tasks completed in a week)
-      const completedThisWeek = updatedTasks.filter(t => 
-        t.completed && 
-        new Date(t.updatedAt || t.createdAt) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
-      ).length;
-      
-      if (completedThisWeek >= 7) {
-        awardXP(0, 'Weekly Warrior');
+    console.log('🔥 Toggling task completion via API...');
+    try {
+      const response = await fetch(`/api/tasks?taskId=${taskId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          completed: !task.completed
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status}`);
       }
+
+      const updatedTask = await response.json();
+      console.log('🔥 Task updated via API:', updatedTask);
+      
+      // Update local state
+      const updatedTasks = tasks.map(t => 
+        t._id === taskId ? updatedTask : t
+      );
+      
+      setTasks(updatedTasks);
+      
+      // Award XP for completing tasks
+      if (!task.completed) {
+        awardXP(10, 'First Task Completed');
+        
+        // Check for weekly warrior badge (7 tasks completed in a week)
+        const completedThisWeek = updatedTasks.filter(t => 
+          t.completed && 
+          new Date(t.updatedAt || t.createdAt) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+        ).length;
+        
+        if (completedThisWeek >= 7) {
+          awardXP(0, 'Weekly Warrior');
+        }
+      }
+      
+      showToast(task.completed ? 'Task marked as incomplete' : ' Great job! Task completed!', task.completed ? 'info' : 'success');
+    } catch (error) {
+      console.error('🔥 Error toggling task:', error);
+      showToast('❌ Failed to update task. Please try again.', 'error');
     }
-    
-    showToast(task.completed ? 'Task marked as incomplete' : ' Great job! Task completed!', task.completed ? 'info' : 'success');
   };
 
-  const deleteTask = (taskId) => {
-    const updatedTasks = tasks.filter(task => task._id !== taskId);
-    setTasks(updatedTasks);
-    localStorage.setItem('tasks', JSON.stringify(updatedTasks));
-    showToast('Task removed', 'info');
+  const deleteTask = async (taskId) => {
+    console.log('🔥 Deleting task via API...');
+    try {
+      const response = await fetch(`/api/tasks?taskId=${taskId}`, {
+        method: 'DELETE'
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status}`);
+      }
+
+      console.log('🔥 Task deleted via API');
+      
+      // Update local state
+      const updatedTasks = tasks.filter(task => task._id !== taskId);
+      setTasks(updatedTasks);
+      
+      showToast('Task removed', 'info');
+    } catch (error) {
+      console.error('🔥 Error deleting task:', error);
+      showToast('❌ Failed to delete task. Please try again.', 'error');
+    }
   };
 
   const addTask = async () => {
