@@ -1,5 +1,12 @@
 import React, { useState, useEffect } from 'react';
 
+// Mock implementations for missing drag and drop imports
+const useSensors = (...sensors) => [];
+const useSensor = (sensor, options) => ({});
+const PointerSensor = {};
+const KeyboardSensor = {};
+const sortableKeyboardCoordinates = () => ({});
+
 export default function Home() {
   const [mounted, setMounted] = useState(false);
   
@@ -686,6 +693,637 @@ export default function Home() {
           }}>
             Tasks: {filteredTasks.length} | DB: {dbConnected ? '🟢' : '🔴'}
           </div>
+
+          {/* Add Task Modal */}
+          {showAddTaskModal && (
+            <div style={{
+              position: 'fixed',
+              top: '0',
+              left: '0',
+              right: '0',
+              bottom: '0',
+              backgroundColor: 'rgba(0,0,0,0.5)',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              zIndex: '9999'
+            }}>
+              <div style={{
+                backgroundColor: theme.cardBg,
+                borderRadius: '12px',
+                padding: '30px',
+                width: '90%',
+                maxWidth: '500px',
+                boxShadow: '0 20px 40px rgba(0,0,0,0.3)'
+              }}>
+                <h2 style={{
+                  margin: '0 0 20px 0',
+                  fontSize: '1.5rem',
+                  fontWeight: '600',
+                  color: theme.text
+                }}>
+                  Add New Task
+                </h2>
+                
+                <div style={{ marginBottom: '15px' }}>
+                  <label style={{
+                    display: 'block',
+                    marginBottom: '5px',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    color: theme.text
+                  }}>
+                    Task Name
+                  </label>
+                  <input
+                    type="text"
+                    value={newTaskName}
+                    onChange={(e) => setNewTaskName(e.target.value)}
+                    placeholder="Enter task name..."
+                    style={{
+                      width: '100%',
+                      padding: '12px',
+                      border: `1px solid ${theme.border}`,
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      backgroundColor: theme.bg,
+                      color: theme.text
+                    }}
+                  />
+                </div>
+
+                <div style={{ marginBottom: '15px' }}>
+                  <label style={{
+                    display: 'block',
+                    marginBottom: '5px',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    color: theme.text
+                  }}>
+                    Priority
+                  </label>
+                  <select
+                    value={newTaskPriority}
+                    onChange={(e) => setNewTaskPriority(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '12px',
+                      border: `1px solid ${theme.border}`,
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      backgroundColor: theme.bg,
+                      color: theme.text
+                    }}
+                  >
+                    <option value="low">Low</option>
+                    <option value="medium">Medium</option>
+                    <option value="high">High</option>
+                  </select>
+                </div>
+
+                <div style={{ marginBottom: '20px' }}>
+                  <label style={{
+                    display: 'block',
+                    marginBottom: '5px',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    color: theme.text
+                  }}>
+                    Category
+                  </label>
+                  <select
+                    value={newTaskCategory}
+                    onChange={(e) => setNewTaskCategory(e.target.value)}
+                    style={{
+                      width: '100%',
+                      padding: '12px',
+                      border: `1px solid ${theme.border}`,
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      backgroundColor: theme.bg,
+                      color: theme.text
+                    }}
+                  >
+                    <option value="work">Work</option>
+                    <option value="personal">Personal</option>
+                    <option value="shopping">Shopping</option>
+                  </select>
+                </div>
+
+                <div style={{
+                  display: 'flex',
+                  gap: '10px',
+                  justifyContent: 'flex-end'
+                }}>
+                  <button
+                    onClick={() => {
+                      setShowAddTaskModal(false);
+                      setNewTaskName('');
+                      setNewTaskPriority('medium');
+                      setNewTaskCategory('work');
+                    }}
+                    style={{
+                      padding: '12px 20px',
+                      backgroundColor: theme.hoverBg,
+                      border: `1px solid ${theme.border}`,
+                      borderRadius: '8px',
+                      color: theme.text,
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                      fontWeight: '500'
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => {
+                      addTask();
+                      setShowAddTaskModal(false);
+                    }}
+                    disabled={!newTaskName.trim() || isAddingTask}
+                    style={{
+                      padding: '12px 20px',
+                      backgroundColor: newTaskName.trim() && !isAddingTask ? theme.success : '#ccc',
+                      border: 'none',
+                      borderRadius: '8px',
+                      color: 'white',
+                      cursor: newTaskName.trim() && !isAddingTask ? 'pointer' : 'not-allowed',
+                      fontSize: '14px',
+                      fontWeight: '500'
+                    }}
+                  >
+                    {isAddingTask ? 'Adding...' : 'Add Task'}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Profile Settings Modal */}
+          {showProfileSettings && (
+            <div style={{
+              position: 'fixed',
+              top: '0',
+              left: '0',
+              right: '0',
+              bottom: '0',
+              backgroundColor: 'rgba(0,0,0,0.5)',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              zIndex: '9999'
+            }}>
+              <div style={{
+                backgroundColor: theme.cardBg,
+                borderRadius: '12px',
+                padding: '30px',
+                width: '90%',
+                maxWidth: '500px',
+                boxShadow: '0 20px 40px rgba(0,0,0,0.3)'
+              }}>
+                <h2 style={{
+                  margin: '0 0 20px 0',
+                  fontSize: '1.5rem',
+                  fontWeight: '600',
+                  color: theme.text
+                }}>
+                  Profile Settings
+                </h2>
+                
+                <div style={{ marginBottom: '15px' }}>
+                  <label style={{
+                    display: 'block',
+                    marginBottom: '5px',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    color: theme.text
+                  }}>
+                    Name
+                  </label>
+                  <input
+                    type="text"
+                    value={user.name}
+                    onChange={(e) => setUser(prev => ({ ...prev, name: e.target.value }))}
+                    style={{
+                      width: '100%',
+                      padding: '12px',
+                      border: `1px solid ${theme.border}`,
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      backgroundColor: theme.bg,
+                      color: theme.text
+                    }}
+                  />
+                </div>
+
+                <div style={{ marginBottom: '20px' }}>
+                  <label style={{
+                    display: 'block',
+                    marginBottom: '5px',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    color: theme.text
+                  }}>
+                    Email
+                  </label>
+                  <input
+                    type="email"
+                    value={user.email}
+                    onChange={(e) => setUser(prev => ({ ...prev, email: e.target.value }))}
+                    style={{
+                      width: '100%',
+                      padding: '12px',
+                      border: `1px solid ${theme.border}`,
+                      borderRadius: '8px',
+                      fontSize: '14px',
+                      backgroundColor: theme.bg,
+                      color: theme.text
+                    }}
+                  />
+                </div>
+
+                <div style={{
+                  display: 'flex',
+                  gap: '10px',
+                  justifyContent: 'flex-end'
+                }}>
+                  <button
+                    onClick={() => setShowProfileSettings(false)}
+                    style={{
+                      padding: '12px 20px',
+                      backgroundColor: theme.hoverBg,
+                      border: `1px solid ${theme.border}`,
+                      borderRadius: '8px',
+                      color: theme.text,
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                      fontWeight: '500'
+                    }}
+                  >
+                    Close
+                  </button>
+                  <button
+                    onClick={() => {
+                      showToast('Profile updated successfully! ✅', 'success');
+                      setShowProfileSettings(false);
+                    }}
+                    style={{
+                      padding: '12px 20px',
+                      backgroundColor: theme.success,
+                      border: 'none',
+                      borderRadius: '8px',
+                      color: 'white',
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                      fontWeight: '500'
+                    }}
+                  >
+                    Save Changes
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Habits Modal */}
+          {showHabits && (
+            <div style={{
+              padding: '20px'
+            }}>
+              <div style={{
+                backgroundColor: theme.cardBg,
+                borderRadius: '12px',
+                padding: '20px',
+                marginBottom: '20px'
+              }}>
+                <h2 style={{
+                  margin: '0 0 20px 0',
+                  fontSize: '1.5rem',
+                  fontWeight: '600',
+                  color: theme.text
+                }}>
+                  Daily Habits
+                </h2>
+                
+                <button
+                  onClick={() => setShowHabitModal(true)}
+                  style={{
+                    padding: '12px 20px',
+                    backgroundColor: theme.success,
+                    border: 'none',
+                    borderRadius: '8px',
+                    color: 'white',
+                    cursor: 'pointer',
+                    fontSize: '14px',
+                    fontWeight: '500',
+                    marginBottom: '20px'
+                  }}
+                >
+                  ➕ Add Habit
+                </button>
+
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+                  gap: '15px'
+                }}>
+                  {habits.map(habit => (
+                    <div
+                      key={habit._id}
+                      style={{
+                        backgroundColor: theme.bg,
+                        border: `1px solid ${theme.border}`,
+                        borderRadius: '8px',
+                        padding: '15px',
+                        display: 'flex',
+                        justifyContent: 'space-between',
+                        alignItems: 'center'
+                      }}
+                    >
+                      <div>
+                        <h4 style={{
+                          margin: '0 0 5px 0',
+                          fontSize: '1.1rem',
+                          fontWeight: '600',
+                          color: theme.text,
+                          textDecoration: habit.completed ? 'line-through' : 'none'
+                        }}>
+                          {habit.name}
+                        </h4>
+                        <p style={{
+                          margin: 0,
+                          fontSize: '0.9rem',
+                          color: theme.subtext
+                        }}>
+                          Streak: {habit.streak} days 🔥
+                        </p>
+                      </div>
+                      <div style={{ display: 'flex', gap: '8px' }}>
+                        <button
+                          onClick={() => toggleHabitComplete(habit._id)}
+                          style={{
+                            padding: '8px 12px',
+                            backgroundColor: habit.completed ? theme.warning : theme.success,
+                            border: 'none',
+                            borderRadius: '6px',
+                            color: 'white',
+                            cursor: 'pointer',
+                            fontSize: '12px',
+                            fontWeight: '500'
+                          }}
+                        >
+                          {habit.completed ? '↩️' : '✅'}
+                        </button>
+                        <button
+                          onClick={() => deleteHabit(habit._id)}
+                          style={{
+                            padding: '8px 12px',
+                            backgroundColor: theme.danger,
+                            border: 'none',
+                            borderRadius: '6px',
+                            color: 'white',
+                            cursor: 'pointer',
+                            fontSize: '12px',
+                            fontWeight: '500'
+                          }}
+                        >
+                          🗑️
+                        </button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Add Habit Modal */}
+              {showHabitModal && (
+                <div style={{
+                  position: 'fixed',
+                  top: '0',
+                  left: '0',
+                  right: '0',
+                  bottom: '0',
+                  backgroundColor: 'rgba(0,0,0,0.5)',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center',
+                  zIndex: '9999'
+                }}>
+                  <div style={{
+                    backgroundColor: theme.cardBg,
+                    borderRadius: '12px',
+                    padding: '30px',
+                    width: '90%',
+                    maxWidth: '400px',
+                    boxShadow: '0 20px 40px rgba(0,0,0,0.3)'
+                  }}>
+                    <h3 style={{
+                      margin: '0 0 20px 0',
+                      fontSize: '1.3rem',
+                      fontWeight: '600',
+                      color: theme.text
+                    }}>
+                      Add New Habit
+                    </h3>
+                    
+                    <input
+                      type="text"
+                      value={newHabitName}
+                      onChange={(e) => setNewHabitName(e.target.value)}
+                      placeholder="Enter habit name..."
+                      style={{
+                        width: '100%',
+                        padding: '12px',
+                        border: `1px solid ${theme.border}`,
+                        borderRadius: '8px',
+                        fontSize: '14px',
+                        backgroundColor: theme.bg,
+                        color: theme.text,
+                        marginBottom: '20px'
+                      }}
+                    />
+
+                    <div style={{
+                      display: 'flex',
+                      gap: '10px',
+                      justifyContent: 'flex-end'
+                    }}>
+                      <button
+                        onClick={() => {
+                          setShowHabitModal(false);
+                          setNewHabitName('');
+                        }}
+                        style={{
+                          padding: '12px 20px',
+                          backgroundColor: theme.hoverBg,
+                          border: `1px solid ${theme.border}`,
+                          borderRadius: '8px',
+                          color: theme.text,
+                          cursor: 'pointer',
+                          fontSize: '14px',
+                          fontWeight: '500'
+                        }}
+                      >
+                        Cancel
+                      </button>
+                      <button
+                        onClick={addHabit}
+                        disabled={!newHabitName.trim()}
+                        style={{
+                          padding: '12px 20px',
+                          backgroundColor: newHabitName.trim() ? theme.success : '#ccc',
+                          border: 'none',
+                          borderRadius: '8px',
+                          color: 'white',
+                          cursor: newHabitName.trim() ? 'pointer' : 'not-allowed',
+                          fontSize: '14px',
+                          fontWeight: '500'
+                        }}
+                      >
+                        Add Habit
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* Stats Dashboard */}
+          {showStats && (
+            <div style={{
+              padding: '20px'
+            }}>
+              <div style={{
+                backgroundColor: theme.cardBg,
+                borderRadius: '12px',
+                padding: '20px',
+                marginBottom: '20px'
+              }}>
+                <h2 style={{
+                  margin: '0 0 20px 0',
+                  fontSize: '1.5rem',
+                  fontWeight: '600',
+                  color: theme.text
+                }}>
+                  Task Statistics
+                </h2>
+                
+                <div style={{
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                  gap: '15px',
+                  marginBottom: '30px'
+                }}>
+                  <div style={{
+                    backgroundColor: theme.bg,
+                    border: `1px solid ${theme.border}`,
+                    borderRadius: '8px',
+                    padding: '20px',
+                    textAlign: 'center'
+                  }}>
+                    <div style={{
+                      fontSize: '2rem',
+                      fontWeight: '700',
+                      color: theme.text,
+                      marginBottom: '5px'
+                    }}>
+                      {tasks.length}
+                    </div>
+                    <div style={{
+                      fontSize: '0.9rem',
+                      color: theme.subtext
+                    }}>
+                      Total Tasks
+                    </div>
+                  </div>
+                  
+                  <div style={{
+                    backgroundColor: theme.bg,
+                    border: `1px solid ${theme.border}`,
+                    borderRadius: '8px',
+                    padding: '20px',
+                    textAlign: 'center'
+                  }}>
+                    <div style={{
+                      fontSize: '2rem',
+                      fontWeight: '700',
+                      color: theme.success,
+                      marginBottom: '5px'
+                    }}>
+                      {tasks.filter(t => t.completed).length}
+                    </div>
+                    <div style={{
+                      fontSize: '0.9rem',
+                      color: theme.subtext
+                    }}>
+                      Completed
+                    </div>
+                  </div>
+                  
+                  <div style={{
+                    backgroundColor: theme.bg,
+                    border: `1px solid ${theme.border}`,
+                    borderRadius: '8px',
+                    padding: '20px',
+                    textAlign: 'center'
+                  }}>
+                    <div style={{
+                      fontSize: '2rem',
+                      fontWeight: '700',
+                      color: theme.warning,
+                      marginBottom: '5px'
+                    }}>
+                      {tasks.filter(t => !t.completed).length}
+                    </div>
+                    <div style={{
+                      fontSize: '0.9rem',
+                      color: theme.subtext
+                    }}>
+                      Pending
+                    </div>
+                  </div>
+                </div>
+
+                <div style={{
+                  backgroundColor: theme.bg,
+                  border: `1px solid ${theme.border}`,
+                  borderRadius: '8px',
+                  padding: '20px'
+                }}>
+                  <h3 style={{
+                    margin: '0 0 15px 0',
+                    fontSize: '1.2rem',
+                    fontWeight: '600',
+                    color: theme.text
+                  }}>
+                    Task Categories
+                  </h3>
+                  {categoryData.map(category => (
+                    <div key={category.name} style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      padding: '10px 0',
+                      borderBottom: `1px solid ${theme.border}`
+                    }}>
+                      <span style={{ color: theme.text }}>{category.name}</span>
+                      <span style={{
+                        backgroundColor: category.color,
+                        color: 'white',
+                        padding: '4px 8px',
+                        borderRadius: '4px',
+                        fontSize: '12px',
+                        fontWeight: '500'
+                      }}>
+                        {category.value}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     );
