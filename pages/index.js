@@ -3,7 +3,7 @@ import DashboardCharts from '../src/components/DashboardCharts';
 import HabitTracker from '../src/components/HabitTracker';
 import TaskList from '../src/components/TaskList';
 
-// Force deployment update - timestamp: 2025-02-26-17-30
+// Force deployment update - timestamp: 2025-02-26-17-45 - FIX LOADING SCREEN
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
