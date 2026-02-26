@@ -50,15 +50,23 @@ export default function Home() {
       setTasks(tasks || []);
       setDbConnected(connected);
       
+      if (connected) {
+        showToast('🟢 Connected to Database', 'success');
+      } else {
+        showToast('⚠️ Using Mock Data - Database unavailable', 'warning');
+      }
+      
       console.log('✅ Tasks fetched successfully:', tasks);
     } catch (error) {
       console.error('❌ Error fetching tasks:', error);
       // Set fallback data to prevent white screen
       setTasks([
-        { _id: '1', name: 'Sample Task 1', completed: false, priority: 'medium', category: 'work' },
-        { _id: '2', name: 'Sample Task 2', completed: true, priority: 'high', category: 'personal' }
+        { _id: '1', name: 'Welcome to Professional Dashboard', completed: false, priority: 'high', category: 'work' },
+        { _id: '2', name: 'Explore premium features', completed: true, priority: 'medium', category: 'personal' },
+        { _id: '3', name: 'Experience smooth animations', completed: false, priority: 'low', category: 'shopping' }
       ]);
       setDbConnected(false);
+      showToast('🔴 Database Connection Failed - Using Offline Mode', 'error');
     }
   };
 
@@ -87,33 +95,41 @@ export default function Home() {
     }
   }, [darkMode]);
 
-  // Functions and calculations can be defined after hooks
+  // Premium SaaS theme with professional styling
   const theme = darkMode ? {
-    bg: '#1a1a1a',
-    cardBg: '#2d2d2d',
+    bg: '#0F0F0F',
+    cardBg: '#1A1A1A', 
     text: '#FFFFFF',
-    border: '#404040',
-    hoverBg: '#3d3d3d',
-    subtext: '#A7A7A7',
-    success: '#1DB954',
-    warning: '#FFA726',
-    danger: '#FF6B35',
-    gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-    chartGrid: '#404040',
-    chartText: '#FFFFFF'
+    border: '#2A2A2A',
+    hoverBg: '#252525',
+    subtext: '#9CA3AF',
+    success: '#10B981',
+    warning: '#F59E0B',
+    danger: '#EF4444',
+    gradient: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #EC4899 100%)',
+    chartGrid: '#2A2A2A',
+    chartText: '#FFFFFF',
+    shadow: '0 10px 40px rgba(0, 0, 0, 0.3)',
+    accent: '#6366F1',
+    glass: 'rgba(255, 255, 255, 0.05)',
+    glassBorder: 'rgba(255, 255, 255, 0.1)'
   } : {
-    bg: '#F8F9FA',
+    bg: '#FAFAFA',
     cardBg: '#FFFFFF',
-    text: '#202124',
-    border: '#E0E0E0',
-    hoverBg: '#F1F3F4',
-    subtext: '#5F6368',
-    success: '#1DB954',
-    warning: '#FFA726',
-    danger: '#FF6B35',
-    gradient: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-    chartGrid: '#E0E0E0',
-    chartText: '#202124'
+    text: '#111827',
+    border: '#E5E7EB',
+    hoverBg: '#F9FAFB',
+    subtext: '#6B7280',
+    success: '#10B981',
+    warning: '#F59E0B',
+    danger: '#EF4444',
+    gradient: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #EC4899 100%)',
+    chartGrid: '#E5E7EB',
+    chartText: '#111827',
+    shadow: '0 10px 40px rgba(0, 0, 0, 0.1)',
+    accent: '#6366F1',
+    glass: 'rgba(0, 0, 0, 0.02)',
+    glassBorder: 'rgba(0, 0, 0, 0.05)'
   };
 
   const showToast = (message, type = 'info') => {
@@ -135,7 +151,7 @@ export default function Home() {
       padding: 0,
       position: 'relative'
     }}>
-      {/* Loading State - Rendered conditionally but hooks already called */}
+      {/* Premium Loading Screen with animations */}
       {!mounted ? (
         <div style={{ 
           position: 'fixed',
@@ -146,35 +162,73 @@ export default function Home() {
           display: 'flex', 
           justifyContent: 'center', 
           alignItems: 'center', 
-          background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+          background: theme.gradient,
           fontSize: '24px',
           color: 'white',
           fontWeight: '600',
-          zIndex: 9999
+          zIndex: 9999,
+          animation: 'fadeIn 0.5s ease-out'
         }}>
           <div style={{ textAlign: 'center' }}>
-            <div style={{ fontSize: '48px', marginBottom: '20px' }}>🚀</div>
-            <div>Loading Task Manager...</div>
+            <div style={{ 
+              fontSize: '64px', 
+              marginBottom: '24px',
+              animation: 'pulse 2s infinite',
+              background: 'linear-gradient(45deg, #fff, #f0f0f0)',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+              backgroundClip: 'text'
+            }}>⚡</div>
+            <div style={{ 
+              fontSize: '18px',
+              fontWeight: '500',
+              opacity: 0.9,
+              letterSpacing: '0.5px'
+            }}>Loading Professional Dashboard...</div>
+            <div style={{
+              marginTop: '16px',
+              fontSize: '14px',
+              opacity: 0.7
+            }}>Preparing your workspace</div>
           </div>
         </div>
       ) : (
         <>
-          {/* Database Status Bar */}
+          {/* Premium Database Status Bar with smooth transitions */}
           <div style={{
             position: 'fixed',
             top: '0',
             left: '0',
             right: '0',
-            backgroundColor: dbConnected ? theme.success : theme.danger,
+            background: dbConnected 
+              ? 'linear-gradient(90deg, #10B981 0%, #059669 100%)'
+              : 'linear-gradient(90deg, #EF4444 0%, #DC2626 100%)',
             color: 'white',
-            padding: '8px 16px',
+            padding: '12px 20px',
             textAlign: 'center',
             fontSize: '14px',
-            fontWeight: '500',
+            fontWeight: '600',
             zIndex: '9999',
-            boxShadow: '0 2px 10px rgba(0,0,0,0.1)'
+            boxShadow: '0 4px 20px rgba(0,0,0,0.1)',
+            backdropFilter: 'blur(10px)',
+            transition: 'all 0.3s ease',
+            letterSpacing: '0.5px'
           }}>
-            {dbConnected ? '🟢 Database Connected' : '🔴 Offline Mode - Tasks may not sync'}
+            <span style={{
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}>
+              <span style={{
+                width: '8px',
+                height: '8px',
+                borderRadius: '50%',
+                background: dbConnected ? '#10F981' : '#FCA5A5',
+                boxShadow: dbConnected ? '0 0 10px #10F981' : '0 0 10px #FCA5A5',
+                animation: dbConnected ? 'pulse 2s infinite' : 'none'
+              }}></span>
+              {dbConnected ? '🟢 Connected to Database' : '🔴 Initializing Connection...'}
+            </span>
           </div>
 
           {/* Main App Content */}
@@ -183,52 +237,130 @@ export default function Home() {
             margin: '0 auto',
             padding: '60px 20px 20px'
           }}>
-          {/* Header with User Profile */}
+          {/* Premium Header with Glass Morphism */}
           <header style={{
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
-            marginBottom: '30px',
-            padding: '25px',
-            backgroundColor: theme.cardBg,
-            borderRadius: '16px',
-            boxShadow: '0 8px 32px rgba(0,0,0,0.1)',
-            background: theme.gradient
+            marginBottom: '40px',
+            padding: '32px',
+            background: darkMode 
+              ? 'linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%)'
+              : 'linear-gradient(135deg, rgba(99, 102, 241, 0.05) 0%, rgba(139, 92, 246, 0.05) 100%)',
+            borderRadius: '20px',
+            boxShadow: theme.shadow,
+            border: `1px solid ${theme.glassBorder}`,
+            backdropFilter: 'blur(20px)',
+            transition: 'all 0.3s ease'
           }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '24px' }}>
               <div style={{
-                width: '60px',
-                height: '60px',
+                width: '72px',
+                height: '72px',
                 borderRadius: '50%',
-                background: 'rgba(255,255,255,0.2)',
-                backdropFilter: 'blur(10px)',
+                background: theme.gradient,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 color: 'white',
-                fontSize: '24px',
-                fontWeight: 'bold',
-                border: '2px solid rgba(255,255,255,0.3)'
+                fontSize: '28px',
+                fontWeight: '700',
+                boxShadow: '0 8px 32px rgba(99, 102, 241, 0.3)',
+                position: 'relative',
+                overflow: 'hidden'
               }}>
-                {user.name.charAt(0).toUpperCase()}
+                <div style={{
+                  position: 'absolute',
+                  top: '-50%',
+                  left: '-50%',
+                  width: '200%',
+                  height: '200%',
+                  background: 'linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent)',
+                  animation: 'shimmer 3s infinite'
+                }}></div>
+                <span style={{ position: 'relative', zIndex: 1 }}>
+                  {user.name.charAt(0).toUpperCase()}
+                </span>
               </div>
               <div>
                 <h1 style={{
                   margin: '0',
-                  fontSize: '2.2rem',
-                  fontWeight: '700',
-                  color: 'white'
+                  fontSize: '2.5rem',
+                  fontWeight: '800',
+                  color: theme.text,
+                  background: theme.gradient,
+                  WebkitBackgroundClip: 'text',
+                  WebkitTextFillColor: 'transparent',
+                  backgroundClip: 'text',
+                  letterSpacing: '-0.5px'
                 }}>
-                  Welcome back, {user.name}! 👋
+                  Welcome back, {user.name}!
                 </h1>
                 <p style={{
-                  margin: '5px 0 0 0',
-                  color: 'rgba(255,255,255,0.9)',
-                  fontSize: '1rem'
+                  margin: '8px 0 0 0',
+                  color: theme.subtext,
+                  fontSize: '1.1rem',
+                  fontWeight: '500',
+                  letterSpacing: '0.25px'
                 }}>
-                  {user.email} • Task Manager Pro
+                  {user.email} • Professional Dashboard
                 </p>
               </div>
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+              <button
+                onClick={() => setShowProfileSettings(true)}
+                style={{
+                  padding: '14px 24px',
+                  background: theme.glass,
+                  border: `1px solid ${theme.glassBorder}`,
+                  borderRadius: '12px',
+                  color: theme.text,
+                  cursor: 'pointer',
+                  fontSize: '15px',
+                  fontWeight: '600',
+                  transition: 'all 0.2s ease',
+                  backdropFilter: 'blur(10px)'
+                }}
+                onMouseOver={(e) => {
+                  e.target.style.background = theme.hoverBg;
+                  e.target.style.transform = 'translateY(-2px)';
+                  e.target.style.boxShadow = '0 8px 25px rgba(0,0,0,0.15)';
+                }}
+                onMouseOut={(e) => {
+                  e.target.style.background = theme.glass;
+                  e.target.style.transform = 'translateY(0)';
+                  e.target.style.boxShadow = 'none';
+                }}
+              >
+                ⚙️ Settings
+              </button>
+              <button
+                onClick={() => setDarkMode(!darkMode)}
+                style={{
+                  padding: '14px 24px',
+                  background: theme.gradient,
+                  border: 'none',
+                  borderRadius: '12px',
+                  color: 'white',
+                  cursor: 'pointer',
+                  fontSize: '15px',
+                  fontWeight: '600',
+                  transition: 'all 0.2s ease',
+                  boxShadow: '0 4px 20px rgba(99, 102, 241, 0.3)'
+                }}
+                onMouseOver={(e) => {
+                  e.target.style.transform = 'translateY(-2px)';
+                  e.target.style.boxShadow = '0 8px 25px rgba(99, 102, 241, 0.4)';
+                }}
+                onMouseOut={(e) => {
+                  e.target.style.transform = 'translateY(0)';
+                  e.target.style.boxShadow = '0 4px 20px rgba(99, 102, 241, 0.3)';
+                }}
+              >
+                {darkMode ? '☀️ Light' : '🌙 Dark'}
+              </button>
             </div>
 
             <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>

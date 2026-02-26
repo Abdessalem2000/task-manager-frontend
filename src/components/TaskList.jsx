@@ -139,31 +139,45 @@ const TaskList = ({
       {/* Search and Filters */}
       <div style={{
         backgroundColor: theme.cardBg,
-        border: `1px solid ${theme.border}`,
-        borderRadius: '12px',
-        padding: '20px',
-        marginBottom: '20px'
+        border: `1px solid ${theme.glassBorder}`,
+        borderRadius: '16px',
+        padding: '24px',
+        marginBottom: '24px',
+        backdropFilter: 'blur(10px)',
+        boxShadow: theme.shadow
       }}>
         <div style={{
           display: 'flex',
-          gap: '12px',
+          gap: '16px',
           flexWrap: 'wrap',
           alignItems: 'center',
-          marginBottom: '16px'
+          marginBottom: '20px'
         }}>
           <input
             type="text"
-            placeholder="Search tasks..."
+            placeholder="🔍 Search tasks..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             style={{
               flex: 1,
-              minWidth: '200px',
-              padding: '10px',
-              border: `1px solid ${theme.border}`,
-              borderRadius: '8px',
-              backgroundColor: theme.inputBg || theme.cardBg,
-              color: theme.text
+              minWidth: '280px',
+              padding: '14px 20px',
+              border: `1px solid ${theme.glassBorder}`,
+              borderRadius: '12px',
+              backgroundColor: theme.glass,
+              color: theme.text,
+              fontSize: '15px',
+              fontWeight: '500',
+              transition: 'all 0.2s ease',
+              backdropFilter: 'blur(10px)'
+            }}
+            onFocus={(e) => {
+              e.target.style.borderColor = theme.accent;
+              e.target.style.boxShadow = '0 0 0 3px rgba(99, 102, 241, 0.1)';
+            }}
+            onBlur={(e) => {
+              e.target.style.borderColor = theme.glassBorder;
+              e.target.style.boxShadow = 'none';
             }}
           />
           
@@ -171,44 +185,73 @@ const TaskList = ({
             value={filterCategory}
             onChange={(e) => setFilterCategory(e.target.value)}
             style={{
-              padding: '10px',
-              border: `1px solid ${theme.border}`,
-              borderRadius: '8px',
-              backgroundColor: theme.inputBg || theme.cardBg,
-              color: theme.text
+              padding: '14px 20px',
+              border: `1px solid ${theme.glassBorder}`,
+              borderRadius: '12px',
+              backgroundColor: theme.glass,
+              color: theme.text,
+              fontSize: '15px',
+              fontWeight: '500',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+              backdropFilter: 'blur(10px)'
             }}
           >
-            <option value="all">All Categories</option>
-            <option value="work">Work</option>
-            <option value="personal">Personal</option>
-            <option value="shopping">Shopping</option>
+            <option value="all">📂 All Categories</option>
+            <option value="work">💼 Work</option>
+            <option value="personal">👤 Personal</option>
+            <option value="shopping">🛒 Shopping</option>
           </select>
           
           <select
             value={filterPriority}
             onChange={(e) => setFilterPriority(e.target.value)}
             style={{
-              padding: '10px',
-              border: `1px solid ${theme.border}`,
-              borderRadius: '8px',
-              backgroundColor: theme.inputBg || theme.cardBg,
-              color: theme.text
+              padding: '14px 20px',
+              border: `1px solid ${theme.glassBorder}`,
+              borderRadius: '12px',
+              backgroundColor: theme.glass,
+              color: theme.text,
+              fontSize: '15px',
+              fontWeight: '500',
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+              backdropFilter: 'blur(10px)'
             }}
           >
-            <option value="all">All Priorities</option>
-            <option value="low">Low</option>
-            <option value="medium">Medium</option>
-            <option value="high">High</option>
+            <option value="all">🎯 All Priorities</option>
+            <option value="high">🔥 High Priority</option>
+            <option value="medium">⚡ Medium Priority</option>
+            <option value="low">💧 Low Priority</option>
           </select>
           
-          <label style={{ color: theme.text, display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <input
-              type="checkbox"
-              checked={showCompleted}
-              onChange={(e) => setShowCompleted(e.target.checked)}
-            />
-            Show Completed
-          </label>
+          <button
+            onClick={() => setShowCompleted(!showCompleted)}
+            style={{
+              padding: '14px 24px',
+              background: showCompleted 
+                ? 'linear-gradient(135deg, #10B981 0%, #059669 100%)'
+                : 'linear-gradient(135deg, #6B7280 0%, #4B5563 100%)',
+              border: 'none',
+              borderRadius: '12px',
+              color: 'white',
+              cursor: 'pointer',
+              fontSize: '15px',
+              fontWeight: '600',
+              transition: 'all 0.2s ease',
+              boxShadow: '0 4px 20px rgba(0,0,0,0.1)'
+            }}
+            onMouseOver={(e) => {
+              e.target.style.transform = 'translateY(-2px)';
+              e.target.style.boxShadow = '0 8px 25px rgba(0,0,0,0.2)';
+            }}
+            onMouseOut={(e) => {
+              e.target.style.transform = 'translateY(0)';
+              e.target.style.boxShadow = '0 4px 20px rgba(0,0,0,0.1)';
+            }}
+          >
+            {showCompleted ? '✅ Show All' : '👁️ Active Only'}
+          </button>
         </div>
 
         {/* Add Task Button */}
@@ -249,52 +292,167 @@ const TaskList = ({
             No tasks found. Try adjusting your filters or add a new task!
           </div>
         ) : (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-            {filteredTasks.map(task => (
+          <div style={{ 
+            display: 'grid', 
+            gridTemplateColumns: 'repeat(auto-fill, minmax(380px, 1fr))',
+            gap: '20px',
+            animation: 'fadeIn 0.5s ease-out'
+          }}>
+            {filteredTasks.map((task, index) => (
               <div
                 key={task._id}
                 style={{
-                  backgroundColor: theme.inputBg || 'rgba(255,255,255,0.5)',
-                  border: `1px solid ${theme.border}`,
-                  borderRadius: '8px',
-                  padding: '16px',
+                  background: darkMode 
+                    ? 'linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%)'
+                    : 'linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(249, 250, 251, 0.9) 100%)',
+                  border: `1px solid ${theme.glassBorder}`,
+                  borderRadius: '16px',
+                  padding: '24px',
                   display: 'flex',
-                  justifyContent: 'space-between',
-                  alignItems: 'center',
-                  transition: 'all 0.2s ease'
+                  flexDirection: 'column',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  transition: 'all 0.3s ease',
+                  boxShadow: theme.shadow,
+                  backdropFilter: 'blur(10px)',
+                  animation: `scaleIn 0.3s ease-out ${index * 0.1}s both`
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
+                  e.currentTarget.style.boxShadow = '0 20px 60px rgba(0,0,0,0.15)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                  e.currentTarget.style.boxShadow = theme.shadow;
                 }}
               >
-                <div style={{ flex: 1 }}>
+                {/* Priority Indicator */}
+                <div style={{
+                  position: 'absolute',
+                  top: '0',
+                  left: '0',
+                  right: '0',
+                  height: '4px',
+                  background: 
+                    task.priority === 'high' ? 'linear-gradient(90deg, #EF4444 0%, #DC2626 100%)' :
+                    task.priority === 'medium' ? 'linear-gradient(90deg, #F59E0B 0%, #D97706 100%)' :
+                    'linear-gradient(90deg, #6366F1 0%, #4F46E5 100%)',
+                  borderRadius: '4px 4px 0 0'
+                }}></div>
+
+                <div style={{ flex: 1, marginBottom: '16px' }}>
                   <h4 style={{
-                    margin: '0 0 8px 0',
+                    margin: '0',
+                    fontSize: '1.3rem',
+                    fontWeight: '700',
                     color: theme.text,
                     textDecoration: task.completed ? 'line-through' : 'none',
-                    opacity: task.completed ? 0.6 : 1
+                    opacity: task.completed ? 0.6 : 1,
+                    lineHeight: '1.4',
+                    letterSpacing: '-0.25px'
                   }}>
                     {task.name}
                   </h4>
-                  <div style={{ display: 'flex', gap: '8px' }}>
+                  
+                  <div style={{ 
+                    display: 'flex', 
+                    gap: '10px', 
+                    marginTop: '12px',
+                    flexWrap: 'wrap'
+                  }}>
                     <span style={{
-                      backgroundColor: priorityColors[task.priority],
+                      background: 
+                        task.priority === 'high' ? 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)' :
+                        task.priority === 'medium' ? 'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)' :
+                        'linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)',
                       color: 'white',
-                      padding: '2px 8px',
-                      borderRadius: '12px',
-                      fontSize: '10px',
-                      fontWeight: '600'
+                      padding: '6px 14px',
+                      borderRadius: '20px',
+                      fontSize: '12px',
+                      fontWeight: '700',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.2)'
                     }}>
                       {task.priority}
                     </span>
                     <span style={{
-                      backgroundColor: categoryColors[task.category],
+                      background: 
+                        task.category === 'work' ? 'linear-gradient(135deg, #6366F1 0%, #4F46E5 100%)' :
+                        task.category === 'personal' ? 'linear-gradient(135deg, #10B981 0%, #059669 100%)' :
+                        'linear-gradient(135deg, #F59E0B 0%, #D97706 100%)',
                       color: 'white',
-                      padding: '2px 8px',
-                      borderRadius: '12px',
-                      fontSize: '10px',
-                      fontWeight: '600'
+                      padding: '6px 14px',
+                      borderRadius: '20px',
+                      fontSize: '12px',
+                      fontWeight: '700',
+                      textTransform: 'uppercase',
+                      letterSpacing: '0.5px',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.2)'
                     }}>
                       {task.category}
                     </span>
                   </div>
+                </div>
+                
+                <div style={{ 
+                  display: 'flex', 
+                  gap: '10px',
+                  marginTop: 'auto'
+                }}>
+                  <button
+                    onClick={() => toggleTaskComplete(task._id)}
+                    style={{
+                      flex: 1,
+                      padding: '12px 16px',
+                      background: task.completed 
+                        ? 'linear-gradient(135deg, #6B7280 0%, #4B5563 100%)'
+                        : 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+                      border: 'none',
+                      borderRadius: '12px',
+                      color: 'white',
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      transition: 'all 0.2s ease',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                    }}
+                    onMouseOver={(e) => {
+                      e.target.style.transform = 'translateY(-2px)';
+                      e.target.style.boxShadow = '0 8px 20px rgba(0,0,0,0.2)';
+                    }}
+                    onMouseOut={(e) => {
+                      e.target.style.transform = 'translateY(0)';
+                      e.target.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+                    }}
+                  >
+                    {task.completed ? '↩️ Undo' : '✅ Complete'}
+                  </button>
+                  <button
+                    onClick={() => deleteTask(task._id)}
+                    style={{
+                      padding: '12px 16px',
+                      background: 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)',
+                      border: 'none',
+                      borderRadius: '12px',
+                      color: 'white',
+                      cursor: 'pointer',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      transition: 'all 0.2s ease',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                    }}
+                    onMouseOver={(e) => {
+                      e.target.style.transform = 'translateY(-2px)';
+                      e.target.style.boxShadow = '0 8px 20px rgba(0,0,0,0.2)';
+                    }}
+                    onMouseOut={(e) => {
+                      e.target.style.transform = 'translateY(0)';
+                      e.target.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+                    }}
+                  >
+                    🗑️ Delete
+                  </button>
                 </div>
                 
                 <div style={{ display: 'flex', gap: '8px' }}>
