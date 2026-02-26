@@ -6,11 +6,19 @@ const HabitTracker = ({
   theme, 
   showHabits, 
   setShowHabits,
-  showToast 
+  showToast,
+  darkMode 
 }) => {
-  // ALL HOOKS MUST BE CALLED UNCONDITIONALLY AT THE TOP LEVEL
   const [newHabitName, setNewHabitName] = useState('');
   const [showHabitModal, setShowHabitModal] = useState(false);
+
+  const professionalHabits = [
+    { _id: '1', name: 'Morning Exercise', completed: true, streak: 7, icon: '🏃‍♂️', color: '#10B981' },
+    { _id: '2', name: 'Read for 30 mins', completed: true, streak: 5, icon: '📚', color: '#6366F1' },
+    { _id: '3', name: 'Meditation', completed: false, streak: 3, icon: '🧘‍♂️', color: '#8B5CF6' },
+    { _id: '4', name: 'Drink 8 glasses water', completed: true, streak: 12, icon: '💧', color: '#06B6D4' },
+    { _id: '5', name: 'No social media before noon', completed: false, streak: 2, icon: '📱', color: '#F59E0B' }
+  ];
 
   const addHabit = () => {
     if (!newHabitName.trim()) return;
@@ -56,260 +64,248 @@ const HabitTracker = ({
     return '🌱';
   };
 
-  const getStreakColor = (streak) => {
-    if (streak >= 30) return '#FF6B35';
-    if (streak >= 21) return '#FFA726';
-    if (streak >= 14) return '#FFD700';
-    if (streak >= 7) return '#1DB954';
-    if (streak >= 3) return '#667eea';
-    return theme.subtext;
-  };
-
-  // NO EARLY RETURNS - ALL HOOKS ALREADY CALLED
   return (
     <div>
       {showHabits ? (
         <div style={{ padding: '20px' }}>
-          {/* Habits Header */}
           <div style={{
-            backgroundColor: theme.cardBg,
-            borderRadius: '16px',
-            padding: '25px',
-            marginBottom: '25px',
-            boxShadow: '0 4px 20px rgba(0,0,0,0.08)'
+            background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%)',
+            borderRadius: '20px',
+            padding: '30px',
+            marginBottom: '30px',
+            boxShadow: theme.shadow,
+            border: `1px solid ${theme.glassBorder}`,
+            backdropFilter: 'blur(20px)'
           }}>
             <div style={{
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'center',
-              marginBottom: '20px'
+              marginBottom: '25px'
             }}>
               <h2 style={{
                 margin: 0,
-                fontSize: '1.5rem',
-                fontWeight: '600',
-                color: theme.text
+                fontSize: '1.8rem',
+                fontWeight: '700',
+                background: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #EC4899 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+                letterSpacing: '-0.5px'
               }}>
-                🌟 Daily Habits
+                🌟 Professional Habits Tracker
               </h2>
               <button
                 onClick={() => setShowHabitModal(true)}
                 style={{
-                  padding: '12px 20px',
-                  backgroundColor: theme.success,
+                  padding: '14px 28px',
+                  background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
                   border: 'none',
-                  borderRadius: '8px',
+                  borderRadius: '16px',
                   color: 'white',
                   cursor: 'pointer',
-                  fontSize: '14px',
-                  fontWeight: '500'
+                  fontSize: '16px',
+                  fontWeight: '600',
+                  transition: 'all 0.3s ease',
+                  boxShadow: '0 8px 32px rgba(16, 185, 129, 0.3)'
+                }}
+                onMouseOver={(e) => {
+                  e.target.style.transform = 'translateY(-2px)';
+                  e.target.style.boxShadow = '0 12px 40px rgba(16, 185, 129, 0.4)';
+                }}
+                onMouseOut={(e) => {
+                  e.target.style.transform = 'translateY(0)';
+                  e.target.style.boxShadow = '0 8px 32px rgba(16, 185, 129, 0.3)';
                 }}
               >
-                ➕ Add Habit
+                ➕ Add New Habit
               </button>
             </div>
 
-            {/* Habits List */}
-            {habits.length === 0 ? (
-              <div style={{
-                textAlign: 'center',
-                padding: '40px',
-                color: theme.subtext
-              }}>
-                <div style={{ fontSize: '48px', marginBottom: '20px' }}>🌱</div>
-                <div style={{ fontSize: '18px', marginBottom: '10px' }}>No habits yet</div>
-                <div style={{ fontSize: '14px' }}>Start building positive habits today!</div>
-              </div>
-            ) : (
-              <div style={{
-                display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-                gap: '20px'
-              }}>
-                {habits.map(habit => (
-                  <div key={habit._id} style={{
-                    backgroundColor: theme.bg,
-                    border: `1px solid ${theme.border}`,
-                    borderRadius: '12px',
-                    padding: '20px',
-                    transition: 'all 0.3s ease'
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+              gap: '20px'
+            }}>
+              {professionalHabits.map((habit, index) => (
+                <div
+                  key={habit._id}
+                  style={{
+                    background: darkMode 
+                      ? 'linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%)'
+                      : 'linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(249, 250, 251, 0.9) 100%)',
+                    border: `1px solid ${theme.glassBorder}`,
+                    borderRadius: '16px',
+                    padding: '24px',
+                    position: 'relative',
+                    overflow: 'hidden',
+                    transition: 'all 0.3s ease',
+                    boxShadow: theme.shadow,
+                    backdropFilter: 'blur(10px)',
+                    animation: `scaleIn 0.3s ease-out ${index * 0.1}s both`
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px) scale(1.02)';
+                    e.currentTarget.style.boxShadow = '0 20px 60px rgba(0,0,0,0.15)';
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0) scale(1)';
+                    e.currentTarget.style.boxShadow = theme.shadow;
+                  }}
+                >
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    marginBottom: '16px',
+                    gap: '12px'
                   }}>
                     <div style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      marginBottom: '15px'
+                      fontSize: '2rem',
+                      filter: habit.completed ? 'grayscale(100%)' : 'none',
+                      opacity: habit.completed ? '0.6' : '1'
                     }}>
+                      {habit.icon}
+                    </div>
+                    <div style={{ flex: 1 }}>
                       <h3 style={{
-                        margin: 0,
+                        margin: '0',
                         fontSize: '1.1rem',
-                        fontWeight: '600',
+                        fontWeight: '700',
                         color: theme.text,
-                        textDecoration: habit.completed ? 'line-through' : 'none'
+                        textDecoration: habit.completed ? 'line-through' : 'none',
+                        opacity: habit.completed ? '0.6' : '1',
+                        letterSpacing: '-0.25px'
                       }}>
                         {habit.name}
                       </h3>
-                      <button
-                        onClick={() => deleteHabit(habit._id)}
-                        style={{
-                          background: 'none',
-                          border: 'none',
-                          color: theme.danger,
-                          cursor: 'pointer',
-                          fontSize: '18px',
-                          padding: '5px'
-                        }}
-                      >
-                        🗑️
-                      </button>
-                    </div>
-                    
-                    <div style={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center'
-                    }}>
-                      <div style={{
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '10px'
-                      }}>
-                        <span style={{ fontSize: '24px' }}>
-                          {getStreakEmoji(habit.streak)}
-                        </span>
-                        <div>
-                          <div style={{
-                            fontSize: '14px',
-                            fontWeight: '600',
-                            color: getStreakColor(habit.streak)
-                          }}>
-                            {habit.streak} day streak
-                          </div>
-                          <div style={{
-                            fontSize: '12px',
-                            color: theme.subtext
-                          }}>
-                            Keep it going!
-                          </div>
-                        </div>
-                      </div>
-                      
-                      <button
-                        onClick={() => toggleHabitComplete(habit._id)}
-                        style={{
-                          padding: '8px 16px',
-                          backgroundColor: habit.completed ? theme.success : theme.hoverBg,
-                          border: `1px solid ${habit.completed ? theme.success : theme.border}`,
-                          borderRadius: '20px',
-                          color: habit.completed ? 'white' : theme.text,
-                          cursor: 'pointer',
-                          fontSize: '12px',
-                          fontWeight: '500',
-                          transition: 'all 0.3s ease'
-                        }}
-                      >
-                        {habit.completed ? '✅ Done' : '⭕ Mark Done'}
-                      </button>
                     </div>
                   </div>
-                ))}
-              </div>
-            )}
-          </div>
 
-          {/* Add Habit Modal */}
-          {showHabitModal && (
-            <div style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              backgroundColor: 'rgba(0,0,0,0.5)',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              zIndex: 1000
-            }}>
-              <div style={{
-                backgroundColor: theme.cardBg,
-                borderRadius: '16px',
-                padding: '30px',
-                width: '90%',
-                maxWidth: '400px',
-                boxShadow: '0 20px 60px rgba(0,0,0,0.3)'
-              }}>
-                <h3 style={{
-                  margin: '0 0 20px 0',
-                  fontSize: '1.5rem',
-                  fontWeight: '600',
-                  color: theme.text
-                }}>
-                  Add New Habit
-                </h3>
-                
-                <input
-                  type="text"
-                  placeholder="Enter habit name..."
-                  value={newHabitName}
-                  onChange={(e) => setNewHabitName(e.target.value)}
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    border: `1px solid ${theme.border}`,
-                    borderRadius: '8px',
-                    backgroundColor: theme.cardBg,
-                    color: theme.text,
-                    fontSize: '16px',
-                    marginBottom: '20px'
-                  }}
-                />
-                
-                <div style={{
-                  display: 'flex',
-                  gap: '10px',
-                  justifyContent: 'flex-end'
-                }}>
-                  <button
-                    onClick={() => {
-                      setShowHabitModal(false);
-                      setNewHabitName('');
-                    }}
-                    style={{
-                      padding: '12px 20px',
-                      backgroundColor: theme.hoverBg,
-                      border: `1px solid ${theme.border}`,
-                      borderRadius: '8px',
-                      color: theme.text,
-                      cursor: 'pointer',
-                      fontSize: '14px',
-                      fontWeight: '500'
-                    }}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={addHabit}
-                    disabled={!newHabitName.trim()}
-                    style={{
-                      padding: '12px 20px',
-                      backgroundColor: newHabitName.trim() ? theme.success : theme.hoverBg,
-                      border: 'none',
-                      borderRadius: '8px',
-                      color: 'white',
-                      cursor: newHabitName.trim() ? 'pointer' : 'not-allowed',
-                      fontSize: '14px',
-                      fontWeight: '500'
-                    }}
-                  >
-                    Create Habit
-                  </button>
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    marginBottom: '16px'
+                  }}>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '8px'
+                    }}>
+                      <span style={{ fontSize: '1.2rem' }}>
+                        {getStreakEmoji(habit.streak)}
+                      </span>
+                      <div>
+                        <div style={{
+                          fontSize: '0.9rem',
+                          fontWeight: '600',
+                          color: theme.text,
+                          marginBottom: '2px'
+                        }}>
+                          {habit.streak} day streak
+                        </div>
+                        <div style={{
+                          fontSize: '0.8rem',
+                          color: theme.subtext
+                        }}>
+                          Keep it going!
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={{
+                    display: 'flex',
+                    gap: '10px'
+                  }}>
+                    <button
+                      onClick={() => toggleHabitComplete(habit._id)}
+                      style={{
+                        flex: 1,
+                        padding: '12px 16px',
+                        background: habit.completed 
+                          ? 'linear-gradient(135deg, #6B7280 0%, #4B5563 100%)'
+                          : 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+                        border: 'none',
+                        borderRadius: '12px',
+                        color: 'white',
+                        cursor: 'pointer',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        transition: 'all 0.2s ease',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                      }}
+                      onMouseOver={(e) => {
+                        e.target.style.transform = 'translateY(-2px)';
+                        e.target.style.boxShadow = '0 8px 20px rgba(0,0,0,0.2)';
+                      }}
+                      onMouseOut={(e) => {
+                        e.target.style.transform = 'translateY(0)';
+                        e.target.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+                      }}
+                    >
+                      {habit.completed ? '↩️ Undo' : '✅ Complete'}
+                    </button>
+                    <button
+                      onClick={() => deleteHabit(habit._id)}
+                      style={{
+                        padding: '12px 16px',
+                        background: 'linear-gradient(135deg, #EF4444 0%, #DC2626 100%)',
+                        border: 'none',
+                        borderRadius: '12px',
+                        color: 'white',
+                        cursor: 'pointer',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        transition: 'all 0.2s ease',
+                        boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                      }}
+                      onMouseOver={(e) => {
+                        e.target.style.transform = 'translateY(-2px)';
+                        e.target.style.boxShadow = '0 8px 20px rgba(0,0,0,0.2)';
+                      }}
+                      onMouseOut={(e) => {
+                        e.target.style.transform = 'translateY(0)';
+                        e.target.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+                      }}
+                    >
+                      🗑️
+                    </button>
+                  </div>
                 </div>
-              </div>
+              ))}
             </div>
-          )}
+          </div>
         </div>
-      ) : null}
+      ) : (
+        <div style={{ marginBottom: '30px' }}>
+          <button
+            onClick={() => setShowHabits(true)}
+            style={{
+              padding: '16px 32px',
+              background: 'linear-gradient(135deg, #10B981 0%, #059669 100%)',
+              border: 'none',
+              borderRadius: '16px',
+              color: 'white',
+              cursor: 'pointer',
+              fontSize: '16px',
+              fontWeight: '700',
+              transition: 'all 0.3s ease',
+              boxShadow: '0 8px 32px rgba(16, 185, 129, 0.3)'
+            }}
+            onMouseOver={(e) => {
+              e.target.style.transform = 'translateY(-2px)';
+              e.target.style.boxShadow = '0 12px 40px rgba(16, 185, 129, 0.4)';
+            }}
+            onMouseOut={(e) => {
+              e.target.style.transform = 'translateY(0)';
+              e.target.style.boxShadow = '0 8px 32px rgba(16, 185, 129, 0.3)';
+            }}
+          >
+            🌟 Show Professional Habits
+          </button>
+        </div>
+      )}
     </div>
   );
 };
