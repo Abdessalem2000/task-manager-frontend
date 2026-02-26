@@ -309,37 +309,72 @@ export default function Home() {
             width: '100%',
           }}>
             {/* Charts Section */}
-            <div style={{
-              background: theme.cardBg,
-              padding: '25px',
-              borderRadius: '15px',
-              boxShadow: theme.shadow,
-              animation: 'fadeIn 0.5s ease-out',
-            }}>
-              <h2 style={{ color: theme.text, marginBottom: '20px' }}>Performance Metrics</h2>
-              <div style={{ height: '300px' }}>
-                {showCharts && <DashboardCharts data={tasks.map(task => ({ name: task.name, value: task.progress || 0 }))} theme={theme} />}
+            {!showCharts ? (
+              <div style={{ marginBottom: '30px' }}>
+                <button
+                  onClick={() => setShowCharts(true)}
+                  style={{
+                    padding: '16px 32px',
+                    background: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #EC4899 100%)',
+                    border: 'none',
+                    borderRadius: '16px',
+                    color: 'white',
+                    cursor: 'pointer',
+                    fontSize: '16px',
+                    fontWeight: '700',
+                    transition: 'all 0.3s ease',
+                    boxShadow: '0 8px 32px rgba(99, 102, 241, 0.3)',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.target.style.transform = 'translateY(-2px)';
+                    e.target.style.boxShadow = '0 12px 40px rgba(99, 102, 241, 0.4)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.target.style.transform = 'translateY(0)';
+                    e.target.style.boxShadow = '0 8px 32px rgba(99, 102, 241, 0.3)';
+                  }}
+                >
+                  📊 Show Professional Analytics
+                </button>
               </div>
-            </div>
+            ) : (
+              <DashboardCharts 
+                data={tasks.map(task => ({ name: task.name, value: task.progress || 0 }))} 
+                theme={theme}
+                showCharts={showCharts}
+                setShowCharts={setShowCharts}
+              />
+            )}
 
             {/* Habit Tracker Section */}
-            <div style={{
-              background: theme.cardBg,
-              padding: '25px',
-              borderRadius: '15px',
-              boxShadow: theme.shadow,
-              animation: 'fadeIn 0.5s ease-out 0.2s',
-            }}>
-              <HabitTracker 
-                habits={habits}
-                setHabits={setHabits}
-                theme={theme}
-                showHabits={showHabits}
-                setShowHabits={setShowHabits}
-                showToast={showToast}
-                darkMode={darkMode}
-              />
-            </div>
+            <HabitTracker 
+              habits={habits}
+              setHabits={setHabits}
+              theme={theme}
+              showHabits={showHabits}
+              setShowHabits={setShowHabits}
+              showToast={showToast}
+              darkMode={darkMode}
+            />
+
+            {/* Task List Section */}
+            <TaskList
+              tasks={tasks}
+              setTasks={setTasks}
+              theme={theme}
+              showToast={showToast}
+              isAddingTask={isAddingTask}
+              setIsAddingTask={setIsAddingTask}
+              searchQuery={searchQuery}
+              setSearchQuery={setSearchQuery}
+              filterCategory={filterCategory}
+              setFilterCategory={setFilterCategory}
+              filterPriority={filterPriority}
+              setFilterPriority={setFilterPriority}
+              showCompleted={showCompleted}
+              setShowCompleted={setShowCompleted}
+              dbConnected={dbConnected}
+            />
           </div>
         </div>
 
