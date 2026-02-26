@@ -3,7 +3,7 @@ import DashboardCharts from '../src/components/DashboardCharts';
 import HabitTracker from '../src/components/HabitTracker';
 import TaskList from '../src/components/TaskList';
 
-// Simple error boundary component
+// Force deployment update - timestamp: 2025-02-26-17-30
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
