@@ -93,12 +93,17 @@ export default function App() {
       if (response.ok) {
         const data = await response.json();
         console.log('Tasks fetched:', data);
-        setTasks(data);
-        setDbConnected(true);
+        
+        // Handle both direct array and wrapped response
+        const tasksData = Array.isArray(data) ? data : (data.tasks || []);
+        const isConnected = data.dbConnected !== undefined ? data.dbConnected : true;
+        
+        setTasks(tasksData);
+        setDbConnected(isConnected);
         
         // Calculate completed today
         const today = new Date().toDateString();
-        const todayTasks = data.filter(task => 
+        const todayTasks = tasksData.filter(task => 
           task.completed && new Date(task.updatedAt).toDateString() === today
         );
         setCompletedToday(todayTasks.length);
@@ -135,9 +140,12 @@ export default function App() {
       if (response.ok) {
         const data = await response.json();
         console.log('Habits fetched:', data);
-        setHabits(data);
+        
+        // Handle both direct array and wrapped response
+        const habitsData = Array.isArray(data) ? data : (data.habits || []);
+        setHabits(habitsData);
       } else {
-        console.warn('Habits API response not ok, using fallback');
+        console.warn('Habits API not found, using fallback');
         // Fallback habits
         setHabits([
           { _id: '1', name: 'Morning Exercise', completed: true, streak: 7, icon: '🏃‍♂️', color: '#10B981' },
