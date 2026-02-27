@@ -102,8 +102,18 @@ export default function Home() {
     }
   };
 
+  // Initialize with sample data to ensure dashboard shows content
   useEffect(() => {
-    setMounted(true);
+    // Set initial sample data if no tasks exist
+    if (tasks.length === 0) {
+      setTasks([
+        { _id: '1', name: 'Complete project documentation', completed: false, priority: 'high', category: 'work', progress: 75 },
+        { _id: '2', name: 'Review pull requests', completed: true, priority: 'medium', category: 'work', progress: 100 },
+        { _id: '3', name: 'Update dependencies', completed: false, priority: 'low', category: 'work', progress: 30 },
+        { _id: '4', name: 'Grocery shopping', completed: false, priority: 'medium', category: 'personal', progress: 0 },
+        { _id: '5', name: 'Gym workout', completed: true, priority: 'high', category: 'personal', progress: 100 }
+      ]);
+    }
   }, []);
 
   useEffect(() => {
