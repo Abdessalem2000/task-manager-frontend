@@ -2,8 +2,8 @@ import { useEffect } from 'react';
 
 export default function Home() {
   useEffect(() => {
-    // Redirect to new dashboard page to bypass Vercel caching
-    window.location.href = '/dashboard';
+    // Redirect to working app
+    window.location.href = '/app';
   }, []);
 
   return (
@@ -18,7 +18,7 @@ export default function Home() {
     }}>
       <div style={{ textAlign: 'center' }}>
         <div style={{ fontSize: '48px', marginBottom: '20px' }}>⚡</div>
-        <h1 style={{ fontSize: '24px', margin: 0 }}>Redirecting to Professional Dashboard...</h1>
+        <h1 style={{ fontSize: '24px', margin: 0 }}>Loading Professional Dashboard...</h1>
         <p style={{ fontSize: '16px', opacity: 0.8 }}>Please wait while we load your workspace</p>
       </div>
     </div>

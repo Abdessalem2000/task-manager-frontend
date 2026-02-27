@@ -1,0 +1,38 @@
+<!DOCTYPE html><html><head><meta charSet="utf-8"/><meta name="viewport" content="width=device-width"/><style>
+          @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+          }
+          
+          @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+          }
+          
+          @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+          }
+          
+          @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+          }
+          
+          @keyframes scaleIn {
+            from { transform: scale(0.9); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+          }
+          
+          * {
+            box-sizing: border-box;
+          }
+          
+          body {
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+          }
+        </style><meta name="next-head-count" content="3"/><link rel="preload" href="/_next/static/css/0847575fce6c671e.css" as="style"/><link rel="stylesheet" href="/_next/static/css/0847575fce6c671e.css" data-n-g=""/><noscript data-n-css=""></noscript><script defer="" nomodule="" src="/_next/static/chunks/polyfills-42372ed130431b0a.js"></script><script src="/_next/static/chunks/webpack-6ef43a8d4a395f49.js" defer=""></script><script src="/_next/static/chunks/framework-64ad27b21261a9ce.js" defer=""></script><script src="/_next/static/chunks/main-4b423ec82b590a3f.js" defer=""></script><script src="/_next/static/chunks/pages/_app-92e78a468211fc0a.js" defer=""></script><script src="/_next/static/chunks/pages/app-43145c885dd20361.js" defer=""></script><script src="/_next/static/dZfOK48FZzSmt76PwkZW5/_buildManifest.js" defer=""></script><script src="/_next/static/dZfOK48FZzSmt76PwkZW5/_ssgManifest.js" defer=""></script></head><body><div id="__next"><div style="min-height:100vh;background-color:#FAFAFA;color:#111827;font-family:-apple-system, BlinkMacSystemFont, &quot;Segoe UI&quot;, Roboto, sans-serif;margin:0;padding:0"><div style="max-width:1200px;margin:0 auto;padding:20px"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:40px;padding:20px;border-radius:15px;background:#FFFFFF;box-shadow:0 10px 40px rgba(0, 0, 0, 0.1)"><h1 style="font-size:2.5em;margin:0;color:#6366F1">✨ Professional Dashboard</h1><button style="background:#6366F1;color:white;border:none;padding:10px 20px;border-radius:8px;cursor:pointer;font-size:1em">🌙 Dark</button></div><div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));gap:25px;margin-bottom:40px"><div style="background:#FFFFFF;padding:25px;border-radius:15px;box-shadow:0 10px 40px rgba(0, 0, 0, 0.1);text-align:center"><div style="font-size:2em;margin-bottom:10px">📊</div><h3 style="margin:0;font-size:1.5em;color:#111827">5</h3><p style="margin:5px 0 0;color:#666">Total Tasks</p></div><div style="background:#FFFFFF;padding:25px;border-radius:15px;box-shadow:0 10px 40px rgba(0, 0, 0, 0.1);text-align:center"><div style="font-size:2em;margin-bottom:10px">✅</div><h3 style="margin:0;font-size:1.5em;color:#111827">2</h3><p style="margin:5px 0 0;color:#666">Completed</p></div><div style="background:#FFFFFF;padding:25px;border-radius:15px;box-shadow:0 10px 40px rgba(0, 0, 0, 0.1);text-align:center"><div style="font-size:2em;margin-bottom:10px">🎯</div><h3 style="margin:0;font-size:1.5em;color:#111827">3</h3><p style="margin:5px 0 0;color:#666">Completed Today</p></div><div style="background:#FFFFFF;padding:25px;border-radius:15px;box-shadow:0 10px 40px rgba(0, 0, 0, 0.1);text-align:center"><div style="font-size:2em;margin-bottom:10px">📈</div><h3 style="margin:0;font-size:1.5em;color:#111827">60%</h3><p style="margin:5px 0 0;color:#666">Progress</p></div></div><div style="background:#FFFFFF;padding:25px;border-radius:15px;box-shadow:0 10px 40px rgba(0, 0, 0, 0.1)"><h2 style="margin:0 0 20px 0;color:#111827">📋 Tasks</h2><div style="padding:15px;margin:10px 0;background:#F8F9FA;border-radius:8px;display:flex;justify-content:space-between;align-items:center"><div><strong>Complete project documentation</strong><div style="font-size:0.9em;color:#666">Priority: <!-- -->high<!-- --> | Progress: <!-- -->75<!-- -->%</div></div><span style="padding:5px 10px;border-radius:5px;background:#F59E0B;color:white;font-size:0.8em">⏳ Pending</span></div><div style="padding:15px;margin:10px 0;background:#F8F9FA;border-radius:8px;display:flex;justify-content:space-between;align-items:center"><div><strong>Review pull requests</strong><div style="font-size:0.9em;color:#666">Priority: <!-- -->medium<!-- --> | Progress: <!-- -->100<!-- -->%</div></div><span style="padding:5px 10px;border-radius:5px;background:#10B981;color:white;font-size:0.8em">✅ Done</span></div><div style="padding:15px;margin:10px 0;background:#F8F9FA;border-radius:8px;display:flex;justify-content:space-between;align-items:center"><div><strong>Update dependencies</strong><div style="font-size:0.9em;color:#666">Priority: <!-- -->low<!-- --> | Progress: <!-- -->30<!-- -->%</div></div><span style="padding:5px 10px;border-radius:5px;background:#F59E0B;color:white;font-size:0.8em">⏳ Pending</span></div><div style="padding:15px;margin:10px 0;background:#F8F9FA;border-radius:8px;display:flex;justify-content:space-between;align-items:center"><div><strong>Grocery shopping</strong><div style="font-size:0.9em;color:#666">Priority: <!-- -->medium<!-- --> | Progress: <!-- -->0<!-- -->%</div></div><span style="padding:5px 10px;border-radius:5px;background:#F59E0B;color:white;font-size:0.8em">⏳ Pending</span></div><div style="padding:15px;margin:10px 0;background:#F8F9FA;border-radius:8px;display:flex;justify-content:space-between;align-items:center"><div><strong>Gym workout</strong><div style="font-size:0.9em;color:#666">Priority: <!-- -->high<!-- --> | Progress: <!-- -->100<!-- -->%</div></div><span style="padding:5px 10px;border-radius:5px;background:#10B981;color:white;font-size:0.8em">✅ Done</span></div></div><div style="margin-top:40px;text-align:center;padding:20px;background:#FFFFFF;border-radius:15px;box-shadow:0 10px 40px rgba(0, 0, 0, 0.1)"><h2 style="margin:0 0 20px 0;color:#111827">🚀 Features Available</h2><div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:15px;text-align:left"><div>✅ Task Management</div><div>✅ Progress Tracking</div><div>✅ Dark/Light Mode</div><div>✅ Professional UI</div><div>✅ Responsive Design</div><div>✅ Real-time Updates</div></div></div></div></div></div><script id="__NEXT_DATA__" type="application/json">{"props":{"pageProps":{}},"page":"/app","query":{},"buildId":"dZfOK48FZzSmt76PwkZW5","nextExport":true,"autoExport":true,"isFallback":false,"scriptLoader":[]}</script></body></html>
