@@ -41,6 +41,7 @@ class ErrorBoundary extends React.Component {
 
 export default function Home() {
   // ALL HOOKS MUST BE CALLED UNCONDITIONALLY AT THE TOP LEVEL
+  console.log('🚀 Dashboard loading - version 0.2.1 - all features restored');
   const [mounted, setMounted] = useState(true); // Force mounted to true to prevent loading screen - v2
   const [user, setUser] = useState({ name: 'Kentache Abdessalem', email: 'kentacheabdou1@gmail.com' });
   const [tasks, setTasks] = useState([]);
