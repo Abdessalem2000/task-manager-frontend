@@ -98,6 +98,8 @@ export default function App() {
         const tasksData = Array.isArray(data) ? data : (data.tasks || []);
         const isConnected = data.dbConnected !== undefined ? data.dbConnected : true;
         
+        console.log('Parsed tasks:', tasksData.length, 'Connected:', isConnected);
+        
         setTasks(tasksData);
         setDbConnected(isConnected);
         
