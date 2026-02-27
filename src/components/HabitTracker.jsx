@@ -20,39 +20,113 @@ const HabitTracker = ({
     { _id: '5', name: 'No social media before noon', completed: false, streak: 2, icon: '📱', color: '#F59E0B' }
   ];
 
-  const addHabit = () => {
+  const addHabit = async () => {
     if (!newHabitName.trim()) return;
     
-    const newHabit = {
-      _id: Date.now().toString(),
-      name: newHabitName.trim(),
-      completed: false,
-      streak: 0,
-      createdAt: new Date().toISOString()
-    };
-    
-    setHabits(prev => [...prev, newHabit]);
-    setNewHabitName('');
-    setShowHabitModal(false);
-    showToast('Habit added successfully! 🌟', 'success');
+    try {
+      const isLocalDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+      const apiUrl = isLocalDev ? (import.meta.env.VITE_API_URL || 'http://localhost:3001') : '';
+      const response = await fetch(`${apiUrl}/api/habits`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          name: newHabitName.trim()
+        })
+      });
+      const data = await response.json();
+      
+      if (data._id) {
+        setHabits(prev => [data, ...prev]);
+        setNewHabitName('');
+        setShowHabitModal(false);
+        showToast('Habit added successfully! 🌟', 'success');
+      } else {
+        showToast(data.error || 'Failed to add habit', 'error');
+      }
+    } catch (error) {
+      console.error('❌ Add habit error:', error);
+      // Fallback to local state
+      const newHabit = {
+        _id: Date.now().toString(),
+        name: newHabitName.trim(),
+        completed: false,
+        streak: 0,
+        createdAt: new Date().toISOString()
+      };
+      setHabits(prev => [...prev, newHabit]);
+      setNewHabitName('');
+      setShowHabitModal(false);
+      showToast('Habit added locally! 🌟', 'success');
+    }
   };
 
-  const toggleHabitComplete = (habitId) => {
-    setHabits(prev => prev.map(h => 
-      h._id === habitId 
-        ? { 
-            ...h, 
-            completed: !h.completed, 
-            streak: h.completed ? Math.max(0, h.streak - 1) : h.streak + 1 
-          } 
-        : h
-    ));
-    showToast('Habit updated! ✅', 'success');
+  const toggleHabitComplete = async (habitId) => {
+    try {
+      const isLocalDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+      const apiUrl = isLocalDev ? (import.meta.env.VITE_API_URL || 'http://localhost:3001') : '';
+      const response = await fetch(`${apiUrl}/api/habits/${habitId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' }
+      });
+      const data = await response.json();
+      
+      if (data._id) {
+        setHabits(prev => prev.map(h => 
+          h._id === habitId ? data : h
+        ));
+        showToast('Habit updated! ✅', 'success');
+      } else {
+        // Fallback to local state update
+        setHabits(prev => prev.map(h => 
+          h._id === habitId 
+            ? { 
+                ...h, 
+                completed: !h.completed, 
+                streak: h.completed ? Math.max(0, h.streak - 1) : h.streak + 1 
+              } 
+            : h
+        ));
+        showToast('Habit updated locally! ✅', 'success');
+      }
+    } catch (error) {
+      console.error('❌ Toggle habit error:', error);
+      // Fallback to local state update
+      setHabits(prev => prev.map(h => 
+        h._id === habitId 
+          ? { 
+              ...h, 
+              completed: !h.completed, 
+              streak: h.completed ? Math.max(0, h.streak - 1) : h.streak + 1 
+            } 
+          : h
+      ));
+      showToast('Habit updated locally! ✅', 'success');
+    }
   };
 
-  const deleteHabit = (habitId) => {
-    setHabits(prev => prev.filter(h => h._id !== habitId));
-    showToast('Habit deleted! 🗑️', 'success');
+  const deleteHabit = async (habitId) => {
+    try {
+      const isLocalDev = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+      const apiUrl = isLocalDev ? (import.meta.env.VITE_API_URL || 'http://localhost:3001') : '';
+      const response = await fetch(`${apiUrl}/api/habits?habitId=${habitId}`, {
+        method: 'DELETE'
+      });
+      const data = await response.json();
+      
+      if (data.message) {
+        setHabits(prev => prev.filter(h => h._id !== habitId));
+        showToast('Habit deleted! 🗑️', 'success');
+      } else {
+        // Fallback to local state update
+        setHabits(prev => prev.filter(h => h._id !== habitId));
+        showToast('Habit deleted locally! 🗑️', 'success');
+      }
+    } catch (error) {
+      console.error('❌ Delete habit error:', error);
+      // Fallback to local state update
+      setHabits(prev => prev.filter(h => h._id !== habitId));
+      showToast('Habit deleted locally! 🗑️', 'success');
+    }
   };
 
   const getStreakEmoji = (streak) => {
@@ -127,7 +201,7 @@ const HabitTracker = ({
               gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
               gap: '20px'
             }}>
-              {professionalHabits.map((habit, index) => (
+              {(habits.length > 0 ? habits : professionalHabits).map((habit, index) => (
                 <div
                   key={habit._id}
                   style={{
