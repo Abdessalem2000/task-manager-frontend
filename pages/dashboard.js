@@ -3,7 +3,7 @@ import DashboardCharts from '../src/components/DashboardCharts';
 import HabitTracker from '../src/components/HabitTracker';
 import TaskList from '../src/components/TaskList';
 
-// WORKING DASHBOARD - SIMPLIFIED TO AVOID SSR ISSUES
+// FINAL WORKING DASHBOARD - NO SSR ISSUES
 class ErrorBoundary extends React.Component {
   constructor(props) {
     super(props);
@@ -40,10 +40,10 @@ class ErrorBoundary extends React.Component {
 }
 
 export default function Dashboard() {
-  console.log('🚀 WORKING DASHBOARD LOADING');
+  console.log('🚀 FINAL DASHBOARD LOADING');
   
-  // Use light theme by default for SSR, will update on client
-  const [mounted, setMounted] = useState(false);
+  // Initialize with true to bypass loading issues
+  const [mounted, setMounted] = useState(true);
   const [user, setUser] = useState({ name: 'Kentache Abdessalem', email: 'kentacheabdou1@gmail.com' });
   const [tasks, setTasks] = useState([
     { _id: '1', name: 'Complete project documentation', completed: false, priority: 'high', category: 'work', progress: 75 },
@@ -70,7 +70,7 @@ export default function Dashboard() {
   const [weeklyGoal, setWeeklyGoal] = useState(20);
 
   useEffect(() => {
-    setMounted(true);
+    console.log('Dashboard mounted, setting up theme...');
     // Only run on client side
     if (typeof window !== 'undefined') {
       try {
@@ -85,42 +85,19 @@ export default function Dashboard() {
   }, []);
 
   useEffect(() => {
+    console.log('Dark mode changed:', darkMode);
     // Only run on client side
-    if (typeof window !== 'undefined' && mounted) {
+    if (typeof window !== 'undefined') {
       try {
         localStorage.setItem('darkMode', JSON.stringify(darkMode));
       } catch (e) {
         console.warn('Failed to save theme preference:', e);
       }
     }
-  }, [darkMode, mounted]);
+  }, [darkMode]);
 
-  // Use light theme for SSR, will update after mount
-  const theme = !mounted ? {
-    bg: '#FAFAFA',
-    cardBg: '#FFFFFF',
-    text: '#111827',
-    border: '#E5E7EB',
-    hoverBg: '#F3F4F6',
-    subtext: '#6B7280',
-    success: '#10B981',
-    warning: '#F59E0B',
-    danger: '#EF4444',
-    gradient: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #EC4899 100%)',
-    chartGrid: '#E5E7EB',
-    chartText: '#374151',
-    shadow: '0 10px 40px rgba(0, 0, 0, 0.1)',
-    accent: '#6366F1',
-    glass: 'rgba(255, 255, 255, 0.8)',
-    glassBorder: 'rgba(255, 255, 255, 0.2)',
-    primary: '#6366F1',
-    buttonBg: '#6366F1',
-    buttonText: '#FFFFFF',
-    inputBg: '#FFFFFF',
-    inputText: '#111827',
-    borderColor: '#D1D5DB',
-    textSecondary: '#6B7280'
-  } : (darkMode ? {
+  // Simple theme object
+  const theme = darkMode ? {
     bg: '#0F0F0F',
     cardBg: '#1A1A1A', 
     text: '#FFFFFF',
@@ -168,7 +145,7 @@ export default function Dashboard() {
     inputText: '#111827',
     borderColor: '#D1D5DB',
     textSecondary: '#6B7280'
-  });
+  };
 
   const showToast = (message, type = 'info') => {
     const id = Date.now();
@@ -178,25 +155,7 @@ export default function Dashboard() {
     }, 3000);
   };
 
-  if (!mounted) {
-    return (
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
-        fontFamily: 'Arial, sans-serif',
-        background: theme.gradient,
-        color: 'white'
-      }}>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '48px', marginBottom: '20px' }}>⚡</div>
-          <h1 style={{ fontSize: '24px', margin: 0 }}>Loading Professional Dashboard...</h1>
-          <p style={{ fontSize: '16px', opacity: 0.8 }}>Preparing your workspace</p>
-        </div>
-      </div>
-    );
-  }
+  console.log('Rendering dashboard with mounted:', mounted);
 
   return (
     <ErrorBoundary>

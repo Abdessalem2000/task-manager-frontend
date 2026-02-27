@@ -302,9 +302,7 @@ const TaskList = ({
               <div
                 key={task._id}
                 style={{
-                  background: darkMode 
-                    ? 'linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.1) 100%)'
-                    : 'linear-gradient(135deg, rgba(255, 255, 255, 0.8) 0%, rgba(249, 250, 251, 0.9) 100%)',
+                  background: theme.cardBg,
                   border: `1px solid ${theme.glassBorder}`,
                   borderRadius: '16px',
                   padding: '24px',
