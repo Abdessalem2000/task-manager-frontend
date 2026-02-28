@@ -19,10 +19,13 @@ export default function handler(req, res) {
 
   return res.status(200).json({
     environment: 'production',
+    timestamp: new Date().toISOString(),
     clerkConfigured: clerkKey && clerkKey !== 'pk_test_YOUR_CLERK_KEY_HERE',
     clerkSecretConfigured: clerkSecret && clerkSecret !== 'sk_test_YOUR_CLERK_SECRET_HERE',
     openaiConfigured: openaiKey && openaiKey !== 'sk_test_YOUR_OPENAI_KEY_HERE',
     clerkKeyLength: clerkKey ? clerkKey.length : 0,
-    clerkKeyStart: clerkKey ? clerkKey.substring(0, 10) + '...' : 'not_set'
+    clerkKeyStart: clerkKey ? clerkKey.substring(0, 10) + '...' : 'not_set',
+    openaiKeyLength: openaiKey ? openaiKey.length : 0,
+    openaiKeyStart: openaiKey ? openaiKey.substring(0, 10) + '...' : 'not_set'
   });
 }
