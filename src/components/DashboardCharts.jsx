@@ -1,10 +1,13 @@
 import React from 'react';
 import { LineChart, Line, AreaChart, Area, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, BarChart, Bar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar } from 'recharts';
 
-const DashboardCharts = ({ tasks, theme, showCharts, setShowCharts }) => {
+const DashboardCharts = ({ tasks = [], theme, showCharts, setShowCharts }) => {
+  // Ensure tasks is an array
+  const safeTasks = Array.isArray(tasks) ? tasks : [];
+  
   // Calculate completion percentage for chart
-  const completionPercentage = tasks.length > 0 
-    ? Math.round((tasks.filter(t => t.completed).length / tasks.length) * 100)
+  const completionPercentage = safeTasks.length > 0 
+    ? Math.round((safeTasks.filter(t => t.completed).length / safeTasks.length) * 100)
     : 0;
 
   // Enhanced mock data for professional charts
@@ -19,15 +22,15 @@ const DashboardCharts = ({ tasks, theme, showCharts, setShowCharts }) => {
   ];
 
   const categoryData = [
-    { name: 'Work', value: tasks.filter(t => t.category === 'work').length, color: '#6366F1' },
-    { name: 'Personal', value: tasks.filter(t => t.category === 'personal').length, color: '#10B981' },
-    { name: 'Shopping', value: tasks.filter(t => t.category === 'shopping').length, color: '#F59E0B' }
+    { name: 'Work', value: safeTasks.filter(t => t.category === 'work').length, color: '#6366F1' },
+    { name: 'Personal', value: safeTasks.filter(t => t.category === 'personal').length, color: '#10B981' },
+    { name: 'Shopping', value: safeTasks.filter(t => t.category === 'shopping').length, color: '#F59E0B' }
   ].filter(item => item.value > 0);
 
   const priorityData = [
-    { name: 'High', value: tasks.filter(t => t.priority === 'high').length, color: '#EF4444' },
-    { name: 'Medium', value: tasks.filter(t => t.priority === 'medium').length, color: '#F59E0B' },
-    { name: 'Low', value: tasks.filter(t => t.priority === 'low').length, color: '#6366F1' }
+    { name: 'High', value: safeTasks.filter(t => t.priority === 'high').length, color: '#EF4444' },
+    { name: 'Medium', value: safeTasks.filter(t => t.priority === 'medium').length, color: '#F59E0B' },
+    { name: 'Low', value: safeTasks.filter(t => t.priority === 'low').length, color: '#6366F1' }
   ].filter(item => item.value > 0);
 
   const productivityData = [

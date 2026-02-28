@@ -5,8 +5,8 @@
   "devFiles": [],
   "ampDevFiles": [],
   "lowPriorityFiles": [
-    "static/OKNRCNVdst0q1wgQbRmS5/_buildManifest.js",
-    "static/OKNRCNVdst0q1wgQbRmS5/_ssgManifest.js"
+    "static/mBR_ZcieT-bXjxSPaS9ra/_buildManifest.js",
+    "static/mBR_ZcieT-bXjxSPaS9ra/_ssgManifest.js"
   ],
   "rootMainFiles": [],
   "pages": {
@@ -34,7 +34,7 @@
       "static/chunks/framework-64ad27b21261a9ce.js",
       "static/chunks/main-4b423ec82b590a3f.js",
       "static/chunks/481-5d00ff9cefbf0ea9.js",
-      "static/chunks/484-dc7992c97979a13c.js",
+      "static/chunks/484-4e6422d2dc2dbe49.js",
       "static/chunks/pages/app-c340386192271204.js"
     ],
     "/dashboard": [
@@ -42,7 +42,7 @@
       "static/chunks/framework-64ad27b21261a9ce.js",
       "static/chunks/main-4b423ec82b590a3f.js",
       "static/chunks/481-5d00ff9cefbf0ea9.js",
-      "static/chunks/484-dc7992c97979a13c.js",
+      "static/chunks/484-4e6422d2dc2dbe49.js",
       "static/chunks/pages/dashboard-da74fd0ccd34024e.js"
     ],
     "/test": [
@@ -62,8 +62,8 @@
       "static/chunks/framework-64ad27b21261a9ce.js",
       "static/chunks/main-4b423ec82b590a3f.js",
       "static/chunks/481-5d00ff9cefbf0ea9.js",
-      "static/chunks/484-dc7992c97979a13c.js",
-      "static/chunks/pages/working-app-3ad82d0fbd9665bd.js"
+      "static/chunks/484-4e6422d2dc2dbe49.js",
+      "static/chunks/pages/working-app-647c4a419ea99240.js"
     ]
   },
   "ampFirstPages": []

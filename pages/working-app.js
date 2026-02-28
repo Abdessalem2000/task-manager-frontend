@@ -383,7 +383,7 @@ export default function WorkingApp() {
             </div>
           ) : (
             <DashboardCharts 
-              data={tasks.map(task => ({ name: task.name, value: task.progress || 0 }))} 
+              tasks={tasks}
               theme={theme}
               showCharts={showCharts}
               setShowCharts={setShowCharts}
