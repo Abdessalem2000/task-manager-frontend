@@ -25,13 +25,13 @@ const DashboardCharts = ({ tasks = [], theme, showCharts, setShowCharts }) => {
     { name: 'Work', value: safeTasks.filter(t => t.category === 'work').length, color: '#6366F1' },
     { name: 'Personal', value: safeTasks.filter(t => t.category === 'personal').length, color: '#10B981' },
     { name: 'Shopping', value: safeTasks.filter(t => t.category === 'shopping').length, color: '#F59E0B' }
-  ].filter(item => item.value > 0);
+  ];
 
   const priorityData = [
     { name: 'High', value: safeTasks.filter(t => t.priority === 'high').length, color: '#EF4444' },
     { name: 'Medium', value: safeTasks.filter(t => t.priority === 'medium').length, color: '#F59E0B' },
     { name: 'Low', value: safeTasks.filter(t => t.priority === 'low').length, color: '#6366F1' }
-  ].filter(item => item.value > 0);
+  ];
 
   const productivityData = [
     { month: 'Jan', tasks: 45, completed: 38, efficiency: 84 },
@@ -189,25 +189,38 @@ const DashboardCharts = ({ tasks = [], theme, showCharts, setShowCharts }) => {
               <h3 style={{ margin: '0 0 20px 0', color: theme.text, fontSize: '1.2rem', fontWeight: '600' }}>
                 🎯 Category Distribution
               </h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={categoryData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                    outerRadius={100}
-                    fill="#8884d8"
-                    dataKey="value"
-                  >
-                    {categoryData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip content={<CustomTooltip />} />
-                </PieChart>
-              </ResponsiveContainer>
+              {categoryData.some(item => item.value > 0) ? (
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie
+                      data={categoryData.filter(item => item.value > 0)}
+                      cx="50%"
+                      cy="50%"
+                      labelLine={false}
+                      label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                      outerRadius={100}
+                      fill="#8884d8"
+                      dataKey="value"
+                    >
+                      {categoryData.filter(item => item.value > 0).map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Pie>
+                    <Tooltip content={<CustomTooltip />} />
+                  </PieChart>
+                </ResponsiveContainer>
+              ) : (
+                <div style={{
+                  height: '300px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: theme.textSecondary,
+                  fontSize: '16px'
+                }}>
+                  No tasks available for category analysis
+                </div>
+              )}
             </div>
 
             {/* Priority Analysis */}
@@ -222,19 +235,32 @@ const DashboardCharts = ({ tasks = [], theme, showCharts, setShowCharts }) => {
               <h3 style={{ margin: '0 0 20px 0', color: theme.text, fontSize: '1.2rem', fontWeight: '600' }}>
                 ⚡ Priority Analysis
               </h3>
-              <ResponsiveContainer width="100%" height={300}>
-                <BarChart data={priorityData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke={theme.chartGrid} />
-                  <XAxis dataKey="name" stroke={theme.chartText} />
-                  <YAxis stroke={theme.chartText} />
-                  <Tooltip content={<CustomTooltip />} />
-                  <Bar dataKey="value" radius={[8, 8, 0, 0]}>
-                    {priorityData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
+              {priorityData.some(item => item.value > 0) ? (
+                <ResponsiveContainer width="100%" height={300}>
+                  <BarChart data={priorityData.filter(item => item.value > 0)}>
+                    <CartesianGrid strokeDasharray="3 3" stroke={theme.chartGrid} />
+                    <XAxis dataKey="name" stroke={theme.chartText} />
+                    <YAxis stroke={theme.chartText} />
+                    <Tooltip content={<CustomTooltip />} />
+                    <Bar dataKey="value" radius={[8, 8, 0, 0]}>
+                      {priorityData.filter(item => item.value > 0).map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      ))}
+                    </Bar>
+                  </BarChart>
+                </ResponsiveContainer>
+              ) : (
+                <div style={{
+                  height: '300px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: theme.textSecondary,
+                  fontSize: '16px'
+                }}>
+                  No tasks available for priority analysis
+                </div>
+              )}
             </div>
 
             {/* Performance Radar */}

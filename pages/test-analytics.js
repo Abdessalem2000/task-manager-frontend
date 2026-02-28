@@ -31,11 +31,13 @@ export default function TestAnalytics() {
   };
 
   const sampleTasks = [
-    { _id: '1', name: 'Complete project documentation', completed: false, priority: 'high', category: 'work', progress: 75 },
-    { _id: '2', name: 'Review pull requests', completed: true, priority: 'medium', category: 'work', progress: 100 },
-    { _id: '3', name: 'Update dependencies', completed: false, priority: 'low', category: 'work', progress: 30 },
-    { _id: '4', name: 'Grocery shopping', completed: false, priority: 'medium', category: 'personal', progress: 0 },
-    { _id: '5', name: 'Gym workout', completed: true, priority: 'high', category: 'personal', progress: 100 }
+    { _id: '1', name: 'Complete project documentation', priority: 'high', category: 'work', completed: false, progress: 75 },
+    { _id: '2', name: 'Review pull requests', priority: 'medium', category: 'work', completed: true, progress: 100 },
+    { _id: '3', name: 'Update dependencies', priority: 'low', category: 'work', completed: false, progress: 30 },
+    { _id: '4', name: 'Grocery shopping', priority: 'medium', category: 'shopping', completed: false, progress: 0 },
+    { _id: '5', name: 'Gym workout', priority: 'high', category: 'personal', completed: true, progress: 100 },
+    { _id: '6', name: 'Read book chapter', priority: 'low', category: 'personal', completed: false, progress: 25 },
+    { _id: '7', name: 'Buy birthday gift', priority: 'medium', category: 'shopping', completed: true, progress: 100 }
   ];
 
   return (

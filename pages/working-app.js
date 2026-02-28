@@ -46,8 +46,13 @@ export default function WorkingApp() {
   const [mounted, setMounted] = useState(true);
   const [user, setUser] = useState({ name: 'Kentache Abdessalem', email: 'kentacheabdou1@gmail.com' });
   const [tasks, setTasks] = useState([
-    { _id: '1', name: 'Sample Task 1', priority: 'medium', category: 'work', completed: false, progress: 50 },
-    { _id: '2', name: 'Sample Task 2', priority: 'high', category: 'personal', completed: true, progress: 100 }
+    { _id: '1', name: 'Complete project documentation', priority: 'high', category: 'work', completed: false, progress: 75 },
+    { _id: '2', name: 'Review pull requests', priority: 'medium', category: 'work', completed: true, progress: 100 },
+    { _id: '3', name: 'Update dependencies', priority: 'low', category: 'work', completed: false, progress: 30 },
+    { _id: '4', name: 'Grocery shopping', priority: 'medium', category: 'shopping', completed: false, progress: 0 },
+    { _id: '5', name: 'Gym workout', priority: 'high', category: 'personal', completed: true, progress: 100 },
+    { _id: '6', name: 'Read book chapter', priority: 'low', category: 'personal', completed: false, progress: 25 },
+    { _id: '7', name: 'Buy birthday gift', priority: 'medium', category: 'shopping', completed: true, progress: 100 }
   ]);
   const [dbConnected, setDbConnected] = useState(false);
   const [toasts, setToasts] = useState([]);
