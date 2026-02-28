@@ -175,6 +175,13 @@ export default function App() {
     console.log('App mounted, fetching data...');
     fetchTasks();
     fetchHabits();
+    
+    // Force a second fetch after a delay to ensure data loads
+    setTimeout(() => {
+      console.log('Second fetch attempt...');
+      fetchTasks();
+      fetchHabits();
+    }, 2000);
   }, []);
 
   // Theme object
