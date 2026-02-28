@@ -1,23 +1,17 @@
-export default function handler(req, res) {
+export async function GET() {
   // Set CORS headers
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
-  
-  if (req.method === 'OPTIONS') {
-    return res.status(200).end();
-  }
-
-  if (req.method !== 'GET') {
-    return res.status(405).json({ error: 'Method not allowed' });
-  }
+  const headers = new Headers({
+    'Access-Control-Allow-Origin': '*',
+    'Access-Control-Allow-Methods': 'GET, OPTIONS',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization'
+  });
 
   // Check environment variables
   const clerkKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
   const clerkSecret = process.env.CLERK_SECRET_KEY;
   const openaiKey = process.env.OPENAI_API_KEY;
 
-  return res.status(200).json({
+  return Response.json({
     environment: 'production',
     timestamp: new Date().toISOString(),
     clerkConfigured: clerkKey && clerkKey !== 'pk_test_YOUR_CLERK_KEY_HERE',
@@ -33,5 +27,5 @@ export default function handler(req, res) {
       OPENAI_API_KEY: openaiKey ? 'SET' : 'NOT_SET',
       MONGODB_URI: process.env.MONGODB_URI ? 'SET' : 'NOT_SET'
     }
-  });
+  }, { headers });
 }
