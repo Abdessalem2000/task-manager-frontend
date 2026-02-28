@@ -18,6 +18,16 @@ const AuthWrapper = ({ children }) => {
       process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY !== 'pk_test_YOUR_CLERK_KEY_HERE';
     setIsClerkConfigured(configured);
     setClerkLoaded(true);
+    
+    // Auto-redirect after 2 seconds if not configured
+    if (!configured) {
+      const timer = setTimeout(() => {
+        if (typeof window !== 'undefined') {
+          window.location.href = '/working-app';
+        }
+      }, 2000);
+      return () => clearTimeout(timer);
+    }
   }, []);
 
   // If Clerk is not configured, render children directly (demo mode)
@@ -34,8 +44,8 @@ const ClerkAuthWrapper = ({ children }) => {
   const { isSignedIn, isLoaded } = useAuth();
   const { user } = useUser();
 
-  // Show loading state
-  if (!isLoaded) {
+  // Show loading state only for first 2 seconds
+  if (!isLoaded && isClerkConfigured) {
     return (
       <div style={{
         display: 'flex',
