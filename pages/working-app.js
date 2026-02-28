@@ -46,10 +46,7 @@ export default function WorkingApp() {
   // State management with clean initial state
   const [mounted, setMounted] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
-  const [user, setUser] = useState({ 
-    name: 'User', 
-    email: 'user@example.com' 
-  });
+  const [user, setUser] = useState(null);
   const [tasks, setTasks] = useState([]);
   const [dbConnected, setDbConnected] = useState(false);
   const [toasts, setToasts] = useState([]);
@@ -279,13 +276,13 @@ export default function WorkingApp() {
                   margin: '0 auto 15px',
                   boxShadow: theme.shadow,
                 }}>
-                  {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                  {user?.name ? user.name.charAt(0).toUpperCase() : 'U'}
                 </div>
                 <h3 style={{ margin: '10px 0 5px 0', color: theme.text, fontSize: '1.1em' }}>
-                  {user.name}
+                  {user?.name || 'Guest'}
                 </h3>
                 <p style={{ margin: '0', color: theme.textSecondary, fontSize: '0.9em' }}>
-                  {user.email}
+                  {user?.email || 'guest@example.com'}
                 </p>
               </div>
 
@@ -477,7 +474,7 @@ export default function WorkingApp() {
                     ✨ Professional Dashboard
                   </h1>
                   <p style={{ margin: '0', color: theme.textSecondary, fontSize: '1em' }}>
-                    Welcome back, {user.name}! Here's your productivity overview.
+                    Welcome back, {user?.name || 'Guest'}! Here's your productivity overview.
                   </p>
                 </div>
               </div>
@@ -633,7 +630,7 @@ export default function WorkingApp() {
                 <input
                   id="userName"
                   type="text"
-                  value={user.name}
+                  value={user?.name || ''}
                   onChange={(e) => setUser({ ...user, name: e.target.value })}
                   style={{
                     width: '100%',

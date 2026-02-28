@@ -3,15 +3,14 @@ import ErrorBoundary from '../src/components/ErrorBoundary';
 import Head from 'next/head';
 import { ClerkProvider } from '@clerk/nextjs';
 
-// Check if Clerk keys are configured
+// Get Clerk publishable key
 const clerkPublishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
-const isClerkConfigured = clerkPublishableKey && clerkPublishableKey !== 'pk_test_YOUR_CLERK_KEY_HERE';
 
 function MyApp({ Component, pageProps }) {
-  // If Clerk is not configured, render without authentication
-  if (!isClerkConfigured) {
+  // Only use ClerkProvider if we have a valid key
+  if (clerkPublishableKey && clerkPublishableKey !== 'pk_test_YOUR_CLERK_KEY_HERE') {
     return (
-      <>
+      <ClerkProvider publishableKey={clerkPublishableKey}>
         <Head>
           <style>{`
             @keyframes fadeIn {
@@ -55,13 +54,13 @@ function MyApp({ Component, pageProps }) {
         <ErrorBoundary>
           <Component {...pageProps} />
         </ErrorBoundary>
-      </>
+      </ClerkProvider>
     );
   }
 
-  // If Clerk is configured, render with authentication
+  // Fallback without Clerk for development/build
   return (
-    <ClerkProvider publishableKey={clerkPublishableKey}>
+    <>
       <Head>
         <style>{`
           @keyframes fadeIn {
@@ -105,7 +104,7 @@ function MyApp({ Component, pageProps }) {
       <ErrorBoundary>
         <Component {...pageProps} />
       </ErrorBoundary>
-    </ClerkProvider>
+    </>
   );
 }
 
