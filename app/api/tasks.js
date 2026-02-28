@@ -52,7 +52,7 @@ export default async function handler(req, res) {
     // Connect to MongoDB
     await connectDB();
   } catch (error) {
-    return res.status(500).json({ error: 'Database connection failed' });
+    return res.status(500).json({ error: 'Database connection failed', timestamp: new Date().toISOString() });
   }
 
   if (req.method === 'POST') {
