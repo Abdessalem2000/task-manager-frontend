@@ -1,1 +1,6 @@
-{"/_app":"pages/_app.js","/_error":"pages/_error.js","/api/ping":"pages/api/ping.js","/app":"pages/app.html","/api/tasks":"pages/api/tasks.js","/":"pages/index.html","/test-analytics":"pages/test-analytics.html","/dashboard":"pages/dashboard.html","/test-api":"pages/test-api.html","/working-app":"pages/working-app.html","/test-charts":"pages/test-charts.html","/test":"pages/test.html","/_document":"pages/_document.js","/404":"pages/404.html"}
+{
+  "/_app": "pages/_app.js",
+  "/_error": "pages/_error.js",
+  "/_document": "pages/_document.js",
+  "/api/tasks": "pages/api/tasks.js"
+}

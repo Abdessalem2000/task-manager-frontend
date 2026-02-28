@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import DashboardCharts from '../src/components/DashboardCharts';
 import HabitTracker from '../src/components/HabitTracker';
 import TaskList from '../src/components/TaskList';
+import AuthWrapper from '../src/components/AuthWrapper';
 
 // WORKING APP WITH GUARANTEED DATA DISPLAY
 class ErrorBoundary extends React.Component {
@@ -45,7 +46,10 @@ export default function WorkingApp() {
   // State management with guaranteed initial data
   const [mounted, setMounted] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
-  const [user, setUser] = useState({ name: 'Kentache Abdessalem', email: 'kentacheabdou1@gmail.com' });
+  const [user, setUser] = useState({ 
+    name: 'Demo User', 
+    email: 'demo@example.com' 
+  });
   const [tasks, setTasks] = useState([
     { _id: '1', name: 'Complete project documentation', priority: 'high', category: 'work', completed: false, progress: 75 },
     { _id: '2', name: 'Review pull requests', priority: 'medium', category: 'work', completed: true, progress: 100 },
@@ -250,16 +254,17 @@ export default function WorkingApp() {
   console.log('Rendering working app with', tasks.length, 'tasks and', habits.length, 'habits');
 
   return (
-    <ErrorBoundary>
-      <div style={{
-        minHeight: '100vh',
-        backgroundColor: theme.bg,
-        color: theme.text,
-        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-        margin: 0,
-        padding: 0,
-        position: 'relative',
-      }}>
+    <AuthWrapper>
+      <ErrorBoundary>
+        <div style={{
+          minHeight: '100vh',
+          backgroundColor: theme.bg,
+          color: theme.text,
+          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+          margin: 0,
+          padding: 0,
+          position: 'relative',
+        }}>
         {/* Professional Layout Container */}
         <div style={{
           maxWidth: '1400px',
@@ -732,5 +737,6 @@ export default function WorkingApp() {
         </div>
       </div>
     </ErrorBoundary>
+    </AuthWrapper>
   );
 }
