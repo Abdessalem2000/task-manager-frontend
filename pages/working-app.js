@@ -3,6 +3,8 @@ import DashboardCharts from '../src/components/DashboardCharts';
 import HabitTracker from '../src/components/HabitTracker';
 import TaskList from '../src/components/TaskList';
 import AuthWrapper from '../src/components/AuthWrapper';
+import AIAssistant from '../src/components/AIAssistant';
+import UpgradeModal from '../src/components/UpgradeModal';
 
 // WORKING APP WITH GUARANTEED DATA DISPLAY
 class ErrorBoundary extends React.Component {
@@ -64,6 +66,7 @@ export default function WorkingApp() {
   const [isAddingTask, setIsAddingTask] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
   const [showProfileSettings, setShowProfileSettings] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterCategory, setFilterCategory] = useState('all');
   const [filterPriority, setFilterPriority] = useState('all');
@@ -254,6 +257,7 @@ export default function WorkingApp() {
   console.log('Rendering working app with', tasks.length, 'tasks and', habits.length, 'habits');
 
   return (
+    <>
     <AuthWrapper>
       <ErrorBoundary>
         <div style={{
@@ -426,6 +430,35 @@ export default function WorkingApp() {
                     }}
                   >
                     ⚙️ Profile Settings
+                  </button>
+                  <button
+                    onClick={() => setShowUpgradeModal(true)}
+                    style={{
+                      width: '100%',
+                      padding: '12px',
+                      background: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #EC4899 100%)',
+                      color: 'white',
+                      border: 'none',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontSize: '0.9em',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                      transition: 'all 0.3s ease',
+                      boxShadow: '0 4px 12px rgba(99, 102, 241, 0.3)',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow = '0 8px 20px rgba(99, 102, 241, 0.4)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = '0 4px 12px rgba(99, 102, 241, 0.3)';
+                    }}
+                  >
+                    🚀 Upgrade to Pro
                   </button>
                 </div>
               </div>
@@ -738,5 +771,13 @@ export default function WorkingApp() {
       </div>
     </ErrorBoundary>
     </AuthWrapper>
+    <AIAssistant tasks={tasks} theme={theme} showToast={showToast} />
+    <UpgradeModal 
+      theme={theme} 
+      isOpen={showUpgradeModal} 
+      onClose={() => setShowUpgradeModal(false)}
+      showToast={showToast}
+    />
+    </>
   );
 }
