@@ -1,19 +1,13 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 export default function HomePage() {
-  const [isRedirecting, setIsRedirecting] = useState(true);
-
   useEffect(() => {
-    // Simple redirect logic without Clerk dependency
-    const timer = setTimeout(() => {
-      if (typeof window !== 'undefined') {
-        window.location.href = '/working-app';
-      }
-    }, 1000);
-
-    return () => clearTimeout(timer);
+    // Immediate redirect to working-app
+    if (typeof window !== 'undefined') {
+      window.location.href = '/working-app';
+    }
   }, []);
 
   return (
@@ -40,7 +34,7 @@ export default function HomePage() {
           fontSize: '1.1em',
           margin: '0'
         }}>
-          {isRedirecting ? 'Loading Professional Dashboard...' : 'Redirecting...'}
+          Loading Professional Dashboard...
         </p>
       </div>
     </div>
