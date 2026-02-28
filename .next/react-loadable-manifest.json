@@ -1,4 +1,24 @@
 {
+  "node_modules\\@clerk\\nextjs\\dist\\cjs\\app-router\\client\\ClerkProvider.js -> ./keyless-creator-reader.js": {
+    "id": null,
+    "files": []
+  },
+  "node_modules\\@clerk\\nextjs\\dist\\cjs\\app-router\\keyless-actions.js -> ../server/keyless-log-cache.js": {
+    "id": null,
+    "files": []
+  },
+  "node_modules\\@clerk\\nextjs\\dist\\cjs\\app-router\\keyless-actions.js -> ../server/keyless-node.js": {
+    "id": null,
+    "files": []
+  },
+  "node_modules\\@clerk\\nextjs\\dist\\cjs\\app-router\\keyless-actions.js -> ../server/keyless-telemetry.js": {
+    "id": null,
+    "files": []
+  },
+  "node_modules\\@clerk\\nextjs\\dist\\cjs\\server\\keyless-telemetry.js -> ./keyless-node.js": {
+    "id": null,
+    "files": []
+  },
   "node_modules\\@clerk\\nextjs\\dist\\esm\\app-router\\client\\ClerkProvider.js -> ./keyless-creator-reader.js": {
     "id": 5527,
     "files": [
@@ -32,6 +52,14 @@
     "files": [
       "static/chunks/690.5577d4c6c9b5f997.js"
     ]
+  },
+  "pages\\sign-in.js -> @clerk/nextjs": {
+    "id": 7302,
+    "files": []
+  },
+  "pages\\sign-up.js -> @clerk/nextjs": {
+    "id": 7302,
+    "files": []
   },
   "src\\components\\AuthWrapper.jsx -> @clerk/clerk-react": {
     "id": 9229,
