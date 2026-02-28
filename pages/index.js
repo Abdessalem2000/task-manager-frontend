@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 export default function Home() {
   useEffect(() => {
     // Redirect to working app
-    window.location.href = '/app';
+    window.location.href = '/working-app';
   }, []);
 
   return (
