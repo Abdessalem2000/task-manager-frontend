@@ -4,7 +4,7 @@ import OpenAI from 'openai';
 
 // Initialize OpenAI client
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY || 'sk_test_YOUR_OPENAI_KEY_HERE',
+  apiKey: process.env.OPENAI_API_KEY,
 });
 
 // MongoDB connection
@@ -15,10 +15,8 @@ const connectDB = async () => {
         throw new Error('MONGODB_URI is not defined in environment variables');
       }
       await mongoose.connect(process.env.MONGODB_URI);
-      console.log('✅ MongoDB connected successfully');
     }
   } catch (error) {
-    console.error('❌ MongoDB connection failed:', error.message);
     throw error;
   }
 };
@@ -52,9 +50,8 @@ export default async function handler(req, res) {
 
   // Get authenticated user
   const { userId } = getAuth(req);
-  const currentUserId = userId || 'demo-user';
-
-  if (!currentUserId) {
+  
+  if (!userId) {
     return res.status(401).json({ error: 'Unauthorized - Please sign in' });
   }
 
@@ -88,7 +85,7 @@ export default async function handler(req, res) {
     await connectDB();
 
     // Get user's tasks
-    const tasks = await Task.find({ userId: currentUserId }).sort({ createdAt: -1 });
+    const tasks = await Task.find({ userId }).sort({ createdAt: -1 });
     
     if (tasks.length === 0) {
       return res.status(200).json({
