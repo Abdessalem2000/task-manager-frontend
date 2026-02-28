@@ -44,6 +44,7 @@ export default function WorkingApp() {
   
   // State management with guaranteed initial data
   const [mounted, setMounted] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
   const [user, setUser] = useState({ name: 'Kentache Abdessalem', email: 'kentacheabdou1@gmail.com' });
   const [tasks, setTasks] = useState([
     { _id: '1', name: 'Complete project documentation', priority: 'high', category: 'work', completed: false, progress: 75 },
@@ -151,21 +152,31 @@ export default function WorkingApp() {
     }
   };
 
-  // Initial data fetch
+  // Initial data fetch and mobile detection
   useEffect(() => {
     console.log('Working app mounted, fetching data...');
     
-    // Fetch data after a short delay to ensure page is loaded
-    setTimeout(() => {
-      fetchTasks();
-      fetchHabits();
-    }, 1000);
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
     
-    // Second fetch attempt
-    setTimeout(() => {
+    handleResize(); // Initial check
+    window.addEventListener('resize', handleResize);
+    
+    // Fetch real data with delay to ensure UI loads first
+    const timer1 = setTimeout(() => {
       fetchTasks();
+    }, 500);
+    
+    const timer2 = setTimeout(() => {
       fetchHabits();
-    }, 3000);
+    }, 800);
+
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+    };
   }, []);
 
   // Theme object
@@ -249,63 +260,40 @@ export default function WorkingApp() {
         padding: 0,
         position: 'relative',
       }}>
+        {/* Professional Layout Container */}
         <div style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          padding: '20px',
-          maxWidth: '1200px',
+          maxWidth: '1400px',
           margin: '0 auto',
+          padding: '20px',
+          display: 'grid',
+          gridTemplateColumns: isMobile ? '1fr' : '280px 1fr',
+          gap: '30px',
+          minHeight: '100vh',
         }}>
-          {/* Header */}
-          <div style={{
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            marginBottom: '40px',
-            padding: '20px',
-            borderRadius: '15px',
-            background: theme.cardBg,
-            boxShadow: theme.shadow,
-          }}>
-            <div>
-              <h1 style={{ fontSize: '2.5em', margin: 0, color: theme.primary }}>✨ Professional Dashboard</h1>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '5px' }}>
-                <span style={{ color: theme.textSecondary }}>
-                  {dbConnected ? '🟢 Connected to Database' : '🟡 Using Sample Data'}
-                </span>
-                <span style={{ color: theme.textSecondary }}>|</span>
-                <span style={{ color: theme.textSecondary }}>Welcome, {user.name}</span>
-              </div>
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center' }}>
-              <button
-                onClick={() => setDarkMode(!darkMode)}
-                style={{
-                  background: theme.buttonBg,
-                  color: theme.buttonText,
-                  border: 'none',
-                  padding: '10px 20px',
-                  borderRadius: '8px',
-                  cursor: 'pointer',
-                  fontSize: '1em',
-                  display: 'flex',
-                  alignItems: 'center',
-                  marginRight: '15px',
-                  boxShadow: theme.shadow,
-                  transition: 'background 0.3s ease, transform 0.2s ease',
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-2px)'}
-                onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
-              >
-                {darkMode ? '☀️ Light Mode' : '🌙 Dark Mode'}
-              </button>
-              <div
-                onClick={() => setShowProfileSettings(true)}
-                style={{
-                  width: '40px',
-                  height: '40px',
+          
+          {/* Sidebar - Only show on desktop */}
+          {!isMobile && (
+            <div style={{
+              background: theme.cardBg,
+              borderRadius: '16px',
+              padding: '25px',
+              boxShadow: theme.shadow,
+              border: `1px solid ${theme.glassBorder}`,
+              backdropFilter: 'blur(10px)',
+              height: 'fit-content',
+              position: 'sticky',
+              top: '20px',
+            }}>
+              {/* User Profile Section */}
+              <div style={{
+                textAlign: 'center',
+                marginBottom: '30px',
+                paddingBottom: '20px',
+                borderBottom: `1px solid ${theme.border}`,
+              }}>
+                <div style={{
+                  width: '60px',
+                  height: '60px',
                   borderRadius: '50%',
                   background: theme.primary,
                   display: 'flex',
@@ -313,46 +301,232 @@ export default function WorkingApp() {
                   alignItems: 'center',
                   color: 'white',
                   fontWeight: 'bold',
-                  cursor: 'pointer',
-                  fontSize: '1.2em',
+                  fontSize: '1.5em',
+                  margin: '0 auto 15px',
                   boxShadow: theme.shadow,
-                  transition: 'transform 0.2s ease',
-                }}
-                onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.1)'}
-                onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
-              >
-                {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                }}>
+                  {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
+                </div>
+                <h3 style={{ margin: '10px 0 5px 0', color: theme.text, fontSize: '1.1em' }}>
+                  {user.name}
+                </h3>
+                <p style={{ margin: '0', color: theme.textSecondary, fontSize: '0.9em' }}>
+                  {user.email}
+                </p>
+              </div>
+
+              {/* Quick Stats */}
+              <div style={{ marginBottom: '25px' }}>
+                <h4 style={{ margin: '0 0 15px 0', color: theme.text, fontSize: '1em' }}>
+                  📊 Quick Stats
+                </h4>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    padding: '10px',
+                    background: theme.hoverBg,
+                    borderRadius: '8px',
+                    fontSize: '0.9em',
+                  }}>
+                    <span style={{ color: theme.textSecondary }}>Total Tasks</span>
+                    <span style={{ fontWeight: 'bold', color: theme.primary }}>{tasks.length}</span>
+                  </div>
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    padding: '10px',
+                    background: theme.hoverBg,
+                    borderRadius: '8px',
+                    fontSize: '0.9em',
+                  }}>
+                    <span style={{ color: theme.textSecondary }}>Completed</span>
+                    <span style={{ fontWeight: 'bold', color: theme.success }}>{tasks.filter(t => t.completed).length}</span>
+                  </div>
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    padding: '10px',
+                    background: theme.hoverBg,
+                    borderRadius: '8px',
+                    fontSize: '0.9em',
+                  }}>
+                    <span style={{ color: theme.textSecondary }}>Progress</span>
+                    <span style={{ fontWeight: 'bold', color: theme.primary }}>
+                      {tasks.length > 0 ? Math.round((tasks.filter(t => t.completed).length / tasks.length) * 100) : 0}%
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Quick Actions */}
+              <div style={{ marginBottom: '25px' }}>
+                <h4 style={{ margin: '0 0 15px 0', color: theme.text, fontSize: '1em' }}>
+                  ⚡ Quick Actions
+                </h4>
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <button
+                    onClick={() => setDarkMode(!darkMode)}
+                    style={{
+                      width: '100%',
+                      padding: '12px',
+                      background: theme.buttonBg,
+                      color: theme.buttonText,
+                      border: 'none',
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontSize: '0.9em',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                      boxShadow: theme.shadow,
+                      transition: 'all 0.3s ease',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow = '0 8px 25px rgba(99, 102, 241, 0.4)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = theme.shadow;
+                    }}
+                  >
+                    {darkMode ? '☀️ Light Mode' : '🌙 Dark Mode'}
+                  </button>
+                  <button
+                    onClick={() => setShowProfileSettings(true)}
+                    style={{
+                      width: '100%',
+                      padding: '12px',
+                      background: theme.hoverBg,
+                      color: theme.text,
+                      border: `1px solid ${theme.border}`,
+                      borderRadius: '8px',
+                      cursor: 'pointer',
+                      fontSize: '0.9em',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                      transition: 'all 0.3s ease',
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.background = theme.buttonBg;
+                      e.currentTarget.style.color = theme.buttonText;
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.background = theme.hoverBg;
+                      e.currentTarget.style.color = theme.text;
+                    }}
+                  >
+                    ⚙️ Profile Settings
+                  </button>
+                </div>
+              </div>
+
+              {/* Status Indicator */}
+              <div style={{
+                padding: '12px',
+                background: dbConnected ? 'rgba(16, 185, 129, 0.1)' : 'rgba(245, 158, 11, 0.1)',
+                border: `1px solid ${dbConnected ? theme.success : theme.warning}`,
+                borderRadius: '8px',
+                fontSize: '0.85em',
+                textAlign: 'center',
+              }}>
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '8px',
+                  color: dbConnected ? theme.success : theme.warning,
+                  fontWeight: '500',
+                }}>
+                  {dbConnected ? '🟢 Database Connected' : '🟡 Sample Data'}
+                </div>
               </div>
             </div>
-          </div>
+          )}
+
+          {/* Main Content Area */}
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '30px',
+          }}>
+            {/* Header */}
+            <div style={{
+              background: theme.cardBg,
+              borderRadius: '16px',
+              padding: '30px',
+              boxShadow: theme.shadow,
+              border: `1px solid ${theme.glassBorder}`,
+              backdropFilter: 'blur(10px)',
+            }}>
+              <div style={{
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+                marginBottom: '10px',
+              }}>
+                <div>
+                  <h1 style={{ fontSize: '2.2em', margin: '0', color: theme.primary, marginBottom: '5px' }}>
+                    ✨ Professional Dashboard
+                  </h1>
+                  <p style={{ margin: '0', color: theme.textSecondary, fontSize: '1em' }}>
+                    Welcome back, {user.name}! Here's your productivity overview.
+                  </p>
+                </div>
+              </div>
+            </div>
 
           {/* Stats Grid */}
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-            gap: '25px',
-            width: '100%',
-            marginBottom: '40px',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: '20px',
+            marginBottom: '30px',
           }}>
             {stats.map((stat, index) => (
               <div
                 key={index}
                 style={{
                   background: theme.cardBg,
-                  padding: '25px',
-                  borderRadius: '15px',
+                  padding: '20px',
+                  borderRadius: '12px',
                   boxShadow: theme.shadow,
+                  border: `1px solid ${theme.glassBorder}`,
+                  backdropFilter: 'blur(10px)',
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'flex-start',
                   transition: 'transform 0.2s ease',
                 }}
-                onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-5px)'}
+                onMouseEnter={(e) => e.currentTarget.style.transform = 'translateY(-4px)'}
                 onMouseLeave={(e) => e.currentTarget.style.transform = 'translateY(0)'}
               >
-                <div style={{ color: theme.primary, fontSize: '2em', marginBottom: '10px' }}>{stat.icon}</div>
-                <h3 style={{ margin: 0, fontSize: '1.5em', color: theme.text }}>{stat.value}</h3>
-                <p style={{ margin: '5px 0 0', color: theme.textSecondary }}>{stat.label}</p>
+                <div style={{
+                  fontSize: '2em',
+                  marginBottom: '8px',
+                  color: theme.primary,
+                }}>
+                  {stat.icon}
+                </div>
+                <div style={{
+                  fontSize: '1.8em',
+                  fontWeight: 'bold',
+                  color: theme.text,
+                  marginBottom: '4px',
+                }}>
+                  {stat.value}
+                </div>
+                <div style={{
+                  fontSize: '0.9em',
+                  color: theme.textSecondary,
+                  fontWeight: '500',
+                }}>
+                  {stat.label}
+                </div>
               </div>
             ))}
           </div>
@@ -424,6 +598,7 @@ export default function WorkingApp() {
             setShowCompleted={setShowCompleted}
             dbConnected={dbConnected}
           />
+          </div>
         </div>
 
         {/* Profile Settings Modal */}
