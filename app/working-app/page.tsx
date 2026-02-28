@@ -1,0 +1,567 @@
+'use client';
+
+import React, { useState, useEffect } from 'react';
+import DashboardCharts from '../../src/components/DashboardCharts';
+import HabitTracker from '../../src/components/HabitTracker';
+import TaskList from '../../src/components/TaskList';
+import AuthWrapper from '../../src/components/AuthWrapper';
+import AIAssistant from '../../src/components/AIAssistant';
+import UpgradeModal from '../../src/components/UpgradeModal';
+
+export default function WorkingApp() {
+  // State management with clean initial state
+  const [mounted, setMounted] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
+  const [user, setUser] = useState<{ name?: string; email?: string } | null>(null);
+  const [tasks, setTasks] = useState<any[]>([]);
+  const [dbConnected, setDbConnected] = useState(false);
+  const [toasts, setToasts] = useState<any[]>([]);
+  const [isAddingTask, setIsAddingTask] = useState(false);
+  const [darkMode, setDarkMode] = useState(false);
+  const [showProfileSettings, setShowProfileSettings] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterCategory, setFilterCategory] = useState('all');
+  const [filterPriority, setFilterPriority] = useState('all');
+  const [showCompleted, setShowCompleted] = useState(true);
+  const [habits, setHabits] = useState<any[]>([]);
+  const [showHabits, setShowHabits] = useState(false);
+  const [showCharts, setShowCharts] = useState(false);
+  const [completedToday, setCompletedToday] = useState(0);
+  const [weeklyGoal, setWeeklyGoal] = useState(20);
+
+  // Theme management
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const savedTheme = localStorage.getItem('darkMode');
+        if (savedTheme) {
+          setDarkMode(JSON.parse(savedTheme));
+        }
+      } catch (e) {
+        // Theme loading failed
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('darkMode', JSON.stringify(darkMode));
+      } catch (e) {
+        // Failed to save theme preference
+      }
+    }
+  }, [darkMode]);
+
+  // REAL DATABASE FETCHING (with fallback to current data)
+  const fetchTasks = async () => {
+    try {
+      const response = await fetch('/api/tasks');
+      if (response.ok) {
+        const data = await response.json();
+        
+        // Handle both direct array and wrapped response
+        const tasksData = Array.isArray(data) ? data : (data.tasks || []);
+        const isConnected = data.dbConnected !== undefined ? data.dbConnected : true;
+        
+        if (tasksData.length > 0) {
+          setTasks(tasksData);
+          setDbConnected(isConnected);
+          
+          // Calculate completed today
+          const today = new Date().toDateString();
+          const todayTasks = tasksData.filter((task: any) => 
+            task.completed && new Date(task.updatedAt).toDateString() === today
+          );
+          setCompletedToday(todayTasks.length);
+        }
+      } else {
+        setDbConnected(false);
+      }
+    } catch (error) {
+      setDbConnected(false);
+    }
+  };
+
+  const fetchHabits = async () => {
+    try {
+      const response = await fetch('/api/habits');
+      if (response.ok) {
+        const data = await response.json();
+        
+        // Handle both direct array and wrapped response
+        const habitsData = Array.isArray(data) ? data : (data.habits || []);
+        
+        if (habitsData.length > 0) {
+          setHabits(habitsData);
+        }
+      }
+    } catch (error) {
+      // Habits fetch failed
+    }
+  };
+
+  // Initial data fetch and mobile detection
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    
+    // Fetch data
+    fetchTasks();
+    fetchHabits();
+    
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Theme object
+  const theme = darkMode ? {
+    bg: '#0F0F0F',
+    cardBg: '#1A1A1A', 
+    text: '#FFFFFF',
+    border: '#2A2A2A',
+    hoverBg: '#252525',
+    subtext: '#9CA3AF',
+    success: '#10B981',
+    warning: '#F59E0B',
+    error: '#EF4444',
+    primary: '#6366F1',
+    secondary: '#8B5CF6',
+    inputBg: '#1F2937',
+    inputText: '#F3F4F6',
+    shadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+    textSecondary: '#9CA3AF'
+  } : {
+    bg: '#FFFFFF',
+    cardBg: '#F9FAFB',
+    text: '#1F2937',
+    border: '#E5E7EB',
+    hoverBg: '#F3F4F6',
+    subtext: '#6B7280',
+    success: '#10B981',
+    warning: '#F59E0B',
+    error: '#EF4444',
+    primary: '#6366F1',
+    secondary: '#8B5CF6',
+    inputBg: '#FFFFFF',
+    inputText: '#1F2937',
+    shadow: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
+    textSecondary: '#6B7280'
+  };
+
+  // Toast notification
+  const showToast = (message: string, type: 'success' | 'error' | 'info' = 'info') => {
+    const id = Date.now();
+    setToasts(prev => [...prev, { id, message, type }]);
+    setTimeout(() => {
+      setToasts(prev => prev.filter(toast => toast.id !== id));
+    }, 3000);
+  };
+
+  // Task operations
+  const addTask = async (taskData: any) => {
+    try {
+      const response = await fetch('/api/tasks', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(taskData)
+      });
+      
+      if (response.ok) {
+        const result = await response.json();
+        setTasks(prev => [result.task, ...prev]);
+        showToast('Task added successfully!', 'success');
+        setIsAddingTask(false);
+      } else {
+        showToast('Failed to add task', 'error');
+      }
+    } catch (error) {
+      showToast('Error adding task', 'error');
+    }
+  };
+
+  const deleteTask = async (taskId: string) => {
+    try {
+      const response = await fetch(`/api/tasks?taskId=${taskId}`, {
+        method: 'DELETE'
+      });
+      
+      if (response.ok) {
+        setTasks(prev => prev.filter(task => task._id !== taskId));
+        showToast('Task deleted successfully!', 'success');
+      } else {
+        showToast('Failed to delete task', 'error');
+      }
+    } catch (error) {
+      showToast('Error deleting task', 'error');
+    }
+  };
+
+  const toggleTaskComplete = async (taskId: string, completed: boolean) => {
+    try {
+      const response = await fetch(`/api/tasks?taskId=${taskId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ completed })
+      });
+      
+      if (response.ok) {
+        const updatedTask = await response.json();
+        setTasks(prev => prev.map(task => 
+          task._id === taskId ? { ...task, ...updatedTask } : task
+        ));
+        showToast(`Task ${completed ? 'completed' : 'uncompleted'}!`, 'success');
+      } else {
+        showToast('Failed to update task', 'error');
+      }
+    } catch (error) {
+      showToast('Error updating task', 'error');
+    }
+  };
+
+  // Filter tasks
+  const filteredTasks = tasks.filter(task => {
+    const matchesSearch = task.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = filterCategory === 'all' || task.category === filterCategory;
+    const matchesPriority = filterPriority === 'all' || task.priority === filterPriority;
+    const matchesCompleted = showCompleted || !task.completed;
+    
+    return matchesSearch && matchesCategory && matchesPriority && matchesCompleted;
+  });
+
+  const completedTasks = tasks.filter(task => task.completed).length;
+  const totalTasks = tasks.length;
+  const completionRate = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+
+  return (
+    <AuthWrapper>
+      <div style={{
+        minHeight: '100vh',
+        backgroundColor: theme.bg,
+        color: theme.text,
+        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif'
+      }}>
+        {/* Toast Notifications */}
+        {toasts.map(toast => (
+          <div key={toast.id} style={{
+            position: 'fixed',
+            top: '20px',
+            right: '20px',
+            backgroundColor: toast.type === 'success' ? theme.success : toast.type === 'error' ? theme.error : theme.primary,
+            color: 'white',
+            padding: '12px 20px',
+            borderRadius: '8px',
+            boxShadow: theme.shadow,
+            zIndex: 1000,
+            animation: 'slideIn 0.3s ease-out'
+          }}>
+            {toast.message}
+          </div>
+        ))}
+
+        {/* Main Content */}
+        <div style={{
+          maxWidth: '1200px',
+          margin: '0 auto',
+          padding: '20px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '20px'
+        }}>
+          {/* Header */}
+          <div style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            marginBottom: '20px',
+            flexWrap: 'wrap',
+            gap: '15px'
+          }}>
+            <div>
+              <h1 style={{ fontSize: '2.2em', margin: '0', color: theme.primary, marginBottom: '5px' }}>
+                ✨ Professional Dashboard
+              </h1>
+              <p style={{ margin: '0', color: theme.textSecondary, fontSize: '1em' }}>
+                Welcome back, {user?.name || 'Guest'}! Here's your productivity overview.
+              </p>
+            </div>
+            
+            {/* Dark Mode Toggle */}
+            <button
+              onClick={() => setDarkMode(!darkMode)}
+              style={{
+                backgroundColor: theme.cardBg,
+                border: `1px solid ${theme.border}`,
+                color: theme.text,
+                padding: '10px 15px',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                fontSize: '1em',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.backgroundColor = theme.hoverBg;
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.backgroundColor = theme.cardBg;
+              }}
+            >
+              {darkMode ? '☀️' : '🌙'}
+            </button>
+          </div>
+
+          {/* Stats Grid */}
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gap: '20px',
+            marginBottom: '20px'
+          }}>
+            <div style={{
+              backgroundColor: theme.cardBg,
+              padding: '20px',
+              borderRadius: '12px',
+              border: `1px solid ${theme.border}`,
+              boxShadow: theme.shadow
+            }}>
+              <h3 style={{ margin: '0 0 10px 0', color: theme.text, fontSize: '1.1em' }}>
+                📋 Total Tasks
+              </h3>
+              <p style={{ margin: '0', fontSize: '2em', fontWeight: 'bold', color: theme.primary }}>
+                {totalTasks}
+              </p>
+            </div>
+
+            <div style={{
+              backgroundColor: theme.cardBg,
+              padding: '20px',
+              borderRadius: '12px',
+              border: `1px solid ${theme.border}`,
+              boxShadow: theme.shadow
+            }}>
+              <h3 style={{ margin: '0 0 10px 0', color: theme.text, fontSize: '1.1em' }}>
+                ✅ Completed Today
+              </h3>
+              <p style={{ margin: '0', fontSize: '2em', fontWeight: 'bold', color: theme.success }}>
+                {completedToday}
+              </p>
+            </div>
+
+            <div style={{
+              backgroundColor: theme.cardBg,
+              padding: '20px',
+              borderRadius: '12px',
+              border: `1px solid ${theme.border}`,
+              boxShadow: theme.shadow
+            }}>
+              <h3 style={{ margin: '0 0 10px 0', color: theme.text, fontSize: '1.1em' }}>
+                📈 Completion Rate
+              </h3>
+              <p style={{ margin: '0', fontSize: '2em', fontWeight: 'bold', color: theme.primary }}>
+                {completionRate}%
+              </p>
+            </div>
+
+            <div style={{
+              backgroundColor: theme.cardBg,
+              padding: '20px',
+              borderRadius: '12px',
+              border: `1px solid ${theme.border}`,
+              boxShadow: theme.shadow
+            }}>
+              <h3 style={{ margin: '0 0 10px 0', color: theme.text, fontSize: '1.1em' }}>
+                🎯 Weekly Goal
+              </h3>
+              <p style={{ margin: '0', fontSize: '2em', fontWeight: 'bold', color: theme.warning }}>
+                {weeklyGoal}
+              </p>
+            </div>
+          </div>
+
+          {/* Charts Section */}
+          {showCharts && (
+            <DashboardCharts 
+              tasks={tasks}
+              theme={theme}
+              showCharts={showCharts}
+              setShowCharts={setShowCharts}
+            />
+          )}
+
+          {/* Task List */}
+          <TaskList
+            tasks={filteredTasks}
+            setTasks={setTasks}
+            theme={theme}
+            showHabits={showHabits}
+            showStats={true}
+            searchQuery={searchQuery}
+            setSearchQuery={setSearchQuery}
+            filterCategory={filterCategory}
+            setFilterCategory={setFilterCategory}
+            filterPriority={filterPriority}
+            setFilterPriority={setFilterPriority}
+            showCompleted={showCompleted}
+            setShowCompleted={setShowCompleted}
+            showToast={showToast}
+            dbConnected={dbConnected}
+            isAddingTask={isAddingTask}
+            setIsAddingTask={setIsAddingTask}
+          />
+
+          {/* Habit Tracker */}
+          <HabitTracker
+            habits={habits}
+            setHabits={setHabits}
+            theme={theme}
+            showHabits={showHabits}
+            setShowHabits={setShowHabits}
+            showToast={showToast}
+            darkMode={darkMode}
+          />
+
+          {/* AI Assistant */}
+          <AIAssistant
+            tasks={tasks}
+            theme={theme}
+            showToast={showToast}
+          />
+
+          {/* Upgrade Modal */}
+          {showUpgradeModal && (
+            <UpgradeModal
+              theme={theme}
+              isOpen={showUpgradeModal}
+              onClose={() => setShowUpgradeModal(false)}
+              showToast={showToast}
+            />
+          )}
+
+          {/* Profile Settings Modal */}
+          {showProfileSettings && (
+            <div style={{
+              position: 'fixed',
+              top: '0',
+              left: '0',
+              right: '0',
+              bottom: '0',
+              backgroundColor: 'rgba(0, 0, 0, 0.5)',
+              display: 'flex',
+              justifyContent: 'center',
+              alignItems: 'center',
+              zIndex: 1000
+            }}>
+              <div style={{
+                backgroundColor: theme.cardBg,
+                padding: '30px',
+                borderRadius: '12px',
+                border: `1px solid ${theme.border}`,
+                boxShadow: theme.shadow,
+                width: '90%',
+                maxWidth: '500px',
+                animation: 'scaleIn 0.3s ease-out'
+              }}>
+                <h2 style={{ color: theme.text, marginBottom: '20px' }}>Profile Settings</h2>
+                <div style={{ marginBottom: '15px' }}>
+                  <label htmlFor="userName" style={{ display: 'block', color: theme.textSecondary, marginBottom: '5px' }}>Name:</label>
+                  <input
+                    id="userName"
+                    type="text"
+                    value={user?.name || ''}
+                    onChange={(e) => setUser({ ...user, name: e.target.value })}
+                    style={{
+                      width: '100%',
+                      padding: '10px',
+                      borderRadius: '8px',
+                      border: `1px solid ${theme.border}`,
+                      backgroundColor: theme.inputBg,
+                      color: theme.inputText,
+                      fontSize: '1em',
+                    }}
+                  />
+                </div>
+                <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+                  <button
+                    onClick={() => setShowProfileSettings(false)}
+                    style={{
+                      backgroundColor: theme.cardBg,
+                      border: `1px solid ${theme.border}`,
+                      color: theme.text,
+                      padding: '10px 20px',
+                      borderRadius: '8px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={() => setShowProfileSettings(false)}
+                    style={{
+                      backgroundColor: theme.primary,
+                      border: 'none',
+                      color: 'white',
+                      padding: '10px 20px',
+                      borderRadius: '8px',
+                      cursor: 'pointer'
+                    }}
+                  >
+                    Save
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Floating Action Buttons */}
+          <div style={{
+            position: 'fixed',
+            bottom: '20px',
+            right: '20px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '10px',
+            zIndex: 100
+          }}>
+            <button
+              onClick={() => setShowCharts(!showCharts)}
+              style={{
+                backgroundColor: theme.primary,
+                border: 'none',
+                color: 'white',
+                width: '50px',
+                height: '50px',
+                borderRadius: '50%',
+                cursor: 'pointer',
+                boxShadow: theme.shadow,
+                fontSize: '1.2em'
+              }}
+            >
+              📊
+            </button>
+            
+            <button
+              onClick={() => setShowUpgradeModal(true)}
+              style={{
+                backgroundColor: theme.secondary,
+                border: 'none',
+                color: 'white',
+                width: '50px',
+                height: '50px',
+                borderRadius: '50%',
+                cursor: 'pointer',
+                boxShadow: theme.shadow,
+                fontSize: '1.2em'
+              }}
+            >
+              💎
+            </button>
+          </div>
+        </div>
+      </div>
+    </AuthWrapper>
+  );
+}
