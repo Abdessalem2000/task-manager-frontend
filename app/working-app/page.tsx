@@ -13,7 +13,14 @@ export default function WorkingApp() {
   const [mounted, setMounted] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
   const [user, setUser] = useState<{ name?: string; email?: string } | null>(null);
-  const [tasks, setTasks] = useState<any[]>([]);
+  // Initialize with demo data for immediate display
+  const [tasks, setTasks] = useState<any[]>([
+    { _id: '1', name: 'Complete project documentation', completed: false, priority: 'high', category: 'work' },
+    { _id: '2', name: 'Review pull requests', completed: true, priority: 'medium', category: 'work' },
+    { _id: '3', name: 'Team meeting at 2 PM', completed: false, priority: 'high', category: 'meetings' },
+    { _id: '4', name: 'Update dashboard design', completed: true, priority: 'low', category: 'work' },
+    { _id: '5', name: 'Code review for feature branch', completed: false, priority: 'medium', category: 'work' }
+  ]);
   const [dbConnected, setDbConnected] = useState(false);
   const [toasts, setToasts] = useState<any[]>([]);
   const [isAddingTask, setIsAddingTask] = useState(false);
@@ -24,10 +31,17 @@ export default function WorkingApp() {
   const [filterCategory, setFilterCategory] = useState('all');
   const [filterPriority, setFilterPriority] = useState('all');
   const [showCompleted, setShowCompleted] = useState(true);
-  const [habits, setHabits] = useState<any[]>([]);
+  // Initialize with demo habits
+  const [habits, setHabits] = useState<any[]>([
+    { _id: '1', name: 'Morning meditation', completed: true, streak: 5, category: 'personal' },
+    { _id: '2', name: 'Exercise for 30 minutes', completed: false, streak: 3, category: 'health' },
+    { _id: '3', name: 'Read for 20 minutes', completed: true, streak: 7, category: 'learning' },
+    { _id: '4', name: 'Drink 8 glasses of water', completed: true, streak: 12, category: 'health' },
+    { _id: '5', name: 'No social media before noon', completed: false, streak: 2, category: 'personal' }
+  ]);
   const [showHabits, setShowHabits] = useState(false);
   const [showCharts, setShowCharts] = useState(false);
-  const [completedToday, setCompletedToday] = useState(0);
+  const [completedToday, setCompletedToday] = useState(2); // 2 tasks completed from demo data
   const [weeklyGoal, setWeeklyGoal] = useState(20);
 
   // Theme management
@@ -77,26 +91,14 @@ export default function WorkingApp() {
           setCompletedToday(todayTasks.length);
         }
       } else if (response.status === 401) {
-        // User not authenticated - set demo data
-        setTasks([
-          { id: 1, name: 'Complete project documentation', completed: false, priority: 'high', category: 'work' },
-          { id: 2, name: 'Review pull requests', completed: true, priority: 'medium', category: 'work' },
-          { id: 3, name: 'Team meeting at 2 PM', completed: false, priority: 'high', category: 'meetings' }
-        ]);
+        // User not authenticated - keep demo data
         setDbConnected(false);
-        setCompletedToday(1);
       } else {
         setDbConnected(false);
       }
     } catch (error) {
-      // Network error - set demo data
-      setTasks([
-        { id: 1, name: 'Complete project documentation', completed: false, priority: 'high', category: 'work' },
-        { id: 2, name: 'Review pull requests', completed: true, priority: 'medium', category: 'work' },
-        { id: 3, name: 'Team meeting at 2 PM', completed: false, priority: 'high', category: 'meetings' }
-      ]);
+      // Network error - keep demo data
       setDbConnected(false);
-      setCompletedToday(1);
     }
   };
 
@@ -113,27 +115,12 @@ export default function WorkingApp() {
           setHabits(habitsData);
         }
       } else if (response.status === 401) {
-        // User not authenticated - set demo habits
-        setHabits([
-          { id: 1, name: 'Morning meditation', completed: true, streak: 5, category: 'personal' },
-          { id: 2, name: 'Exercise for 30 minutes', completed: false, streak: 3, category: 'health' },
-          { id: 3, name: 'Read for 20 minutes', completed: true, streak: 7, category: 'learning' }
-        ]);
+        // User not authenticated - keep demo habits
       } else {
-        // Other error - set demo habits
-        setHabits([
-          { id: 1, name: 'Morning meditation', completed: true, streak: 5, category: 'personal' },
-          { id: 2, name: 'Exercise for 30 minutes', completed: false, streak: 3, category: 'health' },
-          { id: 3, name: 'Read for 20 minutes', completed: true, streak: 7, category: 'learning' }
-        ]);
+        // Other error - keep demo habits
       }
     } catch (error) {
-      // Network error - set demo habits
-      setHabits([
-        { id: 1, name: 'Morning meditation', completed: true, streak: 5, category: 'personal' },
-        { id: 2, name: 'Exercise for 30 minutes', completed: false, streak: 3, category: 'health' },
-        { id: 3, name: 'Read for 20 minutes', completed: true, streak: 7, category: 'learning' }
-      ]);
+      // Network error - keep demo habits
     }
   };
 
@@ -199,6 +186,19 @@ export default function WorkingApp() {
 
   // Task operations
   const addTask = async (taskData: any) => {
+    // For demo mode, add task locally
+    if (!dbConnected) {
+      const newTask = {
+        _id: Date.now().toString(),
+        ...taskData,
+        completed: false
+      };
+      setTasks(prev => [newTask, ...prev]);
+      showToast('Task added successfully! (Demo Mode)', 'success');
+      setIsAddingTask(false);
+      return;
+    }
+
     try {
       const response = await fetch('/api/tasks', {
         method: 'POST',
@@ -220,6 +220,13 @@ export default function WorkingApp() {
   };
 
   const deleteTask = async (taskId: string) => {
+    // For demo mode, delete task locally
+    if (!dbConnected) {
+      setTasks(prev => prev.filter(task => task._id !== taskId));
+      showToast('Task deleted successfully! (Demo Mode)', 'success');
+      return;
+    }
+
     try {
       const response = await fetch(`/api/tasks?taskId=${taskId}`, {
         method: 'DELETE'
@@ -237,6 +244,15 @@ export default function WorkingApp() {
   };
 
   const toggleTaskComplete = async (taskId: string, completed: boolean) => {
+    // For demo mode, toggle task locally
+    if (!dbConnected) {
+      setTasks(prev => prev.map(task => 
+        task._id === taskId ? { ...task, completed } : task
+      ));
+      showToast(`Task ${completed ? 'completed' : 'uncompleted'}! (Demo Mode)`, 'success');
+      return;
+    }
+
     try {
       const response = await fetch(`/api/tasks?taskId=${taskId}`, {
         method: 'PUT',
