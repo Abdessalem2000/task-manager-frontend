@@ -30,39 +30,36 @@ const AuthWrapper = ({ children }) => {
     }
   }, []);
 
-  // If Clerk is not configured, render children directly (demo mode)
+  // If Clerk is not configured, render children directly
   if (!isClerkConfigured || !clerkLoaded) {
     return <>{children}</>;
   }
 
-  return <ClerkAuthWrapper>{children}</ClerkAuthWrapper>;
-};
-
-// Separate component for Clerk authentication logic
-const ClerkAuthWrapper = ({ children }) => {
+  // If Clerk is configured, render with Clerk components
   const { useAuth, SignIn, SignUp, useUser } = ClerkComponents;
-  const { isSignedIn, isLoaded } = useAuth();
-  const { user } = useUser();
+  const ClerkAuthWrapper = ({ children }) => {
+    const { isSignedIn, isLoaded } = useAuth();
+    const { user } = useUser();
 
-  // Show loading state only for first 2 seconds
-  if (!isLoaded && isClerkConfigured) {
-    return (
-      <div style={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: '100vh',
-        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-        background: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #EC4899 100%)',
-        color: 'white'
-      }}>
-        <div style={{ textAlign: 'center' }}>
-          <div style={{ fontSize: '48px', marginBottom: '20px' }}>⚡</div>
-          <h1 style={{ fontSize: '24px', margin: 0 }}>Loading...</h1>
+    // Show loading state only for first 2 seconds
+    if (!isLoaded) {
+      return (
+        <div style={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+          backgroundColor: '#0F0F0F',
+          color: 'white',
+          fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+        }}>
+          <div style={{ textAlign: 'center' }}>
+            <div style={{ fontSize: '48px', marginBottom: '20px' }}>⚡</div>
+            <h1 style={{ fontSize: '24px', margin: 0 }}>Loading...</h1>
+          </div>
         </div>
-      </div>
-    );
-  }
+      );
+    }
 
   // If not signed in, show sign-in/up
   if (!isSignedIn) {
@@ -72,7 +69,6 @@ const ClerkAuthWrapper = ({ children }) => {
         justifyContent: 'center',
         alignItems: 'center',
         minHeight: '100vh',
-        fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
         background: 'linear-gradient(135deg, #6366F1 0%, #8B5CF6 50%, #EC4899 100%)',
         padding: '20px'
       }}>
@@ -90,18 +86,34 @@ const ClerkAuthWrapper = ({ children }) => {
               AI Productivity Dashboard
             </h1>
             <p style={{ margin: 0, color: '#6B7280', fontSize: '16px' }}>
-              Sign in to access your personalized workspace
+              Please sign in to access your personalized workspace
             </p>
           </div>
           
-          <SignIn 
-            path="/sign-in"
-            routing="path"
-            signUpUrl="/sign-up"
-            redirectUrl="/working-app"
-          />
-          
-          <div style={{ textAlign: 'center', marginTop: '20px' }}>
+          <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            marginBottom: '20px'
+          }}>
+            <a 
+              href="/sign-in" 
+              style={{
+                backgroundColor: '#6366F1',
+                color: 'white',
+                padding: '12px 24px',
+                borderRadius: '8px',
+                textDecoration: 'none',
+                fontWeight: 'bold',
+                fontSize: '16px',
+                display: 'inline-block'
+              }}
+            >
+              Sign In
+            </a>
+          </div>
+        
+          <div style={{ textAlign: 'center' }}>
             <p style={{ margin: 0, color: '#6B7280', fontSize: '14px' }}>
               Don't have an account?{' '}
               <a href="/sign-up" style={{ color: '#6366F1', textDecoration: 'none' }}>
@@ -116,6 +128,10 @@ const ClerkAuthWrapper = ({ children }) => {
 
   // If signed in, render children
   return <>{children}</>;
+};
+
+return <>{children}</>;
+
 };
 
 export default AuthWrapper;
