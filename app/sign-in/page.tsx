@@ -1,7 +1,12 @@
 'use client';
 
-import { SignIn } from '@clerk/nextjs';
+import dynamic from 'next/dynamic';
 import { dark } from '@clerk/themes';
+
+const SignIn = dynamic(
+  () => import('@clerk/nextjs').then((mod) => ({ default: mod.SignIn })),
+  { ssr: false }
+);
 
 export default function SignInPage() {
   return (

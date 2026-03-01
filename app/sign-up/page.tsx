@@ -1,7 +1,12 @@
 'use client';
 
-import { SignUp } from '@clerk/nextjs';
+import dynamic from 'next/dynamic';
 import { dark } from '@clerk/themes';
+
+const SignUp = dynamic(
+  () => import('@clerk/nextjs').then((mod) => ({ default: mod.SignUp })),
+  { ssr: false }
+);
 
 export default function SignUpPage() {
   return (
