@@ -1,0 +1,26 @@
+{
+  "app\\sign-in\\page.tsx -> @clerk/nextjs": {
+    "id": 6690,
+    "files": [
+      "static/chunks/146.c79320cabda3004f.js",
+      "static/chunks/431.756d20a407d6a6ca.js"
+    ]
+  },
+  "app\\sign-up\\page.tsx -> @clerk/nextjs": {
+    "id": 6690,
+    "files": [
+      "static/chunks/146.c79320cabda3004f.js",
+      "static/chunks/431.756d20a407d6a6ca.js"
+    ]
+  },
+  "node_modules\\@clerk\\nextjs\\dist\\cjs\\app-router\\client\\ClerkProvider.js -> ./keyless-creator-reader.js": {
+    "id": null,
+    "files": []
+  },
+  "node_modules\\@clerk\\nextjs\\dist\\esm\\app-router\\client\\ClerkProvider.js -> ./keyless-creator-reader.js": {
+    "id": 3868,
+    "files": [
+      "static/chunks/868.84d032d1f677c719.js"
+    ]
+  }
+}
