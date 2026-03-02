@@ -26,7 +26,15 @@ type Habit = {
 };
 
 export default function WorkingApp() {
-  const { isLoaded, isSignedIn, user } = useUser();
+  // Check if Clerk is available
+  const clerkPublishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+  const isClerkAvailable = clerkPublishableKey && 
+      clerkPublishableKey !== 'pk_test_YOUR_CLERK_KEY_HERE' && 
+      clerkPublishableKey.startsWith('pk_test_');
+  
+  // Only use useUser if Clerk is available
+  const clerkUser = isClerkAvailable ? useUser() : { isLoaded: true, isSignedIn: false, user: null };
+  const { isLoaded = true, isSignedIn = false, user = null } = clerkUser;
   
   // State management with clean initial state
   const [mounted, setMounted] = useState(false);
@@ -124,7 +132,7 @@ export default function WorkingApp() {
 
   // Task operations (only work if signed in)
   const addTask = async (taskData: any) => {
-    if (!isSignedIn) {
+    if (!isClerkAvailable || !isSignedIn) {
       showToast('Please sign in to add tasks', 'error');
       return;
     }
@@ -150,7 +158,7 @@ export default function WorkingApp() {
   };
 
   const deleteTask = async (taskId: string) => {
-    if (!isSignedIn) {
+    if (!isClerkAvailable || !isSignedIn) {
       showToast('Please sign in to delete tasks', 'error');
       return;
     }
@@ -172,7 +180,7 @@ export default function WorkingApp() {
   };
 
   const toggleTaskComplete = async (taskId: string, completed: boolean) => {
-    if (!isSignedIn) {
+    if (!isClerkAvailable || !isSignedIn) {
       showToast('Please sign in to update tasks', 'error');
       return;
     }
@@ -314,7 +322,7 @@ export default function WorkingApp() {
                   fontSize: '0.9em', 
                   color: theme.subtext 
                 }}>
-                  Welcome back, Guest! Here's your productivity overview.
+                  Welcome back, {!isClerkAvailable ? 'Developer!' : 'Guest!'} Here's your productivity overview.
                 </p>
               )}
             </div>
@@ -528,7 +536,7 @@ export default function WorkingApp() {
                   <input
                     id="userName"
                     type="text"
-                    value={user?.firstName || ''}
+                    value={user?.firstName || (!isClerkAvailable ? 'Developer' : '')}
                     readOnly
                     style={{
                       width: '100%',
