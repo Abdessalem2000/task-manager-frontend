@@ -1,16 +1,18 @@
 {
   "app\\sign-in\\page.tsx -> @clerk/nextjs": {
-    "id": 6690,
+    "id": 70789,
     "files": [
-      "static/chunks/146.c79320cabda3004f.js",
-      "static/chunks/431.756d20a407d6a6ca.js"
+      "static/chunks/695-dc18527adba38c7e.js",
+      "static/chunks/789-e527d72cfc70772f.js",
+      "static/chunks/431.37818b232c6b2130.js"
     ]
   },
   "app\\sign-up\\page.tsx -> @clerk/nextjs": {
-    "id": 6690,
+    "id": 70789,
     "files": [
-      "static/chunks/146.c79320cabda3004f.js",
-      "static/chunks/431.756d20a407d6a6ca.js"
+      "static/chunks/695-dc18527adba38c7e.js",
+      "static/chunks/789-e527d72cfc70772f.js",
+      "static/chunks/431.37818b232c6b2130.js"
     ]
   },
   "node_modules\\@clerk\\nextjs\\dist\\cjs\\app-router\\client\\ClerkProvider.js -> ./keyless-creator-reader.js": {
@@ -18,9 +20,13 @@
     "files": []
   },
   "node_modules\\@clerk\\nextjs\\dist\\esm\\app-router\\client\\ClerkProvider.js -> ./keyless-creator-reader.js": {
-    "id": 3868,
+    "id": 93868,
     "files": [
-      "static/chunks/868.84d032d1f677c719.js"
+      "static/chunks/868.640ee5283be0862a.js"
     ]
+  },
+  "node_modules\\@clerk\\nextjs\\dist\\esm\\app-router\\client\\keyless-cookie-sync.js -> ../keyless-actions.js": {
+    "id": 97667,
+    "files": []
   }
 }

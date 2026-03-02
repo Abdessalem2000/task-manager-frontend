@@ -1,0 +1,1 @@
+"use strict";exports.id=871,exports.ids=[871],exports.modules={1871:(s,e,a)=>{a.r(e),a.d(e,{KeylessCookieSync:()=>o});let o=(0,a(8570).createProxy)(String.raw`C:\Users\PC\Downloads\saas-analytics-dashboard-20251228T231550Z-1-001\saas-analytics-dashboard\task-manager-frontend\node_modules\@clerk\nextjs\dist\esm\app-router\client\keyless-cookie-sync.js#KeylessCookieSync`)}};
