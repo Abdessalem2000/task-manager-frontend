@@ -177,6 +177,20 @@ Perfect for developers looking to demonstrate full-stack development skills with
 
 For questions or support, please open an issue in the GitHub repository or contact the project maintainer.
 
+## LinkedIn / Portfolio Snippets
+
+**Short project description (for portfolio / GitHub):**
+
+"TaskMetrics is a production-ready Next.js SaaS template that combines tasks, habits, and AI insights into a single analytics dashboard. It includes a full marketing landing page, auth-ready routing, and a dark SaaS UI optimized for teams and agencies."
+
+**LinkedIn post snippet (you can adapt):**
+
+"I've just shipped TaskMetrics – a modern task & habit analytics dashboard built with Next.js, TypeScript, Tailwind, Clerk, and MongoDB.
+
+It's structured like a real SaaS: public landing page, auth routes, and a protected dashboard that shows tasks, completion rate, weekly goals, and room for AI insights.
+
+If you run a small team or agency and want a lightweight analytics view of what's actually getting done each week, I can customize this dashboard for your workflow."
+
 ---
 
 **Built with ❤️ for the modern development community**

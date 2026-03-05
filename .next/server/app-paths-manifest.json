@@ -3,12 +3,12 @@
   "/api/ai/optimize/route": "app/api/ai/optimize/route.js",
   "/api/habits/route": "app/api/habits/route.js",
   "/api/tasks/route": "app/api/tasks/route.js",
-  "/api/ping/route": "app/api/ping/route.js",
-  "/api/migrate/route": "app/api/migrate/route.js",
-  "/api/test-new/route": "app/api/test-new/route.js",
-  "/working-app/page": "app/working-app/page.js",
-  "/api/test-env/route": "app/api/test-env/route.js",
   "/page": "app/page.js",
+  "/api/ping/route": "app/api/ping/route.js",
+  "/api/test-new/route": "app/api/test-new/route.js",
   "/sign-in/page": "app/sign-in/page.js",
-  "/sign-up/page": "app/sign-up/page.js"
+  "/api/test-env/route": "app/api/test-env/route.js",
+  "/sign-up/page": "app/sign-up/page.js",
+  "/working-app/page": "app/working-app/page.js",
+  "/api/migrate/route": "app/api/migrate/route.js"
 }

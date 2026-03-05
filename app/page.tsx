@@ -291,20 +291,20 @@ export default function LandingPage() {
       <section style={{ ...styles.hero, ...styles.heroDesktop }}>
         <div style={styles.heroContent}>
           <p style={styles.tagline}>
-            AI-Powered Task & Habit Dashboard
+            Analytics dashboard for busy teams
           </p>
           <h1 style={styles.title}>
-            Turn your daily chaos into clear, actionable analytics.
+            Give your team a clear, actionable view of tasks and habits.
           </h1>
           <p style={styles.subtitle}>
-            TaskMetrics gives you a unified dashboard for tasks, habits, and AI insights — so you always know what to do next and where your time actually goes.
+            TaskMetrics turns your daily work into a simple analytics dashboard, so agency owners and team leads always know what's done, what's blocked, and what needs attention next.
           </p>
           <div style={styles.ctaButtons}>
-            <Link href="/sign-up" style={styles.primaryButton}>
-              Create your free account
+            <Link href="/working-app" style={styles.primaryButton}>
+              See the live dashboard
             </Link>
             <Link href="#features" style={styles.secondaryButton}>
-              View features ↓
+              How it works ↓
             </Link>
           </div>
           <p style={styles.note}>
@@ -351,19 +351,19 @@ export default function LandingPage() {
         </p>
         <div style={{ ...styles.features, ...styles.featuresDesktop }}>
           <div style={styles.featureCard}>
-            <p style={{ ...styles.featureTitle, color: '#06B6D4' }}>Tasks & priorities</p>
-            <p style={styles.featureDescription}>Plan your day with clear priorities, tags, and due dates.</p>
-            <p style={styles.featureSubtext}>See completion rate and weekly goals at a glance.</p>
+            <p style={{ ...styles.featureTitle, color: '#06B6D4' }}>Task pipeline overview</p>
+            <p style={styles.featureDescription}>Give your team a single place to see what's in progress, what's done, and what's falling behind across clients and projects.</p>
+            <p style={styles.featureSubtext}>Ideal for agencies and squads that manage multiple workstreams.</p>
           </div>
           <div style={styles.featureCard}>
-            <p style={{ ...styles.featureTitle, color: '#10B981' }}>Habit tracking</p>
-            <p style={styles.featureDescription}>Build consistent habits with streaks and daily check-ins.</p>
-            <p style={styles.featureSubtext}>Connect habits to tasks so progress feels natural.</p>
+            <p style={{ ...styles.featureTitle, color: '#10B981' }}>Habit & routine tracking</p>
+            <p style={styles.featureDescription}>Track daily routines like prospecting, content, or reporting so you can see consistency, not just tasks completed.</p>
+            <p style={styles.featureSubtext}>Helps teams build reliable, repeatable habits.</p>
           </div>
           <div style={styles.featureCard}>
-            <p style={{ ...styles.featureTitle, color: '#8B5CF6' }}>AI insights</p>
-            <p style={styles.featureDescription}>Let AI highlight what actually matters today.</p>
-            <p style={styles.featureSubtext}>Remove noise, focus on high-impact work.</p>
+            <p style={{ ...styles.featureTitle, color: '#8B5CF6' }}>AI-powered focus</p>
+            <p style={styles.featureDescription}>Let AI surface the 3–5 most important tasks for today based on your patterns instead of a long, noisy backlog.</p>
+            <p style={styles.featureSubtext}>Make prioritization easier for everyone on the team.</p>
           </div>
         </div>
       </section>
@@ -377,19 +377,19 @@ export default function LandingPage() {
         <ul style={{ ...styles.whyList, ...styles.whyListDesktop }}>
           <li style={styles.whyItem}>
             <span style={styles.bullet} />
-            See exactly how many tasks and habits you complete each week.
+            See tasks and habits for your whole team in a single analytics view.
           </li>
           <li style={styles.whyItem}>
             <span style={styles.bullet} />
-            Understand your productive hours with simple charts, not complex reports.
+            Spot blockers early with simple completion and streak metrics, not complex reports.
           </li>
           <li style={styles.whyItem}>
             <span style={styles.bullet} />
-            Let AI suggest the next best action based on your patterns.
+            Use AI insights to decide what your team should focus on each day.
           </li>
           <li style={styles.whyItem}>
             <span style={styles.bullet} />
-            Start free, then upgrade when you need more automation.
+            Start as a simple dashboard, then extend it with your own automations and integrations.
           </li>
         </ul>
       </section>
@@ -400,16 +400,13 @@ export default function LandingPage() {
           <div>
             <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '8px', color: '#FFFFFF' }}>About</h3>
             <p style={{ fontSize: '14px', color: '#D1D5DB', lineHeight: '1.6' }}>
-              TaskMetrics is a next-generation task and habit dashboard built by an independent developer obsessed with clean UI and real productivity — not just more notifications.
+              TaskMetrics started as a personal dashboard for managing client work and daily habits, and evolved into a reusable SaaS template for teams and agencies. It's built by an independent developer focused on clean UI, simple analytics, and fast iteration — not bloated project management.
             </p>
           </div>
           <div id="contact">
             <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '8px', color: '#FFFFFF' }}>Contact</h3>
-            <p style={{ fontSize: '14px', color: '#D1D5DB', marginBottom: '4px' }}>Want to use this inside your team or agency?</p>
-            <p style={{ fontSize: '14px', color: '#D1D5DB' }}>Email: <span style={{ color: '#E5E7EB' }}>your-email@example.com</span></p>
-            <p style={{ marginTop: '8px', fontSize: '12px', color: '#6B7280' }}>
-              You can also reach out on LinkedIn to discuss a custom version for your workflow.
-            </p>
+            <p style={{ fontSize: '14px', color: '#D1D5DB', marginBottom: '4px' }}>Want a custom version of this dashboard for your team or agency?</p>
+            <p style={{ fontSize: '14px', color: '#D1D5DB' }}>Email: <span style={{ color: '#E5E7EB' }}>your-email@example.com</span> (or connect on LinkedIn to discuss your use case).</p>
           </div>
         </div>
       </section>
