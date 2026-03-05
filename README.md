@@ -1,16 +1,182 @@
-# React + Vite
+# TaskMetrics – Analytics-First Task & Habit Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+TaskMetrics is a modern task and habit dashboard that brings together daily tasks, routines, and AI insights into a single analytics view.
 
-Currently, two official plugins are available:
+- Built with Next.js 14, TypeScript, Tailwind CSS, Clerk, and MongoDB.
+- Features a marketing landing page, auth (sign up / sign in), and a protected analytics dashboard.
+- Designed as a reusable SaaS starter for B2B teams and agencies.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## Live Demo
 
-## React Compiler
+- Landing page: https://task-manager-frontend-opal-nu.vercel.app
+- Dashboard (after sign-in): /working-app
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Key Features
 
-## Expanding the ESLint configuration
+- Task management with completion rate and weekly goals.
+- Habit tracking and routine overview (conceptual / demo-ready).
+- Analytics-style UI with dark SaaS design and KPI cards.
+- Authentication-ready (Clerk integration, can be enabled with real keys).
+- Clean routing: public marketing page + protected dashboard.
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## Tech Stack
+
+- Framework: Next.js (App Router), TypeScript
+- UI: Tailwind CSS, custom dark SaaS layout
+- Auth: Clerk (optional, environment-driven)
+- Data: MongoDB with Mongoose
+- Hosting: Vercel
+
+## Project Structure
+
+```
+task-manager-frontend/
+├── app/                    # Next.js App Router
+│   ├── page.tsx           # Landing page
+│   ├── working-app/       # Protected dashboard
+│   ├── sign-in/           # Authentication pages
+│   └── api/               # API routes
+├── src/components/        # Reusable components
+├── public/               # Static assets
+└── README.md            # This file
+```
+
+## Getting Started
+
+### Prerequisites
+
+- Node.js 18+ 
+- npm or yarn
+- MongoDB database (optional for full functionality)
+
+### Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/Abdessalem2000/task-manager-frontend.git
+cd task-manager-frontend
+```
+
+2. Install dependencies:
+```bash
+npm install
+```
+
+3. Set up environment variables:
+```bash
+cp .env.example .env.local
+```
+
+4. Configure your environment variables in `.env.local`:
+```env
+# Clerk Authentication (optional)
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_your_key_here
+CLERK_SECRET_KEY=sk_test_your_secret_here
+
+# Database
+MONGODB_URI=mongodb+srv://...
+
+# OpenAI (for AI features)
+OPENAI_API_KEY=sk_openai_key_here
+```
+
+5. Run the development server:
+```bash
+npm run dev
+```
+
+6. Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## Deployment
+
+### Vercel (Recommended)
+
+1. Push your code to GitHub
+2. Connect your repository to [Vercel](https://vercel.com)
+3. Configure environment variables in Vercel dashboard
+4. Deploy automatically
+
+### Environment Variables for Production
+
+- `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY`: Clerk publishable key
+- `CLERK_SECRET_KEY`: Clerk secret key
+- `NEXT_PUBLIC_CLERK_SIGN_IN_URL`: `/sign-in`
+- `NEXT_PUBLIC_CLERK_SIGN_UP_URL`: `/sign-up`
+- `NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL`: `/working-app`
+- `NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL`: `/working-app`
+- `MONGODB_URI`: MongoDB connection string
+- `OPENAI_API_KEY`: OpenAI API key for AI features
+
+## Features Overview
+
+### 🏠 Landing Page
+- Professional B2B SaaS design
+- Feature highlights and benefits
+- Call-to-action for sign-up
+- Responsive layout
+
+### 🔐 Authentication
+- Clerk-powered authentication
+- Sign-in and sign-up flows
+- Protected routes
+- Environment-based enablement
+
+### 📊 Analytics Dashboard
+- Task completion metrics
+- Habit tracking visualization
+- KPI cards and progress indicators
+- Dark theme SaaS interface
+
+### 🎯 Task Management
+- Create, edit, and delete tasks
+- Priority levels and categories
+- Completion tracking
+- Weekly goal setting
+
+### 🔄 Habit Tracking
+- Daily habit logging
+- Streak tracking
+- Progress visualization
+- Routine management
+
+## API Endpoints
+
+The application includes several API routes for data management:
+
+- `GET/POST /api/tasks` - Task CRUD operations
+- `GET/POST /api/habits` - Habit management
+- `POST /api/ai/optimize` - AI-powered task optimization
+- `GET /api/ping` - Health check endpoint
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## Portfolio Use
+
+This project is designed to be a portfolio-ready SaaS application showcasing:
+
+- **Modern Development**: Next.js 14, TypeScript, Tailwind CSS
+- **Authentication Integration**: Clerk implementation
+- **Database Integration**: MongoDB with Mongoose
+- **API Design**: RESTful API routes
+- **UI/UX Design**: Professional SaaS interface
+- **Production Deployment**: Vercel hosting
+
+Perfect for developers looking to demonstrate full-stack development skills with a real-world SaaS application.
+
+## Support
+
+For questions or support, please open an issue in the GitHub repository or contact the project maintainer.
+
+---
+
+**Built with ❤️ for the modern development community**
