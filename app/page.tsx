@@ -291,24 +291,24 @@ export default function LandingPage() {
       <section style={{ ...styles.hero, ...styles.heroDesktop }}>
         <div style={styles.heroContent}>
           <p style={styles.tagline}>
-            Analytics dashboard for busy teams
+            TaskForce Mobile - GPS Sales Tracker pour Agences DZ
           </p>
           <h1 style={styles.title}>
-            Give your team a clear, actionable view of tasks and habits.
+            Suivi GPS visites commerciales, offline sync, IA scoring prospects
           </h1>
           <p style={styles.subtitle}>
-            TaskMetrics turns your daily work into a simple analytics dashboard, so agency owners and team leads always know what's done, what's blocked, and what needs attention next.
+            Comme Silwane mais 5x moins cher - 15$/mois. GPS tracking chaque visite, offline mode, IA score prospects, dashboard realtime équipe.
           </p>
           <div style={styles.ctaButtons}>
             <Link href="/working-app" style={styles.primaryButton}>
-              See the live dashboard
+              🚗 Essai Gratuit - Voir Démo
             </Link>
             <Link href="#features" style={styles.secondaryButton}>
-              How it works ↓
+              Comment ça marche ↓
             </Link>
           </div>
           <p style={styles.note}>
-            No credit card required • See your dashboard in under 60 seconds
+            📱 Compatible Android/iOS • Installation PWA • Pas de carte crédit
           </p>
         </div>
 
@@ -345,51 +345,51 @@ export default function LandingPage() {
 
       {/* Features */}
       <section id="features" style={styles.section}>
-        <h2 style={styles.sectionTitle}>Everything in one dashboard.</h2>
+        <h2 style={styles.sectionTitle}>🚗 GPS Sales Tracker - Fonctionnalités Clés</h2>
         <p style={styles.sectionSubtitle}>
-          Tasks, habits, and AI recommendations — organized in one clean interface so you don&apos;t waste time managing your productivity tools.
+          ✅ GPS tracking chaque visite (smartphone) • ✅ Offline mode (sync auto) • ✅ IA score prospects (hot/tiède/froid) • ✅ Dashboard realtime équipe • ✅ Export rapports conformes DZ
         </p>
         <div style={{ ...styles.features, ...styles.featuresDesktop }}>
           <div style={styles.featureCard}>
-            <p style={{ ...styles.featureTitle, color: '#06B6D4' }}>Task pipeline overview</p>
-            <p style={styles.featureDescription}>Give your team a single place to see what's in progress, what's done, and what's falling behind across clients and projects.</p>
-            <p style={styles.featureSubtext}>Ideal for agencies and squads that manage multiple workstreams.</p>
+            <p style={{ ...styles.featureTitle, color: '#06B6D4' }}>📍 GPS Tracking Visites</p>
+            <p style={styles.featureDescription}>Géolocalisation automatique chaque visite client. Suivi temps réel des commerciaux sur terrain.</p>
+            <p style={styles.featureSubtext}>Compatible tous smartphones Android/iOS</p>
           </div>
           <div style={styles.featureCard}>
-            <p style={{ ...styles.featureTitle, color: '#10B981' }}>Habit & routine tracking</p>
-            <p style={styles.featureDescription}>Track daily routines like prospecting, content, or reporting so you can see consistency, not just tasks completed.</p>
-            <p style={styles.featureSubtext}>Helps teams build reliable, repeatable habits.</p>
+            <p style={{ ...styles.featureTitle, color: '#10B981' }}>📱 Offline Mode</p>
+            <p style={styles.featureDescription}>Fonctionne sans internet. Synchronisation automatique dès la connexion disponible.</p>
+            <p style={styles.featureSubtext}>Parfait pour zones couverture 4G limitée</p>
           </div>
           <div style={styles.featureCard}>
-            <p style={{ ...styles.featureTitle, color: '#8B5CF6' }}>AI-powered focus</p>
-            <p style={styles.featureDescription}>Let AI surface the 3–5 most important tasks for today based on your patterns instead of a long, noisy backlog.</p>
-            <p style={styles.featureSubtext}>Make prioritization easier for everyone on the team.</p>
+            <p style={{ ...styles.featureTitle, color: '#8B5CF6' }}>🤖 IA Scoring Prospects</p>
+            <p style={styles.featureDescription}>Score automatique 0-100 basé sur historique, GPS proximité, taux de conversion.</p>
+            <p style={styles.featureSubtext}>Focus sur prospects chauds (score &gt; 70)</p>
           </div>
         </div>
       </section>
 
       {/* Why choose us */}
       <section id="why-us" style={styles.section}>
-        <h2 style={styles.sectionTitle}>Why choose TaskMetrics?</h2>
+        <h2 style={styles.sectionTitle}>Pourquoi TaskForce Mobile vs Silwane?</h2>
         <p style={{ ...styles.sectionSubtitle, marginBottom: '20px' }}>
-          Unlike generic todo apps, TaskMetrics is built for people who want clear analytics on how they actually spend their time.
+          🇩🇿 Conçu spécifiquement pour le marché algérien. 5x moins cher que Silwane avec mêmes fonctionnalités GPS.
         </p>
         <ul style={{ ...styles.whyList, ...styles.whyListDesktop }}>
           <li style={styles.whyItem}>
             <span style={styles.bullet} />
-            See tasks and habits for your whole team in a single analytics view.
+            💰 15$/mois vs Silwane modules payants (75$+)
           </li>
           <li style={styles.whyItem}>
             <span style={styles.bullet} />
-            Spot blockers early with simple completion and streak metrics, not complex reports.
+            📱 PWA installable (pas besoin App Store/Play Store)
           </li>
           <li style={styles.whyItem}>
             <span style={styles.bullet} />
-            Use AI insights to decide what your team should focus on each day.
+            🤖 IA scoring prospects inclus (option payante chez Silwane)
           </li>
           <li style={styles.whyItem}>
             <span style={styles.bullet} />
-            Start as a simple dashboard, then extend it with your own automations and integrations.
+            🇩🇿 Support local et rapports conformes réglementation DZ
           </li>
         </ul>
       </section>
@@ -400,19 +400,19 @@ export default function LandingPage() {
           <div>
             <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '8px', color: '#FFFFFF' }}>About</h3>
             <p style={{ fontSize: '14px', color: '#D1D5DB', lineHeight: '1.6' }}>
-              TaskMetrics started as a personal dashboard for managing client work and daily habits, and evolved into a reusable SaaS template for teams and agencies. It's built by an independent developer focused on clean UI, simple analytics, and fast iteration — not bloated project management.
+              TaskForce Mobile est la solution algérienne alternative à Silwane. Développé pour les réalités du terrain DZ: connexion 4G limitée, besoin de mode offline, prix adapté au marché local.
             </p>
           </div>
           <div id="contact">
             <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '8px', color: '#FFFFFF' }}>Contact</h3>
-            <p style={{ fontSize: '14px', color: '#D1D5DB', marginBottom: '4px' }}>Want a custom version of this dashboard for your team or agency?</p>
-            <p style={{ fontSize: '14px', color: '#D1D5DB' }}>Email: <span style={{ color: '#E5E7EB' }}>your-email@example.com</span> (or connect on LinkedIn to discuss your use case).</p>
+            <p style={{ fontSize: '14px', color: '#D1D5DB', marginBottom: '4px' }}>🚗 Version démo gratuite pour votre agence?</p>
+            <p style={{ fontSize: '14px', color: '#D1D5DB' }}>📱 WhatsApp: +213 5XX XXX XXX (ou LinkedIn: @votre-profil)</p>
           </div>
         </div>
       </section>
 
       <footer style={styles.footer}>
-        © {new Date().getFullYear()} TaskMetrics. All rights reserved.
+        © {new Date().getFullYear()} TaskForce Mobile. All rights reserved.
       </footer>
     </div>
   );

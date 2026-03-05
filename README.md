@@ -1,30 +1,31 @@
-# TaskMetrics – Analytics-First Task & Habit Dashboard
+# TaskForce Mobile – GPS Sales Tracker for Algerian Agencies
 
-TaskMetrics is a modern task and habit dashboard that brings together daily tasks, routines, and AI insights into a single analytics view.
+TaskForce Mobile is a mobile-first PWA for commercial teams in Algeria, providing GPS tracking for sales visits, offline sync, and AI-powered lead scoring.
 
-- Built with Next.js 14, TypeScript, Tailwind CSS, Clerk, and MongoDB.
-- Features a marketing landing page, auth (sign up / sign in), and a protected analytics dashboard.
-- Designed as a reusable SaaS starter for B2B teams and agencies.
+- Built with Next.js 14, TypeScript, Tailwind CSS, and Supabase
+- Features GPS visit tracking, offline mode, and AI prospect scoring
+- Designed as a Silwane competitor for Algerian agencies at 15$/month
 
 ## Live Demo
 
-- Landing page: https://task-manager-frontend-opal-nu.vercel.app
-- Dashboard (after sign-in): /working-app
+- Landing page: https://taskforce-mobile.vercel.app
+- Mobile dashboard: /working-app
 
 ## Key Features
 
-- Task management with completion rate and weekly goals.
-- Habit tracking and routine overview (conceptual / demo-ready).
-- Analytics-style UI with dark SaaS design and KPI cards.
-- Authentication-ready (Clerk integration, can be enabled with real keys).
-- Clean routing: public marketing page + protected dashboard.
+- GPS tracking for each commercial visit
+- Offline mode with automatic sync
+- AI scoring for prospects (hot/warm/cold)
+- Real-time team dashboard
+- Export reports compliant with Algerian standards
 
 ## Tech Stack
 
 - Framework: Next.js (App Router), TypeScript
-- UI: Tailwind CSS, custom dark SaaS layout
+- UI: Tailwind CSS, mobile-first PWA design
+- Database: Supabase (PostgreSQL)
 - Auth: Clerk (optional, environment-driven)
-- Data: MongoDB with Mongoose
+- AI: OpenAI API for lead scoring
 - Hosting: Vercel
 
 ## Project Structure

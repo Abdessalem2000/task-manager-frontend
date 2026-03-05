@@ -1,7 +1,7 @@
 {
-  "name": "task-manager-frontend",
+  "name": "taskforce-mobile",
   "private": true,
-  "version": "0.2.2",
+  "version": "1.0.0",
   "scripts": {
     "dev": "next dev",
     "build": "next build --no-lint",
@@ -15,6 +15,8 @@
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
+    "@supabase/auth-helpers-nextjs": "^0.15.0",
+    "@supabase/supabase-js": "^2.98.0",
     "axios": "^1.13.2",
     "mongoose": "^8.0.0",
     "next": "^14.0.0",
