@@ -2,17 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { createClient } from '../../utils/supabase/client'
-
-interface Client {
-  id: string
-  name: string
-  status: 'new' | 'contacted' | 'visited' | 'closed'
-  score: number
-  lat?: number
-  lng?: number
-  created_at: string
-  notes?: string
-}
+import { Client } from '../types/client'
 
 interface AIScoreResult {
   score: number
