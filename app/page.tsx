@@ -370,14 +370,14 @@ export default function LandingPage() {
 
       {/* Why choose us */}
       <section id="why-us" style={styles.section}>
-        <h2 style={styles.sectionTitle}>Pourquoi TaskForce Mobile vs Silwane?</h2>
+        <h2 style={styles.sectionTitle}>Pourquoi TaskForce Mobile vs les solutions traditionnelles?</h2>
         <p style={{ ...styles.sectionSubtitle, marginBottom: '20px' }}>
-          🇩🇿 Conçu spécifiquement pour le marché algérien. 5x moins cher que Silwane avec mêmes fonctionnalités GPS.
+          🇩🇿 Conçu spécifiquement pour le marché algérien. 5x moins cher que les solutions classiques de gestion de force de vente et d'ERP.
         </p>
         <ul style={{ ...styles.whyList, ...styles.whyListDesktop }}>
           <li style={styles.whyItem}>
             <span style={styles.bullet} />
-            💰 15$/mois vs Silwane modules payants (75$+)
+            💰 15$/mois vs solutions ERP traditionnelles (75$+)
           </li>
           <li style={styles.whyItem}>
             <span style={styles.bullet} />
@@ -385,7 +385,7 @@ export default function LandingPage() {
           </li>
           <li style={styles.whyItem}>
             <span style={styles.bullet} />
-            🤖 IA scoring prospects inclus (option payante chez Silwane)
+            🤖 IA scoring prospects inclus (option payante dans les ERP classiques)
           </li>
           <li style={styles.whyItem}>
             <span style={styles.bullet} />
@@ -400,7 +400,7 @@ export default function LandingPage() {
           <div>
             <h3 style={{ fontSize: '18px', fontWeight: '600', marginBottom: '8px', color: '#FFFFFF' }}>About</h3>
             <p style={{ fontSize: '14px', color: '#D1D5DB', lineHeight: '1.6' }}>
-              TaskForce Mobile est la solution algérienne alternative à Silwane. Développé pour les réalités du terrain DZ: connexion 4G limitée, besoin de mode offline, prix adapté au marché local.
+              TaskForce Mobile est la solution algérienne alternative aux ERP lourds. Développé pour les réalités du terrain DZ: connexion 4G limitée, besoin de mode offline, prix adapté au marché local.
             </p>
           </div>
           <div id="contact">
