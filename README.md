@@ -182,16 +182,49 @@ For questions or support, please open an issue in the GitHub repository or conta
 
 **Short project description (for portfolio / GitHub):**
 
-"TaskMetrics is a production-ready Next.js SaaS template that combines tasks, habits, and AI insights into a single analytics dashboard. It includes a full marketing landing page, auth-ready routing, and a dark SaaS UI optimized for teams and agencies."
+"TaskForce Mobile is a production-ready GPS Sales Tracker PWA for Algerian agencies, featuring offline sync, AI lead scoring, and real-time visit tracking. Built with Next.js, Supabase, and PWA technology as a Silwane competitor at 15$/month."
 
 **LinkedIn post snippet (you can adapt):**
 
-"I've just shipped TaskMetrics – a modern task & habit analytics dashboard built with Next.js, TypeScript, Tailwind, Clerk, and MongoDB.
+"🚀 Just shipped TaskForce Mobile - GPS Sales Tracker for Algerian agencies!
 
-It's structured like a real SaaS: public landing page, auth routes, and a protected dashboard that shows tasks, completion rate, weekly goals, and room for AI insights.
+After seeing how expensive Silwane is (75$+/month), I built an alternative 5x cheaper:
 
-If you run a small team or agency and want a lightweight analytics view of what's actually getting done each week, I can customize this dashboard for your workflow."
+✅ GPS tracking for each sales visit
+✅ Offline mode (works without 4G)
+✅ AI scoring for prospects (hot/warm/cold)
+✅ PWA installable (no app store needed)
+✅ Real-time team dashboard
+
+🇩🇿 Built specifically for Algerian market:
+- French interface (fr-DZ)
+- WhatsApp support
+- 15$/month vs Silwane's 75$+
+- Works in areas with limited connectivity
+
+Tech stack: Next.js 14 + Supabase + PWA + AI
+
+Live demo: https://taskforce-mobile.vercel.app
+
+Beta testers wanted! If you run a commercial agency in Algeria (Blida, Algiers, Oran), DM me for free access.
+
+#Startups #Algeria #SaaS #SalesTech #PWA"
+
+**LinkedIn DM template for agencies:**
+
+"Salam! I noticed you're in the commercial space in Algeria. I've built TaskForce Mobile - a GPS sales tracker specifically for DZ agencies, 5x cheaper than Silwane.
+
+Would you be interested in a free beta test? Features:
+- GPS visit tracking
+- Offline sync (no 4G needed)
+- AI prospect scoring
+- 15$/month pricing
+
+Happy to show you a quick demo. Ramadan Mubarak!"
+
+**Email subject for agencies:**
+"TaskForce Mobile - Alternative Silwane 5x moins cher pour agences DZ"
 
 ---
 
-**Built with ❤️ for the modern development community**
+**Built with ❤️ for the Algerian business community**

@@ -266,8 +266,8 @@ export default function LandingPage() {
       <header style={styles.header}>
         <div style={styles.headerContent}>
           <div style={styles.logo}>
-            <div style={styles.logoBox}>TM</div>
-            <span style={{ fontWeight: '600', letterSpacing: '-0.025em' }}>TaskMetrics</span>
+            <div style={styles.logoBox}>🚗</div>
+            <span style={{ fontWeight: '600', letterSpacing: '-0.025em' }}>TaskForce Mobile</span>
           </div>
           <nav style={{ ...styles.nav, ...styles.navMobile }}>
             <a href="#features" style={{ cursor: 'pointer', color: 'inherit' }}>Features</a>
@@ -317,27 +317,27 @@ export default function LandingPage() {
           <div style={styles.previewBg1} />
           <div style={styles.previewBg2} />
           <div style={styles.previewCard}>
-            <p style={{ fontSize: '12px', fontWeight: '500', color: '#9CA3AF', marginBottom: '12px' }}>Weekly overview</p>
+            <p style={{ fontSize: '12px', fontWeight: '500', color: '#9CA3AF', marginBottom: '12px' }}>Aperçu Dashboard</p>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '12px', marginBottom: '16px', fontSize: '12px' }}>
               <div style={{ borderRadius: '16px', backgroundColor: 'rgba(31, 41, 55, 0.8)', padding: '12px' }}>
-                <p style={{ color: '#9CA3AF', marginBottom: '4px' }}>Tasks done</p>
-                <p style={{ fontSize: '18px', fontWeight: '600', color: '#10B981' }}>28</p>
-                <p style={{ fontSize: '10px', color: '#10B981', marginTop: '4px' }}>+14% vs last week</p>
+                <p style={{ color: '#9CA3AF', marginBottom: '4px' }}>Clients actifs</p>
+                <p style={{ fontSize: '18px', fontWeight: '600', color: '#10B981' }}>24</p>
+                <p style={{ fontSize: '10px', color: '#10B981', marginTop: '4px' }}>+8 ce mois</p>
               </div>
               <div style={{ borderRadius: '16px', backgroundColor: 'rgba(31, 41, 55, 0.8)', padding: '12px' }}>
-                <p style={{ color: '#9CA3AF', marginBottom: '4px' }}>Habits streak</p>
-                <p style={{ fontSize: '18px', fontWeight: '600', color: '#06B6D4' }}>7 days</p>
-                <p style={{ fontSize: '10px', color: '#06B6D4', marginTop: '4px' }}>Focus & journaling</p>
+                <p style={{ color: '#9CA3AF', marginBottom: '4px' }}>Visites aujourd'hui</p>
+                <p style={{ fontSize: '18px', fontWeight: '600', color: '#06B6D4' }}>12</p>
+                <p style={{ fontSize: '10px', color: '#06B6D4', marginTop: '4px' }}>GPS tracking</p>
               </div>
               <div style={{ borderRadius: '16px', backgroundColor: 'rgba(31, 41, 55, 0.8)', padding: '12px' }}>
-                <p style={{ color: '#9CA3AF', marginBottom: '4px' }}>AI insights</p>
-                <p style={{ fontSize: '18px', fontWeight: '600', color: '#8B5CF6' }}>3</p>
-                <p style={{ fontSize: '10px', color: '#8B5CF6', marginTop: '4px' }}>New suggestions</p>
+                <p style={{ color: '#9CA3AF', marginBottom: '4px' }}>Prospects chauds</p>
+                <p style={{ fontSize: '18px', fontWeight: '600', color: '#8B5CF6' }}>8</p>
+                <p style={{ fontSize: '10px', color: '#8B5CF6', marginTop: '4px' }}>Score IA &gt; 70</p>
               </div>
             </div>
             <div style={{ borderRadius: '16px', backgroundColor: 'rgba(31, 41, 55, 0.8)', padding: '12px', fontSize: '12px', color: '#D1D5DB' }}>
-              <p style={{ marginBottom: '8px', fontWeight: '500' }}>"If you complete 4 more tasks today, you&apos;ll hit 40% higher output than last Monday."</p>
-              <p style={{ fontSize: '10px', color: '#6B7280' }}>AI assistant · Focus mode</p>
+              <p style={{ marginBottom: '8px', fontWeight: '500' }}>"3 prospects chauds à Alger nécessitent suivi prioritaire. Score IA élevé + proximité GPS."</p>
+              <p style={{ fontSize: '10px', color: '#6B7280' }}>AI scoring · GPS tracking</p>
             </div>
           </div>
         </div>
