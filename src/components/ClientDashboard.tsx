@@ -5,6 +5,7 @@ import NewClientForm from './NewClientForm'
 import GPSVisitTracker from './GPSVisitTracker'
 import AIScore from './AIScore'
 import OrderForm, { ClientRecentOrders } from './OrderForm'
+import PWARegister from './PWARegister'
 import { createClient } from '../../utils/supabase/client'
 import { Client } from '../types/client'
 
@@ -127,6 +128,7 @@ export default function ClientDashboard() {
 
   return (
     <div className="space-y-4">
+      <PWARegister />
       <h1 className="text-2xl font-semibold mb-2">
         TaskForce Mobile – Distributeur / Pré-vente
       </h1>
