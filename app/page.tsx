@@ -297,7 +297,7 @@ export default function LandingPage() {
             Suivi GPS visites commerciales, offline sync, IA scoring prospects
           </h1>
           <p style={styles.subtitle}>
-            Comme Silwane mais 5x moins cher - 15$/mois. GPS tracking chaque visite, offline mode, IA score prospects, dashboard realtime équipe.
+            Alternative légère aux ERP de force de vente – 5x moins cher que les solutions traditionnelles, à partir de 15$/mois. GPS tracking chaque visite, offline mode, IA score prospects, dashboard realtime équipe.
           </p>
           <div style={styles.ctaButtons}>
             <Link href="/working-app" style={styles.primaryButton}>
