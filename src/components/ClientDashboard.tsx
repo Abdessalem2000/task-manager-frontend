@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import NewClientForm from './NewClientForm'
 import GPSVisitTracker from './GPSVisitTracker'
 import AIScore from './AIScore'
+import OrderForm, { ClientRecentOrders } from './OrderForm'
 import { createClient } from '../../utils/supabase/client'
 import { Client } from '../types/client'
 
@@ -71,6 +72,11 @@ export default function ClientDashboard() {
   const [clients, setClients] = useState<Client[]>([])
   const [selectedClientId, setSelectedClientId] = useState<string | null>(null)
   const [showNewClient, setShowNewClient] = useState(false)
+  const [todayStats, setTodayStats] = useState<{
+    clientsToday: number
+    visitsToday: number
+    ordersToday: number
+  }>({ clientsToday: 0, visitsToday: 0, ordersToday: 0 })
 
   const supabase = createClient()
 
@@ -85,8 +91,36 @@ export default function ClientDashboard() {
     }
   }
 
+  const fetchTodayStats = async () => {
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    const isoStart = today.toISOString()
+
+    const { count: visitsCount } = await supabase
+      .from('visits')
+      .select('*', { count: 'exact', head: true })
+      .gte('created_at', isoStart)
+
+    const { count: ordersCount } = await supabase
+      .from('orders')
+      .select('*', { count: 'exact', head: true })
+      .gte('created_at', isoStart)
+
+    const { count: newClientsCount } = await supabase
+      .from('clients')
+      .select('*', { count: 'exact', head: true })
+      .gte('created_at', isoStart)
+
+    setTodayStats({
+      clientsToday: newClientsCount || 0,
+      visitsToday: visitsCount || 0,
+      ordersToday: ordersCount || 0,
+    })
+  }
+
   useEffect(() => {
     fetchClients()
+    fetchTodayStats()
   }, [])
 
   const selectedClient = clients.find((c) => c.id === selectedClientId) || null
@@ -100,6 +134,27 @@ export default function ClientDashboard() {
         Gérez vos clients, enregistrez les visites terrain (GPS) et préparez vos
         pré-commandes pour vos tournées de distribution.
       </p>
+
+      <div className="grid gap-4 md:grid-cols-3">
+        <div className="bg-white rounded-lg shadow p-4">
+          <p className="text-xs text-gray-500 uppercase mb-1">Aujourd'hui</p>
+          <p className="text-sm text-gray-700">
+            Nouveaux clients: <span className="font-semibold">{todayStats.clientsToday}</span>
+          </p>
+        </div>
+        <div className="bg-white rounded-lg shadow p-4">
+          <p className="text-xs text-gray-500 uppercase mb-1">Visites du jour</p>
+          <p className="text-sm text-gray-700">
+            Visites enregistrées: <span className="font-semibold">{todayStats.visitsToday}</span>
+          </p>
+        </div>
+        <div className="bg-white rounded-lg shadow p-4">
+          <p className="text-xs text-gray-500 uppercase mb-1">Pré-commandes du jour</p>
+          <p className="text-sm text-gray-700">
+            Pré-commandes créées: <span className="font-semibold">{todayStats.ordersToday}</span>
+          </p>
+        </div>
+      </div>
 
       <div className="grid gap-4 lg:grid-cols-3">
         {/* Left: Clients list */}
@@ -151,15 +206,16 @@ export default function ClientDashboard() {
                 <AIScore client={selectedClient} />
               </div>
               <div className="bg-white rounded-lg shadow p-4">
-                <h2 className="font-semibold mb-2">Pré-vente (démo)</h2>
-                <p className="text-xs text-gray-600 mb-2">
-                  Prochaine étape: ajouter un vrai formulaire de pré-commande (produits, quantités).
-                  Pour l'instant, cette section peut afficher les futures pré-commandes.
+                <h2 className="font-semibold mb-2">Pré-commande rapide</h2>
+                <p className="text-xs text-gray-600 mb-3">
+                  Sélectionnez un produit et une quantité pour enregistrer une pré-commande
+                  pour ce point de vente.
                 </p>
-                <p className="text-xs text-gray-400">
-                  (Vous pouvez montrer cette section aux distributeurs et leur demander exactement
-                  quelles infos ils veulent voir ici.)
-                </p>
+                <OrderForm
+                  clientId={selectedClient.id}
+                  onCreated={fetchTodayStats}
+                />
+                <ClientRecentOrders clientId={selectedClient.id} />
               </div>
             </>
           ) : (
