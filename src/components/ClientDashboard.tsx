@@ -36,20 +36,33 @@ function ClientsList({
   onAddNew: () => void
 }) {
   return (
-    <div className="bg-white rounded-lg shadow p-4 h-full flex flex-col">
+    <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4 h-full flex flex-col">
       <div className="flex items-center justify-between mb-3">
-        <h2 className="font-semibold text-lg">Clients / Prospects</h2>
+        <h2 className="text-sm font-semibold text-slate-900">
+          Clients / Points de vente
+        </h2>
         <button
           type="button"
           onClick={onAddNew}
-          className="px-3 py-1 text-sm bg-blue-500 text-white rounded"
+          className="inline-flex items-center rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-700"
         >
           + Nouveau
         </button>
       </div>
+
+      {/* Search bar */}
+      <div className="mb-2">
+        <input
+          type="text"
+          placeholder="Rechercher un client…"
+          className="w-full rounded-lg border border-slate-200 px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+        />
+      </div>
+
+      {/* List content */}
       <div className="flex-1 overflow-auto border rounded">
         {clients.length === 0 && (
-          <div className="p-3 text-sm text-gray-500">
+          <div className="p-3 text-sm text-slate-500">
             Aucun client pour l'instant. Ajoutez votre premier prospect.
           </div>
         )}
@@ -58,13 +71,13 @@ function ClientsList({
             <li
               key={c.id}
               onClick={() => onSelectClient(c.id)}
-              className={`flex items-center justify-between px-3 py-2 text-sm cursor-pointer border-b hover:bg-gray-50 ${
+              className={`flex items-center justify-between px-3 py-2 text-sm cursor-pointer border-b hover:bg-slate-50 ${
                 selectedClientId === c.id ? 'bg-blue-50' : ''
               }`}
             >
               <div>
                 <div className="font-medium">{c.name}</div>
-                <div className="text-xs text-gray-500">{c.address}</div>
+                <div className="text-xs text-slate-500">{c.address}</div>
               </div>
               <div className="flex items-center gap-2">
                 <span
@@ -147,50 +160,65 @@ export default function ClientDashboard() {
   const selectedClient = clients.find((c) => c.id === selectedClientId) || null
 
   return (
-    <div className="space-y-4">
+  <div className="min-h-screen bg-gray-50">
+    <div className="mx-auto max-w-6xl px-4 py-6 space-y-6">
       <PWARegister />
-      <h1 className="text-2xl font-semibold mb-2">
-        TaskForce Mobile – Distributeur / Pré-vente
-      </h1>
-      <p className="text-sm text-gray-600 mb-4">
-        Gérez vos clients, enregistrez les visites terrain (GPS) et préparez vos
-        pré-commandes pour vos tournées de distribution.
-      </p>
+      
+      {/* Header */}
+      <header className="space-y-1">
+        <h1 className="text-2xl font-semibold text-slate-900">
+          TaskForce Mobile – Tournée du jour
+        </h1>
+        <p className="text-sm text-slate-600">
+          Distributeur / Pré-vente – suivez vos points de vente, visites terrain et actions du jour.
+        </p>
+      </header>
 
-      <div className="grid gap-4 md:grid-cols-3">
-        <div className="bg-white rounded-lg shadow p-4">
-          <p className="text-xs text-gray-500 uppercase mb-1">Aujourd'hui</p>
-          <p className="text-sm text-gray-700">
-            Nouveaux clients: <span className="font-semibold">{todayStats.clientsToday}</span>
+      {/* "Aujourd'hui" Summary Cards */}
+      <section className="grid gap-4 md:grid-cols-3">
+        <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4">
+          <p className="text-xs font-medium text-slate-500 uppercase mb-1">Nouveaux clients</p>
+          <p className="text-2xl font-semibold text-slate-900">
+            {todayStats?.clientsToday ?? 0}
+          </p>
+          <p className="text-xs text-slate-500 mt-1">
+            Points de vente ajoutés aujourd'hui.
           </p>
         </div>
-        <div className="bg-white rounded-lg shadow p-4">
-          <p className="text-xs text-gray-500 uppercase mb-1">Visites du jour</p>
-          <p className="text-sm text-gray-700">
-            Visites enregistrées: <span className="font-semibold">{todayStats.visitsToday}</span>
+        <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4">
+          <p className="text-xs font-medium text-slate-500 uppercase mb-1">Visites du jour</p>
+          <p className="text-2xl font-semibold text-slate-900">
+            {todayStats?.visitsToday ?? 0}
+          </p>
+          <p className="text-xs text-slate-500 mt-1">
+            Visites terrain enregistrées avec GPS.
           </p>
         </div>
-        <div className="bg-white rounded-lg shadow p-4">
-          <p className="text-xs text-gray-500 uppercase mb-1">Pré-commandes du jour</p>
-          <p className="text-sm text-gray-700">
-            Pré-commandes créées: <span className="font-semibold">{todayStats.ordersToday}</span>
+        <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4">
+          <p className="text-xs font-medium text-slate-500 uppercase mb-1">Pré-commandes</p>
+          <p className="text-2xl font-semibold text-slate-900">
+            {todayStats?.ordersToday ?? 0}
+          </p>
+          <p className="text-xs text-slate-500 mt-1">
+            Pré-commandes créées aujourd'hui.
           </p>
         </div>
-      </div>
+      </section>
 
-      <div className="grid gap-4 lg:grid-cols-3">
-        {/* Left: Clients list */}
-        <div className="lg:col-span-1 h-full flex flex-col gap-3">
+      {/* Main Grid Layout */}
+      <main className="grid gap-4 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,2fr)] items-start">
+        {/* LEFT COLUMN: clients list + new client */}
+        <section className="space-y-4">
           {showNewClient && (
-            <div className="bg-white rounded-lg shadow p-4">
-              <div className="flex items-center justify-between mb-2">
-                <h2 className="font-semibold text-sm">Nouveau client</h2>
+            <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4">
+              <div className="flex items-center justify-between mb-3">
+                <h2 className="text-sm font-semibold text-slate-900">Nouveau client</h2>
                 <button
                   type="button"
                   onClick={() => setShowNewClient(false)}
-                  className="text-xs text-gray-500 hover:text-gray-800"
+                  className="text-slate-400 hover:text-slate-600"
                 >
-                  Fermer
+                  ✕
                 </button>
               </div>
               <NewClientForm
@@ -207,54 +235,61 @@ export default function ClientDashboard() {
             onSelectClient={(id) => setSelectedClientId(id)}
             onAddNew={() => setShowNewClient(true)}
           />
-        </div>
+        </section>
 
-        {/* Right: GPS + AI + simple pre-sale section */}
-        <div className="lg:col-span-2 space-y-4">
+        {/* RIGHT COLUMN: client details + GPS + IA */}
+        <section className="space-y-4">
           {selectedClient ? (
             <>
-              <div className="bg-white rounded-lg shadow p-4">
-                <h2 className="font-semibold mb-1">
+              {/* Fiche point de vente */}
+              <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4">
+                <h2 className="text-sm font-semibold text-slate-900 mb-1">
                   Point de vente: {selectedClient.name}
                 </h2>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-slate-600">
                   Adresse: {selectedClient.address || '—'}
                 </p>
-                <p className="text-sm text-gray-600">
+                <p className="text-sm text-slate-600">
                   Tél: {selectedClient.phone || '—'}
                 </p>
-                <p className="text-xs text-gray-500 mt-2">
-                  Statut: <span className="font-medium">{selectedClient.status}</span>{' '}
-                  -  Score: <span className="font-medium">{selectedClient.score ?? '—'}</span> / 100
+                <p className="text-xs text-slate-500 mt-2">
+                  Statut: <span className="font-medium">{selectedClient.status}</span> -  Score:{' '}
+                  <span className="font-medium">{selectedClient.score ?? '—'}</span> / 100
                 </p>
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-slate-500 mt-1">
                   Dernière visite: (à implémenter) – pour l'instant, utilisez la liste des visites dans Supabase.
                 </p>
               </div>
+
+              {/* GPS + IA side by side on desktop, stacked on mobile */}
               <div className="grid gap-4 md:grid-cols-2">
-                <GPSVisitTracker clientId={selectedClient.id} />
-                <AIScore client={selectedClient} />
+                <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4">
+                  <GPSVisitTracker clientId={selectedClient.id} />
+                </div>
+                <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4">
+                  <AIScore client={selectedClient} />
+                </div>
               </div>
-              <div className="bg-white rounded-lg shadow p-4">
-                <h2 className="font-semibold mb-2">Pré-commande rapide</h2>
-                <p className="text-xs text-gray-600 mb-3">
-                  Sélectionnez un produit et une quantité pour enregistrer une pré-commande
-                  pour ce point de vente.
-                </p>
-                <OrderForm
-                  clientId={selectedClient.id}
-                  onCreated={fetchTodayStats}
-                />
+
+              {/* Pré-vente section */}
+              <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4">
+                <OrderForm clientId={selectedClient.id} />
+              </div>
+              
+              {/* Historique commandes */}
+              <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-4">
                 <ClientRecentOrders clientId={selectedClient.id} />
               </div>
             </>
           ) : (
-            <div className="bg-white rounded-lg shadow p-6 text-sm text-gray-600">
-              Aucun client sélectionné. Ajoutez un client à gauche pour commencer.
+            <div className="bg-white rounded-xl shadow-sm border border-slate-100 p-6 text-sm text-slate-600">
+              Aucun client sélectionné. Choisissez un point de vente à gauche pour voir les détails,
+              enregistrer une visite GPS et calculer le score.
             </div>
           )}
-        </div>
-      </div>
+        </section>
+      </main>
     </div>
-  )
+  </div>
+)
 }

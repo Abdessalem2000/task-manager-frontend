@@ -177,7 +177,7 @@ export default function GPSVisitTracker({ clientId }: { clientId: string }) {
         <div className="space-y-3">
           <button
             onClick={startVisit}
-            className="w-full px-4 py-3 text-sm md:text-base rounded bg-blue-600 text-white disabled:opacity-60"
+            className="w-full inline-flex justify-center items-center rounded-lg bg-blue-600 px-4 py-3 text-sm md:text-base font-medium text-white hover:bg-blue-700 disabled:opacity-60"
           >
             🚗 Démarrer la visite (GPS)
           </button>

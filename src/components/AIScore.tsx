@@ -227,7 +227,7 @@ export default function AIScore({ client, userLocation }: { client: Client; user
       <button
         onClick={scoreClient}
         disabled={scoring}
-        className="w-full px-4 py-3 text-sm md:text-base rounded bg-purple-600 text-white disabled:opacity-60"
+        className="w-full inline-flex justify-center items-center rounded-lg bg-purple-600 px-4 py-3 text-sm md:text-base font-medium text-white hover:bg-purple-700 disabled:opacity-60"
       >
         {scoring ? (
           <span className="flex items-center justify-center">
