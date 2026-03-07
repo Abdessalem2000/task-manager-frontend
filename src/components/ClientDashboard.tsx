@@ -9,6 +9,21 @@ import PWARegister from './PWARegister'
 import { createClient } from '../../utils/supabase/client'
 import { Client } from '../types/client'
 
+function getStatusClasses(status: Client['status']) {
+  switch (status) {
+    case 'new':
+      return 'bg-blue-100 text-blue-700'
+    case 'contacted':
+      return 'bg-yellow-100 text-yellow-700'
+    case 'visited':
+      return 'bg-green-100 text-green-700'
+    case 'closed':
+      return 'bg-gray-200 text-gray-700'
+    default:
+      return 'bg-gray-100 text-gray-700'
+  }
+}
+
 function ClientsList({
   clients,
   selectedClientId,
@@ -52,7 +67,12 @@ function ClientsList({
                 <div className="text-xs text-gray-500">{c.address}</div>
               </div>
               <div className="flex items-center gap-2">
-                <span className="text-xs px-2 py-1 rounded-full bg-gray-100">
+                <span
+                  className={
+                    'text-xs px-2 py-1 rounded-full ' +
+                    getStatusClasses(c.status)
+                  }
+                >
                   {c.status}
                 </span>
                 {typeof c.score === 'number' && (
@@ -195,12 +215,20 @@ export default function ClientDashboard() {
             <>
               <div className="bg-white rounded-lg shadow p-4">
                 <h2 className="font-semibold mb-1">
-                  {selectedClient.name}
+                  Point de vente: {selectedClient.name}
                 </h2>
-                <p className="text-sm text-gray-600">{selectedClient.address}</p>
+                <p className="text-sm text-gray-600">
+                  Adresse: {selectedClient.address || '—'}
+                </p>
+                <p className="text-sm text-gray-600">
+                  Tél: {selectedClient.phone || '—'}
+                </p>
+                <p className="text-xs text-gray-500 mt-2">
+                  Statut: <span className="font-medium">{selectedClient.status}</span>{' '}
+                  -  Score: <span className="font-medium">{selectedClient.score ?? '—'}</span> / 100
+                </p>
                 <p className="text-xs text-gray-500 mt-1">
-                  Tél: {selectedClient.phone || '—'} -  Statut: {selectedClient.status} -  Score:{' '}
-                  {selectedClient.score ?? '—'}
+                  Dernière visite: (à implémenter) – pour l'instant, utilisez la liste des visites dans Supabase.
                 </p>
               </div>
               <div className="grid gap-4 md:grid-cols-2">

@@ -26,6 +26,7 @@ export default function GPSVisitTracker({ clientId }: { clientId: string }) {
   const [currentVisit, setCurrentVisit] = useState<Visit | null>(null)
   const [notes, setNotes] = useState('')
   const [error, setError] = useState<string>('')
+  const [info, setInfo] = useState<string | null>(null)
 
   const supabase = createClient()
 
@@ -46,6 +47,7 @@ export default function GPSVisitTracker({ clientId }: { clientId: string }) {
 
     setStatus('tracking')
     setError('')
+    setInfo('Demande d\'accès à la localisation…')
 
     navigator.geolocation.getCurrentPosition(
       async (position) => {
@@ -74,15 +76,18 @@ export default function GPSVisitTracker({ clientId }: { clientId: string }) {
 
           setCurrentVisit(visit)
           setStatus('visit_active')
+          setInfo('Visite GPS enregistrée avec succès.')
         } catch (err) {
           console.error('Error starting visit:', err)
           setError('Erreur lors du démarrage de la visite')
+          setInfo(null)
           setStatus('error')
         }
       },
       (error) => {
         console.error('GPS Error:', error)
-        setError('Impossible d\'obtenir votre position GPS')
+        setError('Erreur GPS. Vérifiez les permissions de localisation sur votre téléphone.')
+        setInfo(null)
         setStatus('error')
       },
       {
@@ -154,14 +159,17 @@ export default function GPSVisitTracker({ clientId }: { clientId: string }) {
   return (
     <div className="bg-white rounded-lg shadow-lg p-4 max-w-md mx-auto">
       <div className="mb-4">
-        <h3 className="text-lg font-semibold text-gray-800 mb-2">
-          📍 Suivi GPS Visite
-        </h3>
+        <h2 className="font-semibold mb-2">📍 Suivi GPS Visite</h2>
         
         {error && (
           <div className="bg-red-100 border border-red-400 text-red-700 px-3 py-2 rounded mb-3">
             {error}
           </div>
+        )}
+        {info && (
+          <p className="mt-2 text-xs text-gray-600">
+            {info}
+          </p>
         )}
       </div>
 
@@ -169,7 +177,7 @@ export default function GPSVisitTracker({ clientId }: { clientId: string }) {
         <div className="space-y-3">
           <button
             onClick={startVisit}
-            className="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-3 px-4 rounded-lg transition-colors"
+            className="w-full px-4 py-3 text-sm md:text-base rounded bg-blue-600 text-white disabled:opacity-60"
           >
             🚗 Démarrer la visite (GPS)
           </button>
